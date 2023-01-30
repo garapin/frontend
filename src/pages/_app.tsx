@@ -4,15 +4,16 @@ import {createTheme, ThemeProvider} from '@mui/material/styles';
 import Head from "next/head";
 
 const garapinTheme = createTheme({
+    spacing: [0, 4, 8, 16, 32, 64],
     typography: {
-        fontFamily: 'Arial',
+        fontFamily: 'Roboto, Arial',
     },
     palette: {
         primary: {
-            main: '#ff5733',
+            main: '#713F97',
         },
         secondary: {
-            main: '#33e6ff',
+            main: '#F7F4F9',
         },
     },
 });
