@@ -21,7 +21,7 @@ const garapinTheme = createTheme({
 
 export default function App({Component, pageProps}: AppProps) {
     return <>
-        <CssBaseline />
+        {/* <CssBaseline /> */}
         <Head>
             <title>Garapin</title>
         </Head>

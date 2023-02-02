@@ -19,8 +19,8 @@ const ComponentsDemo = () => {
         className='h-screen align-middle justify-center p-5'
         sx={{
             bgcolor: 'background.paper',
-            pt: 8,
-            pb: 6,
+            pt: 3,
+            pb: 2,
         }}>
         <Paper elevation={5} className='flex-shrink'>
             <Container>
