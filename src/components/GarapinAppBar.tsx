@@ -7,6 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import {FormControl, NativeSelect} from "@mui/material";
+import {FormEventHandler} from "react";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -57,7 +58,10 @@ const LanguageSelector = styled('div')(({theme}) => ({
     marginRight: theme.spacing(3)
 }));
 
-export default function GarapinAppBar({searchVariant = false}: { searchVariant?: boolean }) {
+export default function GarapinAppBar({
+                                          searchVariant = false,
+                                          onSearchSubmit
+                                      }: { searchVariant?: boolean, onSearchSubmit?: FormEventHandler<HTMLDivElement> }) {
     return (
         <Box sx={{flexGrow: 1}}>
             <AppBar position="static">
@@ -74,6 +78,7 @@ export default function GarapinAppBar({searchVariant = false}: { searchVariant?:
                                 <StyledInputBase
                                     placeholder="Search…"
                                     inputProps={{'aria-label': 'search'}}
+                                    onSubmit={onSearchSubmit}
                                 />
                             </Search>}
                         </Box>
