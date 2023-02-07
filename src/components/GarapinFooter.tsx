@@ -36,9 +36,27 @@ export default function GarapinFooter() {
                 <Typography variant="h5" className="pb-3">
                     Temukan di Media Sosial:
                 </Typography>
+                <Box className="flex flex-row justify-around pb-3">
+                    <img src="/instagram_icon.svg" alt="Instagram Icon"/>
+                    <img src="/youtube_icon.svg" alt="Youtube Icon"/>
+                    <img src="/facebook_icon.svg" alt="Facebook Icon"/>
+                    <img src="/linkedin_icon.svg" alt="Linkedin Icon"/>
+                </Box>
                 <Typography variant="h5" className="pb-3">
                     Hubungi Kami:
                 </Typography>
+                <Box className="flex flex-row justify-between pb-3">
+                    <Typography variant="body2">contact@garap.in</Typography>
+                    <img src="/mail_icon.svg" alt="Email Icon"/>
+                </Box>
+                <Box className="flex flex-row justify-between pb-3">
+                    <Typography variant="body2">0813-8020-6100 (Customer)</Typography>
+                    <img src="/whatsapp_icon.svg" alt="Whatsapp Icon"/>
+                </Box>
+                <Box className="flex flex-row justify-between pb-3">
+                    <Typography variant="body2">0821-3758-5330 (Mitra)</Typography>
+                    <img src="/whatsapp_icon.svg" alt="Whatsapp Icon"/>
+                </Box>
             </Box>
             <Box>
                 <img src="/garapin_logo_white.svg" alt="Garapin Logo" width="400"/>
