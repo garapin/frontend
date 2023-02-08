@@ -69,7 +69,7 @@ export default function GarapinAppBar({
                     <Box className="flex flex-row justify-between w-full">
                         <Box className="flex flex-row">
                             <Box className="mr-3">
-                                <img src="/garapin_logo_white.svg" alt="Garapin Logo"/>
+                                <img src="/garapin_logo_white.svg" alt="Garapin Logo" width="114"/>
                             </Box>
                             {searchVariant && <Search>
                                 <SearchIconWrapper>
