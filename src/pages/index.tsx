@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
+import GarapinAppBar from "@/components/GarapinAppBar";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -127,7 +128,9 @@ const LandingPage = () => (
         <Head>
             <title>My Landing Page</title>
         </Head>
-        <h1>Welcome to my landing page</h1>
+        <body>
+            <GarapinAppBar/>
+        </body>
     </div>
 );
 

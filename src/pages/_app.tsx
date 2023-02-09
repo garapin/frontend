@@ -3,6 +3,7 @@ import type {AppProps} from 'next/app'
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import Head from "next/head";
 import { CssBaseline } from '@mui/material';
+import LandingPage from "@/pages/landing_page/LandingPage";
 
 const garapinTheme = createTheme({
     spacing: [0, 4, 8, 16, 32, 64],
@@ -26,7 +27,8 @@ export default function App({Component, pageProps}: AppProps) {
             <title>Garapin</title>
         </Head>
         <ThemeProvider theme={garapinTheme}>
-            <Component {...pageProps} />
+            {/*<Component {...pageProps} />*/}
+            <LandingPage/>
         </ThemeProvider>
     </>
 }
