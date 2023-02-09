@@ -2,16 +2,21 @@ import Box from '@mui/material/Box';
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import {color} from "@mui/system";
+import { withTranslation, WithTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
-export default function GarapinFooter() {
+interface Props extends WithTranslation {
+
+}
+const GarapinFooter:React.FC<Props> = ({t}) => {
     return (
         <Box className="flex flex-row justify-around p-10" sx={{backgroundColor: '#713F97'}}>
             <Box className="flex flex-col max-w-sm">
                 <Typography variant="h5" className="pb-3">
-                    Apa Sih Garapin?
+                    {t('footer.excerpt.header')}
                 </Typography>
                 <Typography variant="body2" className="pb-3">
-                    Garapin adalah sebuah aplikasi mobile atau platform digital yang membantu para produsen dan maklon untuk mendapatkan customer yang ingin memproduksi sebuah barang melalui pabrik dan produsen yang terpercaya dengan quantity yang terjangkau oleh customer.
+                    {t('footer.excerpt.content')}
                 </Typography>
                 <Typography variant="h5" className="pb-3">
                     PT Visi Teknologi Digital
@@ -26,7 +31,7 @@ export default function GarapinFooter() {
                     Jakarta Barat 11480. Indonesia.
                 </Typography>
                 <Typography variant="h5" className="pb-3">
-                    Tanda Daftar PSE
+                    {t('footer.pse.header')}
                 </Typography>
                 <Typography variant="body2">
                     000205.01/DJAI.PSE/02/2021
@@ -34,7 +39,7 @@ export default function GarapinFooter() {
             </Box>
             <Box className="flex flex-col">
                 <Typography variant="h5" className="pb-3">
-                    Temukan di Media Sosial:
+                    {t('footer.socials.header')}
                 </Typography>
                 <Box className="flex flex-row justify-around pb-3">
                     <img src="/instagram_icon.svg" alt="Instagram Icon"/>
@@ -43,7 +48,7 @@ export default function GarapinFooter() {
                     <img src="/linkedin_icon.svg" alt="Linkedin Icon"/>
                 </Box>
                 <Typography variant="h5" className="pb-3">
-                    Hubungi Kami:
+                    {t('footer.contact.header')}
                 </Typography>
                 <Box className="flex flex-row justify-between pb-3">
                     <Typography variant="body2">contact@garap.in</Typography>
@@ -64,3 +69,5 @@ export default function GarapinFooter() {
         </Box>
     );
 }
+
+export default withTranslation('common')(GarapinFooter);

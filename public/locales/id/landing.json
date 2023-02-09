@@ -1,0 +1,35 @@
+{
+    "section2":{
+        "header": "Copy Message 1: Semudah 1,2,3.",
+        "content": {
+            "step1": {
+                "header": "Cari.",
+                "content": "This is the content of step 1."
+            },
+            "step2": {
+                "header": "Buat",
+                "content": "This is the content of step 2."
+            },
+            "step3": {
+                "header": "Kirim",
+                "content": "This is the content of step 3."
+            }
+        }
+
+    },
+    "section3":{
+        "header": "Lebih dari Sekadar Direktori Usaha",
+        "content": "This is the content of section 3."
+    },
+    "section4": {
+        "header": "Dalam Sorotan Media",
+        "content": "This is the content of section 4."
+    },
+    "section5": {
+        "header": "Mudahkan Produksi Usahamu Bersama Garapin",
+        "content": "This is the content of section 5.",
+        "email": "email@perusahaan-anda.co.id",
+        "register": "Daftar Sekarang"
+    }
+    
+}

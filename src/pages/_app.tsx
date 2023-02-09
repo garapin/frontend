@@ -3,7 +3,9 @@ import type {AppProps} from 'next/app'
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import Head from "next/head";
 import { CssBaseline } from '@mui/material';
-import LandingPage from "@/pages/landing_page/LandingPage";
+import { appWithTranslation } from 'next-i18next'
+import LandingPage from "@/pages/index";
+import { Suspense } from 'react';
 
 const garapinTheme = createTheme({
     spacing: [0, 4, 8, 16, 32, 64],
@@ -20,15 +22,17 @@ const garapinTheme = createTheme({
     },
 });
 
-export default function App({Component, pageProps}: AppProps) {
+const GarapinApp = ({Component, pageProps}: AppProps) => {
     return <>
-        {/* <CssBaseline /> */}
         <Head>
             <title>Garapin</title>
         </Head>
         <ThemeProvider theme={garapinTheme}>
-            {/*<Component {...pageProps} />*/}
-            <LandingPage/>
+            <Suspense fallback={<div>Loading...</div>}>
+                <Component {...pageProps} />
+            </Suspense>
         </ThemeProvider>
     </>
 }
+
+export default appWithTranslation(GarapinApp);

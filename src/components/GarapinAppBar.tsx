@@ -7,7 +7,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import {FormControl, NativeSelect} from "@mui/material";
-import {FormEventHandler} from "react";
+import {FormEventHandler, useCallback} from "react";
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -58,10 +60,28 @@ const LanguageSelector = styled('div')(({theme}) => ({
     marginRight: theme.spacing(3)
 }));
 
+
+
 export default function GarapinAppBar({
                                           searchVariant = false,
                                           onSearchSubmit
                                       }: { searchVariant?: boolean, onSearchSubmit?: FormEventHandler<HTMLDivElement> }) {
+
+    const {i18n} = useTranslation();
+    const {language: currentLanguage} = i18n;
+    const router = useRouter();
+    const locales = router.locales ?? [currentLanguage];
+
+    const switchToLocale = useCallback(
+        (locale: string) => {
+          const path = router.asPath;
+      
+          return router.push(path, path, { locale });
+        },
+        [router]
+      );
+
+    console.log("resolved lang:", i18n.resolvedLanguage);
     return (
         <Box sx={{flexGrow: 1}}>
             <AppBar position="static">
@@ -91,14 +111,15 @@ export default function GarapinAppBar({
                                     <FormControl fullWidth>
                                         <NativeSelect
                                             disableUnderline={true}
-                                            defaultValue={"id-ID"}
+                                            value={i18n.resolvedLanguage}
                                             inputProps={{
                                                 name: "age",
                                                 id: "uncontrolled-native"
                                             }}
+                                            onChange={(e) => switchToLocale(e.target.value as string)}
                                         >
-                                            <option value={"id-ID"}>Indonesia</option>
-                                            <option value={"en-US"}>English</option>
+                                            <option value={"id"} disabled={i18n.resolvedLanguage === 'id'}>Indonesia</option>
+                                            <option value={"en"} disabled={i18n.resolvedLanguage === 'en'}>English</option>
                                         </NativeSelect>
                                     </FormControl>
                                 </Box>
