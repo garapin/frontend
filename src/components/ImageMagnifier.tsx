@@ -2,20 +2,26 @@ import React, { useState } from 'react'
 
 export default function ImageMagnifier({
     src,
-    width,
-    height,
+    maxWidth,
+    maxHeight,
     magnifierHeight = 120,
     magnifieWidth = 120,
     zoomLevel = 1.5,
     alt,
+    rimProps,
+    rimStyles,
+    useMagnifier=true
   }: {
     src: string;
-    width?: string;
-    height?: string;
+    maxWidth?: string;
+    maxHeight?: string;
     magnifierHeight?: number;
     magnifieWidth?: number;
     zoomLevel?: number;
-    alt?:string
+    alt?:string;
+    rimProps?: object
+    rimStyles?: object
+    useMagnifier?: boolean;
   }) {
     const [[x, y], setXY] = useState([0, 0]);
     const [[imgWidth, imgHeight], setSize] = useState([0, 0]);
@@ -24,14 +30,14 @@ export default function ImageMagnifier({
       <div
         style={{
           position: "relative",
-          height: height,
-          width: width
+          maxHeight: maxHeight,
+          maxWidth: maxWidth
         }}
       >
-        <img
+        { useMagnifier && <img
           alt={alt??"An image"}
           src={src}
-          style={{ height: height, width: width, borderRadius: 6}}
+          style={{ width: '100%', maxHeight: maxHeight, maxWidth: maxWidth, borderRadius: 6, objectFit: 'cover', cursor: 'zoom-in', ...rimStyles }}
           onMouseEnter={(e) => {
             // update image size and turn-on magnifier
             const elem = e.currentTarget;
@@ -53,7 +59,16 @@ export default function ImageMagnifier({
             // close magnifier
             setShowMagnifier(false);
           }}
-        />
+          {...rimProps}
+        /> }
+
+        { !useMagnifier && <img 
+          alt={alt??"An image"}
+          src={src}
+          style={{ width: '100%', maxHeight: maxHeight, maxWidth: maxWidth, borderRadius: 6, objectFit: 'cover',}}  
+          {...rimProps}
+          />
+      }
   
         <div
           style={{

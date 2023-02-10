@@ -15,17 +15,24 @@ export interface CarouselImageSet {
 type ImageCarouselProp = {
     dataSource: CarouselImageSet[],
     rimProps?: object,
+    rimStyles?: object,
     rsProps?: object,
-    width: number,
-    height?: number
+    maxWidth?: number,
+    maxHeight?: number,
+    withThumbnail?: boolean,
+    useMagnifier?:boolean,
 }
 
-export default function ImageCarousel({dataSource, rimProps, rsProps, width, height}: ImageCarouselProp) {
+type AdditionalProps = { [key: string]: any };
+
+type Props = ImageCarouselProp & AdditionalProps;
+
+export default function ImageCarousel({dataSource, rimProps, rimStyles, rsProps, maxWidth, maxHeight, withThumbnail=true, useMagnifier, ...props}: Props) {
     const [currentSlide, setCurrentSlide] = useState(0);
     let slider:ReactSlick|null;
 
   return (
-    <Box className='py-2'>
+    <Box className='py-2' {...props}>
     <ReactSlick
                 {...{
                     dots: false,
@@ -41,10 +48,11 @@ export default function ImageCarousel({dataSource, rimProps, rsProps, width, hei
             >
                 {dataSource.map((src, index) => (
                     <div key={index}>
-                        <ImageMagnifier src={src.srcUrl} zoomLevel={3} alt={src.alt}/>
+                        <ImageMagnifier src={src.srcUrl} zoomLevel={3} alt={src.alt} maxWidth={`${maxWidth}px`} maxHeight={maxHeight?`${maxHeight}px`:'100%'} rimProps={rimProps} rimStyles={rimStyles} useMagnifier={useMagnifier}/>
                     </div>
                 ))}
             </ReactSlick>
+            {withThumbnail &&
             <div className="w-full flex justify-center pb-2">
                 {dataSource.map((_,index) => (
                     <div
@@ -61,7 +69,7 @@ export default function ImageCarousel({dataSource, rimProps, rsProps, width, hei
 
                     </div>
                 ))}
-            </div>
+            </div> }
             </Box>
   )
 }

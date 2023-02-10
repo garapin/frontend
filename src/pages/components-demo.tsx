@@ -1,8 +1,13 @@
+import CardHorizontal from "@/components/CardHorizontal";
+import CardVertical from "@/components/CardVertical";
+import GarapinAppBar from "@/components/GarapinAppBar";
+import GarapinFooter from "@/components/GarapinFooter";
 import ImageCarousel, { CarouselImageSet } from "@/components/ImageCarousel";
 import ListDetail from "@/components/ListDetail";
-import { Container, List, ListItem, Paper, Typography, Link as MuiLink } from "@mui/material";
+import { Container, List, ListItem, Paper, Typography, Link as MuiLink, TextField, Button, Theme, createStyles } from "@mui/material";
 import { Box } from "@mui/system"
 import NextLink from "next/link";
+
 
 const ComponentsDemo = () => {
 
@@ -22,7 +27,19 @@ const ComponentsDemo = () => {
             pt: 3,
             pb: 2,
         }}>
-        <Paper elevation={5} className='flex-shrink'>
+            <Box className="py-5">
+                <GarapinAppBar />
+            </Box>
+            <Box className="py-5">
+                <GarapinAppBar searchVariant/>
+            </Box>
+            <CardHorizontal imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/>
+            <Box className="py-5">
+            <CardVertical imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/>
+            </Box>
+            <GarapinFooter />
+
+        {/* <Paper elevation={5} className='flex-shrink'>
             <Container>
                 <Typography variant="h5" className='pb-5 pt-3'>Components Example</Typography>
                 <Typography variant="h6">Image Carousel</Typography>
@@ -49,7 +66,7 @@ const ComponentsDemo = () => {
                     </List>
                 </Box>
             </Container>
-        </Paper>
+        </Paper> */}
         </Box>
     );
 }
