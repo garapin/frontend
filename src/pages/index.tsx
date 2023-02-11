@@ -11,6 +11,9 @@ import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { makeStyles } from "@mui/styles";
+import { ClassNames } from "@emotion/react";
+import CardVertical from "@/components/CardVertical";
 
 const Register = styled('div')(({theme}) => ({
     position: 'relative',
@@ -37,9 +40,94 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }));
 
+const useStyles = makeStyles({
+    cardContainer: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        maxWidth: '50%',
+      },
+    card: {
+      width: '25%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      margin: '1%',
+    },
+  });
+  
+
+  const productData = [
+    {
+        id: 1,
+        name: 'Product 1',
+        price: 10000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 2,
+        name: 'Product 2',
+        price: 20000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 3,
+        name: 'Product 3',
+        price: 30000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 4,
+        name: 'Product 4',
+        price: 10000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 5,
+        name: 'Product 5',
+        price: 20000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 6,
+        name: 'Product 6',
+        price: 30000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 7,
+        name: 'Product 7',
+        price: 10000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 8,
+        name: 'Product 8',
+        price: 20000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 9,
+        name: 'Product 9',
+        price: 30000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+    {
+        id: 10,
+        name: 'Product 10',
+        price: 30000,
+        image: 'https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg',
+    },
+];
+
+
 export default function LandingPage() {
 
     const {t} = useTranslation('landing');
+    const styles = useStyles();
+
+    const databanyak =[1,2,3,4,5];
 
     return (
         <>
@@ -84,7 +172,7 @@ export default function LandingPage() {
                             </Box>
                         </Box>
                     </Box>
-                    <Box className="flex flex-row items-center justify-between pt-20 pb-20 pl-80 pr-80"
+                    <Box className="flex md:flex-row items-center justify-between pt-20 pb-20 pl-80 pr-80"
                          sx={{backgroundColor: '#F8F4F9'}}>
                         <img
                             src="https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg"
@@ -102,6 +190,12 @@ export default function LandingPage() {
                         </Box>
                         <img src="/daily_social_logo.png" alt="Daily Social Logo"/>
                         <img src="/startup4industries_logo.png" alt="Startup 4 Industries Logo"/>
+                    </Box>
+                    <Box className={styles.cardContainer}>
+                        {productData.map((product) => 
+                                <CardVertical key={product.id} imageUrl={product.image} productName={product.name} price={`Rp${product.price}`} location="Jakarta" />
+                            )}
+
                     </Box>
                     <Box className="flex flex-col items-center justify-around pt-20 pb-20 pl-80 pr-80"
                          sx={{backgroundColor: '#F8F4F9'}}>
