@@ -104,6 +104,7 @@ const LoginPage = () => {
         <Box className={classes.loginUi}>
             <Paper>
             <GarapinAppBar searchVariant/>
+            
             <Box className={`${classes.loginUi} flex flex-row flex-grow`} style={{marginTop:'64px'}}>
                 <Box className='sm:w-0 md:w-2/3  bg-gray-200 p-3'>
                     <ImageCarousel className={classes.carousel}
