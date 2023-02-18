@@ -14,6 +14,7 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { makeStyles } from "@mui/styles";
 import { ClassNames } from "@emotion/react";
 import CardVertical from "@/components/CardVertical";
+import HomePage from "@/components/mainSearchBar/homePage";
 
 const Register = styled('div')(({theme}) => ({
     position: 'relative',
@@ -140,6 +141,7 @@ export default function LandingPage() {
             <main>
                 <Box className="flex flex-col">
                     <GarapinAppBar/>
+                    {/* <HomePage /> */}
                     <Box className="flex flex-col items-center justify-between pt-20 pb-20"
                          sx={{backgroundColor: '#F8F4F9'}}>
                             {/* <Trans t={t} i18nKey={'section2.header'}> */}
