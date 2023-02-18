@@ -6,10 +6,12 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
-import {FormControl, NativeSelect} from "@mui/material";
-import {FormEventHandler, useCallback} from "react";
+import {Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography} from "@mui/material";
+import {FormEventHandler, useCallback, useEffect, useState} from "react";
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import useFirebaseAuth from '@/hooks/useFirebaseAuth';
+import Link from 'next/link';
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -71,6 +73,27 @@ export default function GarapinAppBar({
     const {language: currentLanguage} = i18n;
     const router = useRouter();
     const locales = router.locales ?? [currentLanguage];
+    const auth = useFirebaseAuth();
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    useEffect(() => {}, [auth]);
+
+    const handleClick = (event:any) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogOut = async () => {
+        setAnchorEl(null);
+        await auth.signOut();
+        console.log("sign out");
+    }
+
+    console.log("state auth: ", auth.authUser);
+    console.log("loading auth:", auth.loading);
 
     const switchToLocale = useCallback(
         (locale: string) => {
@@ -83,13 +106,20 @@ export default function GarapinAppBar({
 
     console.log("resolved lang:", i18n.resolvedLanguage);
     return (
-        <Box sx={{flexGrow: 1}}>
-            <AppBar position="static">
+        <Container maxWidth="xl">
+            <AppBar position="fixed" style={{zIndex: 1300}}>
                 <Toolbar>
-                    <Box className="flex flex-row justify-between w-full">
+                    <Box className={`flex flex-row justify-between w-full`} >
                         <Box className="flex flex-row">
-                            <Box className="mr-3">
-                                <img src="/garapin_logo_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
+                            <Box className="mr-3" sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                flexShrink: 1
+                            }}>
+                                <Link href="/">
+                                    <img src="/garapin_logo_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
+                                </Link>
                             </Box>
                             {searchVariant && <Search>
                                 <SearchIconWrapper>
@@ -104,8 +134,15 @@ export default function GarapinAppBar({
                         </Box>
                         <Box style={{
                             display: 'flex',
-                            flexDirection: 'row'
+                            flexDirection: 'row',
+                            flexShrink: 1
                         }}>
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                flexShrink: 1
+                            }} >
                             <LanguageSelector>
                                 <Box sx={{minWidth: 120}}>
                                     <FormControl fullWidth>
@@ -124,15 +161,45 @@ export default function GarapinAppBar({
                                     </FormControl>
                                 </Box>
                             </LanguageSelector>
-                            {searchVariant && <Button variant="contained"
+                            </Box>
+                            { (!auth.loading && auth.authUser == null && router.pathname!== '/login') && <Link href="/login"><Button variant="contained"
                                                       style={{
                                                           backgroundColor: '#FFFFFF',
                                                           color: '#713F97'
-                                                      }}>MASUK</Button>}
+                                                      }}
+                                                      >MASUK</Button> </Link>}
+                            { (!auth.loading && auth.authUser !== null) && <>
+                            <Box>
+                                <IconButton onClick={handleClick}>
+                                    <Avatar sx={{ml: 2}}/>
+                                    <Typography variant='body1' sx={{color:'#ffffff', pl: 2}}>{auth.authUser.email}</Typography>
+                                </IconButton>
+                                </Box>
+                            <Menu
+                                sx={{ mt: '45px' }}
+                                id="menu-appbar"
+                                anchorEl={anchorEl}
+                                anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                keepMounted
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                >
+                                <MenuItem onClick={()=>{}}>Profile</MenuItem>
+                                <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
+                            </Menu>
+                            </>}
+
                         </Box>
                     </Box>
                 </Toolbar>
             </AppBar>
-        </Box>
+        </Container>
     );
 }
