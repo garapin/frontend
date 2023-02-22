@@ -11,6 +11,8 @@ import GuestGuard from '@/components/auth/GuestGuard';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { NextPage } from 'next';
 import Spinner from '@/components/spinner';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -81,19 +83,21 @@ const GarapinApp = (props: ExtendedAppProps) => {
     const guestGuard = Component.guestGuard ?? false
 
     return <>
-        <Head>
-            <title>Garapin</title>
-            <meta name='viewport' content='initial-scale=1, width=device-width' />
-        </Head>
-        <FirebaseAuthProvider>
-            <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                <ThemeProvider theme={garapinTheme}>
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <Component {...pageProps} />
-                    </Suspense>
-                </ThemeProvider>
-            </Guard>
-        </FirebaseAuthProvider>
+      <Provider store={store}>
+          <Head>
+              <title>Garapin</title>
+              <meta name='viewport' content='initial-scale=1, width=device-width' />
+          </Head>
+          <FirebaseAuthProvider>
+              <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                  <ThemeProvider theme={garapinTheme}>
+                      <Suspense fallback={<div>Loading...</div>}>
+                          <Component {...pageProps} />
+                      </Suspense>
+                  </ThemeProvider>
+              </Guard>
+          </FirebaseAuthProvider>
+      </Provider>
     </>
 }
 
