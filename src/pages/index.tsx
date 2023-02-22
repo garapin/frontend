@@ -14,7 +14,6 @@ import {makeStyles} from "@mui/styles";
 import CardVertical from "@/components/CardVertical";
 import {Container, Divider, Grid, InputAdornment, TextField} from "@mui/material";
 import ImageCarousel, {CarouselImageSet} from "@/components/ImageCarousel";
-import Image from "next/image";
 
 const StyledInputBase = styled(InputBase)(({theme}) => ({
     color: '#713F97',
@@ -279,9 +278,9 @@ export default function LandingPage() {
                     </Box>
                     <Box className="flex flex-col md:flex-row items-center justify-center py-10 md:py-20"
                          sx={{backgroundColor: '#F8F4F9'}}>
-                        <Image className="w-1280 h-720 md:pr-32"
-                               src="https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg"
-                               alt="Image with stock photos"/>
+                        <img className="w-1280 h-720 md:pr-32"
+                             src="https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg"
+                             alt="Image with stock photos"/>
                         <Box className="max-w-sm">
                             <Typography variant="h4" color="#713F97" fontWeight="bold"
                                         className="pb-5 pt-4">{t('section3.header')}</Typography>
@@ -295,8 +294,8 @@ export default function LandingPage() {
                                         className="pb-5">{t('section4.header')}</Typography>
                             <Typography variant="body1" color="text.primary">{t('section4.content')}</Typography>
                         </Box>
-                        <Image className="pb-8" src="/daily_social_logo.png" alt="Daily Social Logo"/>
-                        <Image src="/startup4industries_logo.png" alt="Startup 4 Industries Logo"/>
+                        <img className="pb-8" src="/daily_social_logo.png" alt="Daily Social Logo"/>
+                        <img src="/startup4industries_logo.png" alt="Startup 4 Industries Logo"/>
                     </Box>
                     <Box className="flex flex-col items-center justify-around py-10 md:py-20 px-4 md:px-80"
                          sx={{backgroundColor: '#F8F4F9'}}>
