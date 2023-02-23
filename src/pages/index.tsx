@@ -8,7 +8,7 @@ import * as React from "react";
 import {alpha, styled, useTheme} from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
-import {useTranslation} from "next-i18next";
+import {i18n, Trans, useTranslation} from "next-i18next";
 import {serverSideTranslations} from 'next-i18next/serverSideTranslations'
 import {makeStyles} from "@mui/styles";
 import {ClassNames} from "@emotion/react";
@@ -130,24 +130,28 @@ export default function LandingPage() {
                         <Container maxWidth="xl" className="px-4 md:px-16 pt-36 pb-28 md:pt-48 md:pb-48">
                             <Box>
                                 <Box className="max-w-xl xl:max-w-full">
-                                    <Typography variant="h3" color="primary" className="mb-8">Bikin <b>Packaging</b> Apa
-                                        Aja<br/>di Garapin, Bisa!</Typography>
-                                    <Typography variant="body1">Garapin menyediakan berbagai layanan produksi untuk
-                                        semua kebutuhanmu.
-                                        <br/>Butuh packaging siap pakai, cetak kuantiti kecil, atau custom partai besar?
-                                        Garapin solusinya!</Typography>
+                                
+                                    <Typography variant="h3" color="primary" className="mb-8">
+                                        <Trans>
+                                        {t('section1.header')}<b></b>
+                                        </Trans>
+                                            </Typography>
+                                    <Typography variant="body1">
+                                        <Trans>
+                                        {t('section1.content')}
+                                        </Trans>
+                                    </Typography>
                                 </Box>
                                 <Box className="max-w-xl mt-24 mb-20">
-                                    <TextField placeholder="Saya mau buat..." fullWidth
+                                    <TextField placeholder={`${t('section1.searchbar')}`} fullWidth
                                                InputProps={{
                                                    endAdornment: <InputAdornment position="end"><Button
                                                        variant="contained"
-                                                       color="garapinColor">Cari</Button></InputAdornment>,
+                                                       color="garapinColor">{t('section1.searchButton')}</Button></InputAdornment>,
                                                }}></TextField>
                                 </Box>
                                 <Box className="mt-28">
-                                    <Typography variant="body1">Dipercaya oleh klien-klien ternama
-                                        Indonesia</Typography>
+                                    <Typography variant="body1">{t('section1.credentials')}</Typography>
                                     <Box className="flex items-center mt-7">
                                         <svg width="150" height="48" viewBox="0 0 150 48" fill="none"
                                              xmlns="http://www.w3.org/2000/svg" className="mr-10">
@@ -180,7 +184,7 @@ export default function LandingPage() {
 
                                         <svg width="221" height="48" viewBox="0 0 221 48" fill="none"
                                              xmlns="http://www.w3.org/2000/svg" className="mr-10">
-                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                            <path fillRule="evenodd" clipRule="evenodd"
                                                   d="M118.152 33.7479C115.75 36.2086 112.877 37.4454 109.547 37.4454C106.855 37.4454 104.566 36.8911 102.231 35.5212V29.8804C104.109 31.1667 106.47 32.3918 108.798 32.3918C113.655 32.3918 116.546 29.0168 116.546 24.234C116.546 19.4472 113.556 15.972 108.697 15.972C106.526 15.972 104.767 16.7597 103.393 18.3386C101.92 20.0489 101.159 22.4936 101.159 25.7259V48H100.793C98.1157 48 95.9466 45.81 95.9466 43.1074V24.8897C95.9466 17.1592 100.627 10.9172 108.673 10.9172C112.645 10.9172 115.872 12.2889 118.318 15.0444C120.618 17.6188 121.758 20.8807 121.758 24.8061C121.758 28.2993 120.555 31.2854 118.152 33.7479ZM174.585 33.559C172.193 36.1524 169.114 37.4454 165.381 37.4454C161.441 37.4454 158.23 36.0738 155.787 33.3189C153.488 30.7127 152.347 27.448 152.347 23.5582C152.347 16.6723 157.612 10.9172 164.539 10.9172C167.211 10.9172 169.531 11.4872 171.874 12.7847V18.4845C169.996 17.1976 167.636 15.9725 165.308 15.9725C160.451 15.9725 157.559 19.347 157.559 24.1315C157.559 28.8508 160.619 32.3924 165.407 32.3924C167.575 32.3924 169.361 31.5718 170.79 29.9188C172.209 28.277 172.947 25.8641 172.947 22.6228V4.89259C172.947 2.18947 175.117 0 177.793 0H178.159V23.454C178.159 27.5845 176.975 30.9656 174.585 33.559ZM189.304 8.41412C188.757 9.03252 187.973 9.31721 187.016 9.31721C185.226 9.31721 183.947 7.98514 183.947 6.19234C183.947 4.35776 185.203 3.11929 187.016 3.11929C188.761 3.11929 190.085 4.42517 190.085 6.19234C190.085 7.06702 189.831 7.81634 189.304 8.41412ZM215.787 22.6222C215.787 20.5475 215.009 18.9052 213.448 17.6611C212.041 16.5413 210.284 15.972 208.146 15.972C203.428 15.972 200.399 19.6952 200.399 24.2864C200.399 28.7043 203.61 32.3918 208.096 32.3918C211.216 32.3918 212.885 30.5517 214.664 28.2591V34.8688C213.758 35.5546 212.715 36.3022 211.651 36.7412C210.527 37.2148 209.186 37.4454 207.637 37.4454C200.134 37.4454 195.187 31.1723 195.187 23.9226C195.187 20.1999 196.333 17.1224 198.638 14.7223C201.085 12.1791 204.294 10.9172 208.222 10.9172C215.671 10.9172 221 15.2354 221 23.0379V36.9256H220.635C217.957 36.9256 215.787 34.7351 215.787 32.0319V22.6222ZM144.437 21.1314C143.778 19.0751 142.952 18.0628 141.053 16.992C136.536 14.4443 132.091 16.6132 130.023 21.1119L144.437 21.1314ZM140.459 37.368C137.13 38.0822 133.864 37.5312 130.677 35.7329C127.567 33.9802 125.485 31.3734 124.442 27.9288C122.332 20.962 126.654 13.1986 133.606 11.3189C137.051 10.3874 140.355 10.8092 143.494 12.5797C148.708 15.5224 150.608 20.0734 150.276 25.9376L129.277 25.8953C129.587 28.287 131.055 30.1584 133.12 31.3222C135.213 32.5033 137.137 32.7852 138.921 32.2264C140.905 31.5979 142.512 29.9645 143.82 28.4436L148.1 31.5918C146.354 34.7451 143.978 36.6114 140.459 37.368ZM184.41 11.4381H189.621V36.9251H189.255C186.58 36.9251 184.41 34.7345 184.41 32.0314L184.41 11.4381ZM7.62781 36.9251C2.5299 36.9251 0 33.4247 0 28.5349V9.98853C0 7.28652 2.17022 5.09538 4.84708 5.09538H5.21284V11.4387H14.0191V16.4929H5.21229V29.1216C5.21229 31.2692 6.16203 31.872 8.19413 31.872H14.0191V36.9262L7.62781 36.9251ZM37.8976 33.7033C35.323 36.1958 32.2279 37.4449 28.6322 37.4449C25.0702 37.4449 21.9928 36.1947 19.4182 33.7033C16.8347 31.2018 15.5468 28.0179 15.5468 24.1816C15.5468 16.6962 21.2077 10.9178 28.6322 10.9178C32.1958 10.9178 35.2815 12.1769 37.8722 14.6867C40.4717 17.2037 41.7707 20.3782 41.7707 24.1816C41.7707 28.0179 40.4811 31.2013 37.8976 33.7033ZM62.2667 17.5709C61.5021 18.8656 60.9093 19.7938 60.4921 20.3548C60.0324 20.9648 59.5783 21.4523 59.1285 21.7888C62.7507 22.9699 64.0999 25.5037 64.0999 29.2781V36.9251H63.7342C61.0573 36.9251 58.8871 34.7345 58.8871 32.0314V29.7968C58.8871 27.3527 57.8014 25.6947 55.2367 25.6947H50.5035V36.9251H50.1372C47.4609 36.9251 45.2923 34.7345 45.2923 32.0314V4.89259C45.2923 2.18947 47.4609 0 50.1377 0H50.5035V20.5893H52.0438C53.7367 20.5893 54.8489 20.0044 55.4876 18.8985L59.8656 11.4393L65.805 11.4337L62.2667 17.5709ZM89.1724 33.7038C86.5966 36.1964 83.5015 37.4454 79.9064 37.4454C76.345 37.4454 73.2676 36.1953 70.6918 33.7038C68.1083 31.2024 66.8205 28.0185 66.8205 24.1822C66.8205 16.6968 72.4819 10.9184 79.9064 10.9184C83.47 10.9184 86.5552 12.1774 89.1464 14.6872C91.7465 17.2043 93.0443 20.3787 93.0443 24.1822C93.0443 28.0185 91.7559 31.2018 89.1724 33.7038ZM85.4099 18.2506C83.9734 16.7335 82.149 15.972 79.9064 15.972C75.1102 15.972 72.2383 19.5024 72.2383 24.1822C72.2383 28.7968 75.1781 32.3918 79.9064 32.3918C84.6358 32.3918 87.5746 28.7968 87.5746 24.1822C87.5746 21.732 86.8453 19.7659 85.4104 18.2506H85.4099ZM34.1362 18.2506C32.6997 16.7335 30.8754 15.972 28.6333 15.972C23.8365 15.972 20.9652 19.5024 20.9652 24.1822C20.9652 28.7968 23.9045 32.3918 28.6328 32.3918C33.3622 32.3918 36.3004 28.7968 36.3004 24.1822C36.3004 21.732 35.5722 19.7659 34.1362 18.2506Z"
                                                   fill="#AFA9B1"/>
                                         </svg>
@@ -266,8 +270,8 @@ export default function LandingPage() {
                     </Box>
                     <Box className="flex flex-col md:px-80 py-10 md:py-20">
                         <Box className="flex flex-col md:flex-row justify-between">
-                            <Typography className="px-10 md:px-0" variant="h4" color="#713F97">Jelajahi Produk di Garapin</Typography>
-                            <Button variant="text" className="max-w-fit ml-10">LIHAT SEMUA</Button>
+                            <Typography className="px-10 md:px-0" variant="h4" color="#713F97">{t('sectionJelajah.header')}</Typography>
+                            <Button variant="text" className="max-w-fit ml-10">{t('sectionJelajah.viewAllButton')}</Button>
                         </Box>
                         <Divider className="mx-10 md:mx-0 pt-6"/>
                         <Grid className="px-10 md:px-0 pt-8 md:pt-12" container spacing={4}>
@@ -324,8 +328,12 @@ export default function LandingPage() {
     )
 }
 
-export const getServerSideProps = async ({locale}: { locale: string }) => ({
+export const getServerSideProps = async ({locale}: { locale: string }) => {
+    if (process.env.NODE_ENV === "development") {
+        await i18n?.reloadResources();
+      }
+    return {
     props: {
         ...(await serverSideTranslations(locale, ['landing', 'common']))
     }
-});
+}};

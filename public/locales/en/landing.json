@@ -1,4 +1,13 @@
 {
+    "section1":{
+        "header": "Create any <1>Packaging</1> in Garapin<br />Yes you can!",
+        "content": "Garapin provides various production services for your packaging needs.<br />From design to production, we can help you create your packaging in a fast and easy way.",
+
+        "searchbar": "I want to create a...",
+        "searchButton": "Search",
+        "credentials": "Trusted by Indonesia's Top Brands"
+
+    },
     "section2":{
         "header": "Copy Message 1: As easy as 1,2,3.",
         "content": {
@@ -15,6 +24,11 @@
                 "content": "This is the content of step 3."
             }
         }
+
+    },
+    "sectionJelajah": {
+        "header": "Discover Garapin Products",
+        "viewAllButton": "View All"
 
     },
     "section3":{

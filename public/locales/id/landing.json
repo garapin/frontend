@@ -1,4 +1,13 @@
 {
+    "section1":{
+        "header": "Bikin <1>Packaging</1> Apa Aja<br />di Garapin, Bisa!!",
+        "content": "Garapin menyediakan berbagai layanan produksi untuk semua kebutuhanmu.<br />Butuh packaging siap pakai, cetak kuantiti kecil, atau custom partai besar? Garapin solusinya!",
+
+        "searchbar": "Saya mau buat...",
+        "searchButton": "Cari",
+        "credentials": "Dipercaya oleh klien-klien ternama Indonesia"
+
+    },
     "section2":{
         "header": "Copy Message 1: Semudah 1,2,3.",
         "content": {
@@ -15,6 +24,11 @@
                 "content": "This is the content of step 3."
             }
         }
+
+    },
+    "sectionJelajah": {
+        "header": "Jelajahi Produk di Garapin",
+        "viewAllButton": "Lihat Semua"
 
     },
     "section3":{
