@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import Firebase from 'src/configs/firebase'
+import { toast } from 'react-toastify'
+import Firebase, { getFirestore } from 'src/configs/firebase'
 
 // interface UserType {
 //   email: string
@@ -13,8 +14,12 @@ import Firebase from 'src/configs/firebase'
 const useFirebaseAuth = () => {
   const [authUser, setAuthUser] = useState<null | Firebase.User>(null)
   const [loading, setLoading] = useState(true)
+  const firestore = getFirestore();
+  let callback = null;
+  let unsubscribe:null|Function = null;
 
   const authStateChanged = async (authState: Firebase.User|null) => {
+    if (unsubscribe !== null) unsubscribe();
     if (!authState) {
       setAuthUser(null)
       setLoading(false)
@@ -24,12 +29,20 @@ const useFirebaseAuth = () => {
       const formattedUser = authState
       setAuthUser(formattedUser)
       setLoading(false)
+
+      unsubscribe = firestore.doc(`usersData/${formattedUser.uid}`).onSnapshot((doc) => {
+        if (doc.exists) {
+          console.log("User data from update snapshot:", doc.data());
+          authState.getIdToken(true);
+        }
+      })
     }
   }
 
   const resetUser = () => {
     setAuthUser(null)
     setLoading(false)
+    toast.success("Berhasil logout. Sampai jumpa lagi!");
   }
 
   const signInWithEmailAndPassword = (email: string, password: string) =>

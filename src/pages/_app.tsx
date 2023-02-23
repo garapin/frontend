@@ -13,6 +13,9 @@ import { NextPage } from 'next';
 import Spinner from '@/components/spinner';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -102,6 +105,7 @@ const GarapinApp = (props: ExtendedAppProps) => {
                   <ThemeProvider theme={garapinTheme}>
                       <Suspense fallback={<div>Loading...</div>}>
                           <Component {...pageProps} />
+                          <ToastContainer />
                       </Suspense>
                   </ThemeProvider>
               </Guard>
