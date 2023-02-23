@@ -14,6 +14,7 @@ import {makeStyles} from "@mui/styles";
 import CardVertical from "@/components/CardVertical";
 import {Container, Divider, Grid, InputAdornment, TextField} from "@mui/material";
 import ImageCarousel, {CarouselImageSet} from "@/components/ImageCarousel";
+import {useRouter} from 'next/router';
 
 const StyledInputBase = styled(InputBase)(({theme}) => ({
     color: '#713F97',
@@ -107,6 +108,7 @@ const imageSet: CarouselImageSet[] = [
 export default function LandingPage() {
 
     const {t} = useTranslation('landing');
+    const router = useRouter();
 
     return (
         <>
@@ -140,8 +142,13 @@ export default function LandingPage() {
                                                InputProps={{
                                                    endAdornment: <InputAdornment position="end"><Button
                                                        variant="contained"
-                                                       color="garapinColor">{t('section1.searchButton')}</Button></InputAdornment>,
-                                               }}></TextField>
+                                                       color="garapinColor"
+                                                       onClick={(event) => {
+                                                           router.push('/product-list');
+                                                       }}
+                                                   >{t('section1.searchButton')}</Button></InputAdornment>,
+                                               }}
+                                    ></TextField>
                                 </Box>
                                 <Box className="mt-28">
                                     <Typography variant="body1">{t('section1.credentials')}</Typography>

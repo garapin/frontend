@@ -8,8 +8,8 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import {Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography} from "@mui/material";
 import {FormEventHandler, useCallback, useEffect, useState} from "react";
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
+import {useTranslation} from 'next-i18next';
+import {useRouter} from 'next/router';
 import useFirebaseAuth from '@/hooks/useFirebaseAuth';
 import Link from 'next/link';
 
@@ -63,7 +63,6 @@ const LanguageSelector = styled('div')(({theme}) => ({
 }));
 
 
-
 export default function GarapinAppBar({
                                           searchVariant = false,
                                           onSearchSubmit
@@ -76,9 +75,10 @@ export default function GarapinAppBar({
     const auth = useFirebaseAuth();
     const [anchorEl, setAnchorEl] = useState(null);
 
-    useEffect(() => {}, [auth]);
+    useEffect(() => {
+    }, [auth]);
 
-    const handleClick = (event:any) => {
+    const handleClick = (event: any) => {
         setAnchorEl(event.currentTarget);
     };
 
@@ -97,19 +97,19 @@ export default function GarapinAppBar({
 
     const switchToLocale = useCallback(
         (locale: string) => {
-          const path = router.asPath;
-      
-          return router.push(path, path, { locale });
+            const path = router.asPath;
+
+            return router.push(path, path, {locale});
         },
         [router]
-      );
+    );
 
     console.log("resolved lang:", i18n.resolvedLanguage);
     return (
         <Container maxWidth="xl">
             <AppBar position="fixed" style={{zIndex: 1300}}>
                 <Toolbar>
-                    <Box className={`flex flex-row justify-between w-full`} >
+                    <Box className={`flex flex-row justify-between w-full`}>
                         <Box className="flex flex-row">
                             <Box className="mr-3" sx={{
                                 display: 'flex',
@@ -117,18 +117,23 @@ export default function GarapinAppBar({
                                 flexDirection: 'row',
                                 flexShrink: 1
                             }}>
-                                <Link href="/">
+                                <Link href="/" className="hidden md:block">
                                     <img src="/garapin_logo_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
                                 </Link>
+                                <Link href="/" className="block md:hidden">
+                                    <img src="/garapin_logo_g_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
+                                </Link>
                             </Box>
-                            {searchVariant && <Search>
+                            {searchVariant && <Search className="flex flex-col justify-center hidden md:block">
                                 <SearchIconWrapper>
                                     <SearchIcon style={{color: '#713F97'}}/>
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     placeholder="Search…"
                                     inputProps={{'aria-label': 'search'}}
-                                    onSubmit={onSearchSubmit}
+                                    onSubmit={(event) => {
+                                        router.push('/product-list');
+                                    }}
                                 />
                             </Search>}
                         </Box>
@@ -142,58 +147,64 @@ export default function GarapinAppBar({
                                 alignItems: 'center',
                                 flexDirection: 'row',
                                 flexShrink: 1
-                            }} >
-                            <LanguageSelector>
-                                <Box sx={{minWidth: 120}}>
-                                    <FormControl fullWidth>
-                                        <NativeSelect
-                                            disableUnderline={true}
-                                            value={i18n.resolvedLanguage}
-                                            inputProps={{
-                                                name: "age",
-                                                id: "uncontrolled-native"
-                                            }}
-                                            onChange={(e) => switchToLocale(e.target.value as string)}
-                                        >
-                                            <option value={"id"} disabled={i18n.resolvedLanguage === 'id'}>Indonesia</option>
-                                            <option value={"en"} disabled={i18n.resolvedLanguage === 'en'}>English</option>
-                                        </NativeSelect>
-                                    </FormControl>
-                                </Box>
-                            </LanguageSelector>
+                            }}>
+                                <LanguageSelector>
+                                    <Box sx={{minWidth: 120}}>
+                                        <FormControl fullWidth>
+                                            <NativeSelect
+                                                disableUnderline={true}
+                                                value={i18n.resolvedLanguage}
+                                                inputProps={{
+                                                    name: "age",
+                                                    id: "uncontrolled-native"
+                                                }}
+                                                onChange={(e) => switchToLocale(e.target.value as string)}
+                                            >
+                                                <option value={"id"}
+                                                        disabled={i18n.resolvedLanguage === 'id'}>Indonesia
+                                                </option>
+                                                <option value={"en"} disabled={i18n.resolvedLanguage === 'en'}>English
+                                                </option>
+                                            </NativeSelect>
+                                        </FormControl>
+                                    </Box>
+                                </LanguageSelector>
                             </Box>
-                            { (!auth.loading && auth.authUser == null && router.pathname!== '/login') && <Link href="/login"><Button variant="contained"
-                                                      style={{
-                                                          backgroundColor: '#FFFFFF',
-                                                          color: '#713F97'
-                                                      }}
-                                                      >MASUK</Button> </Link>}
-                            { (!auth.loading && auth.authUser !== null) && <>
-                            <Box>
-                                <IconButton onClick={handleClick}>
-                                    <Avatar sx={{ml: 2}}/>
-                                    <Typography variant='body1' sx={{color:'#ffffff', pl: 2}}>{auth.authUser.email}</Typography>
-                                </IconButton>
+                            {(!auth.loading && auth.authUser == null && router.pathname !== '/login') &&
+                                <Link href="/login"><Button variant="contained"
+                                                            style={{
+                                                                backgroundColor: '#FFFFFF',
+                                                                color: '#713F97'
+                                                            }}
+                                >MASUK</Button> </Link>}
+                            {(!auth.loading && auth.authUser !== null) && <>
+                                <Box>
+                                    <IconButton onClick={handleClick}>
+                                        <Avatar sx={{ml: 2}}/>
+                                        <Typography variant='body1'
+                                                    sx={{color: '#ffffff', pl: 2}}>{auth.authUser.email}</Typography>
+                                    </IconButton>
                                 </Box>
-                            <Menu
-                                sx={{ mt: '45px' }}
-                                id="menu-appbar"
-                                anchorEl={anchorEl}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorEl)}
-                                onClose={handleClose}
+                                <Menu
+                                    sx={{mt: '45px'}}
+                                    id="menu-appbar"
+                                    anchorEl={anchorEl}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleClose}
                                 >
-                                <MenuItem onClick={()=>{}}>Profile</MenuItem>
-                                <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
-                            </Menu>
+                                    <MenuItem onClick={() => {
+                                    }}>Profile</MenuItem>
+                                    <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
+                                </Menu>
                             </>}
 
                         </Box>
