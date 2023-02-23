@@ -1,4 +1,4 @@
-import {Box, Divider, Grid, InputAdornment, TextField} from "@mui/material";
+import {Box, Container, Divider, Grid, InputAdornment, TextField} from "@mui/material";
 import LoginPage from "@/pages/login";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import CardVertical from "@/components/CardVertical";
@@ -7,6 +7,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import {useRouter} from 'next/router';
 import GarapinFooter from "@/components/GarapinFooter";
+import { i18n } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const productData = [
     {
@@ -115,17 +117,19 @@ const IndexPage = () => {
                            }}
                 ></TextField>
             </Box>
-            <Box className="flex flex-col md:px-80 py-4 md:py-20">
+            <Container>
+            <Box className="flex flex-col py-4 md:py-20">
                 <Typography className="px-10 md:px-0" variant="h6" color="text.primary">Menampilkan 543 hasil untuk pencarian “Food packaging”</Typography>
                 <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4}>
                     {productData.map((product) => (
-                        <Grid key={product.id} item xs={6} sm={6} md={4} lg={3}>
+                        <Grid key={product.id} item xs={6} sm={6} md={3} lg={3} className="content-center">
                             <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
                                           price={`Rp${product.price}`} location="Jakarta"/>
                         </Grid>
                     ))}
                 </Grid>
             </Box>
+            </Container>
             <GarapinFooter/>
         </Box>
     )
@@ -135,3 +139,13 @@ LoginPage.authGuard = false;
 LoginPage.guestGuard = true;
 
 export default IndexPage;
+
+export const getServerSideProps = async ({locale}: { locale: string }) => {
+    if (process.env.NODE_ENV === "development") {
+        await i18n?.reloadResources();
+      }
+    return {
+    props: {
+        ...(await serverSideTranslations(locale, ['landing', 'common']))
+    }
+}};

@@ -45,6 +45,7 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
         paddingLeft: `calc(1em + ${theme.spacing(4)})`,
         transition: theme.transitions.create('width'),
         width: '100%',
+        height: '100%',
         [theme.breakpoints.up('sm')]: {
             width: '70ch',
             '&:focus': {
@@ -124,11 +125,12 @@ export default function GarapinAppBar({
                                     <img src="/garapin_logo_g_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
                                 </Link>
                             </Box>
-                            {searchVariant && <Search className="flex flex-col justify-center hidden md:block">
+                            {searchVariant && <Search className="flex flex-col justify-center  hidden md:block">
                                 <SearchIconWrapper>
                                     <SearchIcon style={{color: '#713F97'}}/>
                                 </SearchIconWrapper>
                                 <StyledInputBase
+                                    className="items-center h-full"
                                     placeholder="Search…"
                                     inputProps={{'aria-label': 'search'}}
                                     onSubmit={(event) => {
@@ -171,10 +173,10 @@ export default function GarapinAppBar({
                                 </LanguageSelector>
                             </Box>
                             {(!auth.loading && auth.authUser == null && router.pathname !== '/login') &&
-                                <Link href="/login"><Button variant="contained"
-                                                            style={{
+                                <Link href="/login" style={{paddingTop:'4px', paddingBottom:'4px'}}><Button variant="contained"
+                                                            sx={{
                                                                 backgroundColor: '#FFFFFF',
-                                                                color: '#713F97'
+                                                                color: '#713F97',
                                                             }}
                                 >MASUK</Button> </Link>}
                             {(!auth.loading && auth.authUser !== null) && <>
