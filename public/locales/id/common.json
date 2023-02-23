@@ -13,5 +13,14 @@
         "contact": {
             "header": "Hubungi Kami"
         }
+    },
+    "appBar": {
+        "searchBarText": "Cari sesuatu...",
+        "menu": {
+            "profile": "Profil",
+            "logout": "Keluar"
+
+        },
+        "loginButton": "Masuk"
     }
 }

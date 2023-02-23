@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import {Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography} from "@mui/material";
 import {FormEventHandler, useCallback, useEffect, useState} from "react";
-import {useTranslation} from 'next-i18next';
+import {useTranslation, withTranslation} from 'next-i18next';
 import {useRouter} from 'next/router';
 import useFirebaseAuth from '@/hooks/useFirebaseAuth';
 import Link from 'next/link';
@@ -64,10 +64,10 @@ const LanguageSelector = styled('div')(({theme}) => ({
 }));
 
 
-export default function GarapinAppBar({
+const GarapinAppBar = ({
                                           searchVariant = false,
                                           onSearchSubmit
-                                      }: { searchVariant?: boolean, onSearchSubmit?: FormEventHandler<HTMLDivElement> }) {
+                                      }: { searchVariant?: boolean, onSearchSubmit?: FormEventHandler<HTMLDivElement> }) => {
 
     const {i18n} = useTranslation();
     const {language: currentLanguage} = i18n;
@@ -93,9 +93,6 @@ export default function GarapinAppBar({
         console.log("sign out");
     }
 
-    console.log("state auth: ", auth.authUser);
-    console.log("loading auth:", auth.loading);
-
     const switchToLocale = useCallback(
         (locale: string) => {
             const path = router.asPath;
@@ -106,6 +103,7 @@ export default function GarapinAppBar({
     );
 
     console.log("resolved lang:", i18n.resolvedLanguage);
+    const {t} = useTranslation('common');
     return (
         <Container maxWidth="xl">
             <AppBar position="fixed" style={{zIndex: 1300}}>
@@ -131,7 +129,7 @@ export default function GarapinAppBar({
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     className="items-center h-full"
-                                    placeholder="Search…"
+                                    placeholder={t('appBar.searchBarText')??'Cari...'}
                                     inputProps={{'aria-label': 'search'}}
                                     onSubmit={(event) => {
                                         router.push('/product-list');
@@ -178,13 +176,13 @@ export default function GarapinAppBar({
                                                                 backgroundColor: '#FFFFFF',
                                                                 color: '#713F97',
                                                             }}
-                                >MASUK</Button> </Link>}
+                                >{t('appBar.loginButton')}</Button> </Link>}
                             {(!auth.loading && auth.authUser !== null) && <>
                                 <Box>
                                     <IconButton onClick={handleClick}>
                                         <Avatar sx={{ml: 2}}/>
                                         <Typography variant='body1'
-                                                    sx={{color: '#ffffff', pl: 2}}>{auth.authUser.email}</Typography>
+                                                    sx={{color: '#ffffff', pl: 2}}>{auth.authUser.displayName??auth.authUser.email}</Typography>
                                     </IconButton>
                                 </Box>
                                 <Menu
@@ -204,8 +202,8 @@ export default function GarapinAppBar({
                                     onClose={handleClose}
                                 >
                                     <MenuItem onClick={() => {
-                                    }}>Profile</MenuItem>
-                                    <MenuItem onClick={handleLogOut}>Log Out</MenuItem>
+                                    }}>{t('appBar.menu.profile')}</MenuItem>
+                                    <MenuItem onClick={handleLogOut}>{t('appBar.menu.logout')}</MenuItem>
                                 </Menu>
                             </>}
 
@@ -216,3 +214,5 @@ export default function GarapinAppBar({
         </Container>
     );
 }
+
+export default withTranslation('common')(GarapinAppBar);

@@ -13,5 +13,14 @@
         "contact": {
             "header": "Get in Touch"
         }
+    }, 
+    "appBar": {
+        "searchBarText": "Search...",
+        "menu": {
+            "profile": "Profile",
+            "logout": "Logout"
+
+        },
+        "loginButton": "Login"
     }
 }

@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import {useRouter} from 'next/router';
 import GarapinFooter from "@/components/GarapinFooter";
-import { i18n } from "next-i18next";
+import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const productData = [
@@ -101,6 +101,8 @@ const IndexPage = () => {
 
     const router = useRouter();
 
+    const {t} = useTranslation('products');
+
     return (
         <Box>
             <GarapinAppBar searchVariant={true}/>
@@ -119,7 +121,9 @@ const IndexPage = () => {
             </Box>
             <Container>
             <Box className="flex flex-col py-4 md:py-20">
-                <Typography className="px-10 md:px-0" variant="h6" color="text.primary">Menampilkan 543 hasil untuk pencarian “Food packaging”</Typography>
+                <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
+                    {t('searchResult', {result: 543, searchTerm: 'Food Packaging'})}
+                </Typography>
                 <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4}>
                     {productData.map((product) => (
                         <Grid key={product.id} item xs={6} sm={6} md={3} lg={3} className="content-center">
@@ -146,6 +150,6 @@ export const getServerSideProps = async ({locale}: { locale: string }) => {
       }
     return {
     props: {
-        ...(await serverSideTranslations(locale, ['landing', 'common']))
+        ...(await serverSideTranslations(locale, ['products', 'common']))
     }
 }};

@@ -4,6 +4,8 @@ import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { Box, Button, CircularProgress, Paper, TextField, Theme, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useFormik } from "formik";
+import { i18n, useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 
 const useStyles = makeStyles((theme:Theme) => ({
@@ -49,6 +51,8 @@ const LoginPage = () => {
         },
     });
 
+    const {t} = useTranslation('auth');
+
     return (
         <Box className={classes.loginUi}>
             <Paper>
@@ -66,19 +70,19 @@ const LoginPage = () => {
                 <Box className='sm:w-full lg:w-1/3 bg-gray-100'>
                     <Box className='flex flex-col justify-center h-full'>
                         <Box className='flex flex-col justify-center items-center' sx={{pb:4}}>
-                            <Typography variant="h5">Login</Typography>
-                            <Typography variant="subtitle1">Masuk ke akun Anda</Typography>
+                            <Typography variant="h5">{t('login.title')}</Typography>
+                            <Typography variant="subtitle1">{t('login.subtitle')}</Typography>
                         </Box>
                             <form onSubmit={formik.handleSubmit}>
                         <Box className='flex flex-col justify-center items-center'>
                             <Box className='w-1/2 py-2'>
-                                <TextField label="Email" 
+                                <TextField label={t('login.fields.email')}
                                     variant="outlined" name="email" fullWidth onChange={formik.handleChange} value={formik.values.email}
                                     error={formik.touched.email && Boolean(formik.errors.email)} helperText={formik.touched.email && formik.errors.email}
                                     />
                             </Box>
                             <Box className='w-1/2 py-2'>
-                                <TextField label="Password" type="password" name="password" 
+                                <TextField label={t('login.fields.password')} type="password" name="password" 
                                 variant="outlined" fullWidth onChange={formik.handleChange} value={formik.values.password}
                                 error={formik.touched.password && Boolean(formik.errors.password)} helperText={formik.touched.password && formik.errors.password}
                                 />
@@ -87,12 +91,12 @@ const LoginPage = () => {
                                 <Button variant="contained" fullWidth color="garapinColor" style={{
                                                           backgroundColor: '#713F97',
                                                           color: '#ffffff'
-                                                      }} type="submit" disabled={formik.isSubmitting}>Login {formik.isSubmitting && <CircularProgress color="secondary" sx={{pl: 2}}/>}</Button>
+                                                      }} type="submit" disabled={formik.isSubmitting}>{t('login.button.submit')} {formik.isSubmitting && <CircularProgress color="secondary" size={10} sx={{ml: 2}}/>}</Button>
                             </Box>
                         </Box>
                             </form>
                         <Box>
-                            <Typography variant="subtitle1" className='text-center' sx={{pt:4}}>Belum punya akun? <Link href="/register">Daftar</Link></Typography>
+                            <Typography variant="subtitle1" className='text-center' sx={{pt:4}}>{t('login.registerCopy.title')} <Link href="/register">{t('login.registerCopy.link')}</Link></Typography>
                         </Box>
                     </Box>
                 </Box>
@@ -106,3 +110,13 @@ LoginPage.authGuard = false;
 LoginPage.guestGuard = true;
 
 export default LoginPage;
+
+export const getServerSideProps = async ({locale}: { locale: string }) => {
+    if (process.env.NODE_ENV === "development") {
+        await i18n?.reloadResources();
+      }
+    return {
+    props: {
+        ...(await serverSideTranslations(locale, ['auth', 'common']))
+    }
+}};
