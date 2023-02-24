@@ -9,7 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import {Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography} from "@mui/material";
 import {FormEventHandler, useCallback, useEffect, useState} from "react";
 import {useTranslation, withTranslation} from 'next-i18next';
-import {useRouter} from 'next/router';
+import {Router, useRouter} from 'next/router';
 import useFirebaseAuth from '@/hooks/useFirebaseAuth';
 import Link from 'next/link';
 
@@ -202,7 +202,7 @@ const GarapinAppBar = ({
                                     onClose={handleClose}
                                 >
                                     <MenuItem onClick={() => {
-                                    }}>{t('appBar.menu.profile')}</MenuItem>
+                                    }}><Link href="/transaction-list">{t('appBar.menu.profile')}</Link></MenuItem>
                                     <MenuItem onClick={handleLogOut}>{t('appBar.menu.logout')}</MenuItem>
                                 </Menu>
                             </>}
