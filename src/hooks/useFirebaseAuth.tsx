@@ -10,15 +10,20 @@ import Firebase, { getFirestore } from 'src/configs/firebase'
 // const formatAuthUser = (user: Firebase.User) => {
 //  user.
 // }
+interface FirebaseUserWithClaims extends Firebase.User {
+  authTokenData?: Firebase.auth.IdTokenResult
+}
 
 const useFirebaseAuth = () => {
-  const [authUser, setAuthUser] = useState<null | Firebase.User>(null)
+  const [authUser, setAuthUser] = useState<null | FirebaseUserWithClaims>(null)
   const [loading, setLoading] = useState(true)
   const firestore = getFirestore();
   let callback = null;
   let unsubscribe:null|Function = null;
 
-  const authStateChanged = async (authState: Firebase.User|null) => {
+  
+
+  const authStateChanged = async (authState: FirebaseUserWithClaims|null) => {
     if (unsubscribe !== null) unsubscribe();
     if (!authState) {
       setAuthUser(null)
@@ -34,8 +39,18 @@ const useFirebaseAuth = () => {
         if (doc.exists) {
           console.log("User data from update snapshot:", doc.data());
           authState.getIdToken(true);
+          setLoading(true);
+          authState.getIdTokenResult().then((claimsData) => {
+            setAuthUser({
+                ...authState,
+                authTokenData: claimsData
+              }
+            );
+            setLoading(false);
+          });
+          
         }
-      })
+    });
     }
   }
 
@@ -62,7 +77,7 @@ const useFirebaseAuth = () => {
 
   // listen for Firebase state change
   useEffect(() => {
-    const unsubscribe = Firebase.auth().onAuthStateChanged(authStateChanged)
+    const unsubscribe = Firebase.auth().onAuthStateChanged((user) => authStateChanged(user))
 
     return () => unsubscribe()
   }, [])

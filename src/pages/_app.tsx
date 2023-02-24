@@ -15,6 +15,8 @@ import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import GarapinAppBar from '@/components/GarapinAppBar';
+import GarapinFooter from '@/components/GarapinFooter';
 
 
 const { palette } = createTheme();
@@ -94,6 +96,9 @@ const GarapinApp = (props: ExtendedAppProps) => {
 
     const guestGuard = Component.guestGuard ?? false
 
+    const showFooter = Component.showFooter ?? true
+    const showAppBar = Component.showAppBar ?? true
+
     return <>
       <Provider store={store}>
           <Head>
@@ -104,7 +109,9 @@ const GarapinApp = (props: ExtendedAppProps) => {
               <Guard authGuard={authGuard} guestGuard={guestGuard}>
                   <ThemeProvider theme={garapinTheme}>
                       <Suspense fallback={<div>Loading...</div>}>
+                          {showAppBar && <GarapinAppBar /> }
                           <Component {...pageProps} />
+                          {showFooter && <GarapinFooter /> }
                           <ToastContainer />
                       </Suspense>
                   </ThemeProvider>

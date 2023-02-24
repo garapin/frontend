@@ -108,6 +108,7 @@ const LoginPage = () => {
 
 LoginPage.authGuard = false;
 LoginPage.guestGuard = true;
+LoginPage.showFooter = false;
 
 export default LoginPage;
 

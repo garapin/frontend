@@ -120,7 +120,7 @@ export default function LandingPage() {
             </Head>
             <main>
                 <Box className="flex flex-col content-center">
-                    <GarapinAppBar/>
+                    {/* <GarapinAppBar/> */}
                     <Box className="h-min-screen flex flex-col justify-center bg-white">
                         <Container maxWidth="xl" className="px-4 md:px-16 pt-36 pb-28 md:pt-48 md:pb-48">
                             <Box>
@@ -322,7 +322,7 @@ export default function LandingPage() {
                                     className="md:ml-5">{t('section5.register')}</Button>
                         </Box>
                     </Box>
-                    <GarapinFooter/>
+                    {/* <GarapinFooter/> */}
                 </Box>
             </main>
         </>
