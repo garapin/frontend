@@ -111,11 +111,9 @@ const GarapinApp = (props: ExtendedAppProps) => {
                   <ThemeProvider theme={garapinTheme}>
                       <Suspense fallback={<div>Loading...</div>}>
                           {showAppBar && <GarapinAppBar /> }
-                            <div className="flex flex-col">
                               <FirestoreLoader />
                             <Component {...pageProps}/>
                             {showFooter && <GarapinFooter /> }
-                            </div>
                           <ToastContainer />
                       </Suspense>
                   </ThemeProvider>
