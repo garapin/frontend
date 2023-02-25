@@ -5,18 +5,19 @@ import Head from "next/head";
 import { CssBaseline, PaletteColorOptions } from '@mui/material';
 import { appWithTranslation } from 'next-i18next'
 import LandingPage from "@/pages/index";
-import { Suspense, ReactNode } from 'react';
+import { Suspense, ReactNode, useEffect } from 'react';
 import { FirebaseAuthProvider } from '@/context/FirebaseContext';
 import GuestGuard from '@/components/auth/GuestGuard';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { NextPage } from 'next';
 import Spinner from '@/components/spinner';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch } from 'react-redux';
 import { store } from '@/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GarapinAppBar from '@/components/GarapinAppBar';
 import GarapinFooter from '@/components/GarapinFooter';
+import FirestoreLoader from '@/components/FirestoreLoader';
 
 
 const { palette } = createTheme();
@@ -97,7 +98,7 @@ const GarapinApp = (props: ExtendedAppProps) => {
     const guestGuard = Component.guestGuard ?? false
 
     const showFooter = Component.showFooter ?? true
-    const showAppBar = Component.showAppBar ?? true
+    const showAppBar = Component.showAppBar ?? true    
 
     return <>
       <Provider store={store}>
@@ -110,8 +111,11 @@ const GarapinApp = (props: ExtendedAppProps) => {
                   <ThemeProvider theme={garapinTheme}>
                       <Suspense fallback={<div>Loading...</div>}>
                           {showAppBar && <GarapinAppBar /> }
-                          <Component {...pageProps} />
-                          {showFooter && <GarapinFooter /> }
+                            <div className="flex flex-col">
+                              <FirestoreLoader />
+                            <Component {...pageProps}/>
+                            {showFooter && <GarapinFooter /> }
+                            </div>
                           <ToastContainer />
                       </Suspense>
                   </ThemeProvider>
