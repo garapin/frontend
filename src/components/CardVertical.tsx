@@ -6,16 +6,22 @@ import Typography from '@mui/material/Typography';
 import {CardActionArea} from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
+import {useRouter} from 'next/router';
 
 export default function CardVertical({
                                          imageUrl,
                                          productName,
                                          price,
-                                         location
-                                     }: { imageUrl: string, productName: string, price: string, location: string }) {
+                                         location,
+                                         objectId
+                                     }: { imageUrl: string, productName: string, price: string, location: string, objectId: string}) {
+
+    const router = useRouter();
 
     return (
-        <Card sx={{maxWidth: 190}}>
+        <Card sx={{maxWidth: 190}} onClick={() => {
+            router.push('/product-detail');
+        }}>
             <CardActionArea>
                 <CardMedia
                     component="img"

@@ -97,7 +97,7 @@ const productData = [
     }
 ];
 
-const IndexPage = () => {
+const ProductListPage = () => {
 
     const router = useRouter();
 
@@ -120,7 +120,7 @@ const IndexPage = () => {
                 ></TextField>
             </Box>
             <Container>
-            <Box className="flex flex-col py-4 md:py-20">
+                <Box className="flex flex-col md:px-80 py-4 md:py-20">
                 <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
                     {t('searchResult', {result: 543, searchTerm: 'Food Packaging'})}
                 </Typography>
@@ -128,7 +128,8 @@ const IndexPage = () => {
                     {productData.map((product) => (
                         <Grid key={product.id} item xs={6} sm={6} md={3} lg={3} className="content-center">
                             <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
-                                          price={`Rp${product.price}`} location="Jakarta"/>
+                                          price={`Rp${product.price}`} location="Jakarta"
+                                          objectId={product.id.toString()}/>
                         </Grid>
                     ))}
                 </Grid>
