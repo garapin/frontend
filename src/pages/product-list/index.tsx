@@ -6,9 +6,8 @@ import * as React from "react";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import {useRouter} from 'next/router';
-import GarapinFooter from "@/components/GarapinFooter";
-import { i18n, useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import {i18n, useTranslation} from "next-i18next";
+import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 
 const productData = [
     {
@@ -120,22 +119,21 @@ const ProductListPage = () => {
                 ></TextField>
             </Box>
             <Container>
-                <Box className="flex flex-col md:px-80 py-4 md:py-20">
-                <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
-                    {t('searchResult', {result: 543, searchTerm: 'Food Packaging'})}
-                </Typography>
-                <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4}>
-                    {productData.map((product) => (
-                        <Grid key={product.id} item xs={6} sm={6} md={3} lg={3} className="content-center">
-                            <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
-                                          price={`Rp${product.price}`} location="Jakarta"
-                                          objectId={product.id.toString()}/>
-                        </Grid>
-                    ))}
-                </Grid>
-            </Box>
+                <Box className="flex flex-col py-4 md:py-20">
+                    <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
+                        {t('searchResult', {result: 543, searchTerm: 'Food Packaging'})}
+                    </Typography>
+                    <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4}>
+                        {productData.map((product) => (
+                            <Grid key={product.id} item xs={6} sm={6} md={3} lg={3} className="content-center">
+                                <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
+                                              price={`Rp${product.price}`} location="Jakarta"
+                                              objectId={product.id.toString()}/>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
             </Container>
-            <GarapinFooter/>
         </Box>
     )
 }
@@ -148,9 +146,10 @@ export default ProductListPage;
 export const getServerSideProps = async ({locale}: { locale: string }) => {
     if (process.env.NODE_ENV === "development") {
         await i18n?.reloadResources();
-      }
-    return {
-    props: {
-        ...(await serverSideTranslations(locale, ['products', 'common']))
     }
-}};
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ['products', 'common']))
+        }
+    }
+};
