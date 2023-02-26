@@ -143,7 +143,7 @@ const ProductListPage = () => {
 LoginPage.authGuard = false;
 LoginPage.guestGuard = true;
 
-export default IndexPage;
+export default ProductListPage;
 
 export const getServerSideProps = async ({locale}: { locale: string }) => {
     if (process.env.NODE_ENV === "development") {
