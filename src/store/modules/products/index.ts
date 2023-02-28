@@ -65,7 +65,7 @@ export const getAllProducts = ():ThunkAction<void, RootState, unknown, any> => {
             dispatch(setAllProductsLoaded(false));
             dispatch(setProductLoading());
             const data = await getAllProductsFromDB();
-            dispatch(setProducts(data));
+            dispatch(setProducts(data.data));
 
             if(data.data.length < pageSize) {
                 console.log('All products loaded');
@@ -104,11 +104,12 @@ export const getAllProductNext = (): ThunkAction<void, RootState, unknown, any> 
     }
 }
 
-export const getSingleProduct = (id: string): ThunkAction<void, RootState, unknown, any> => {
+export const getSingleProduct = (slug: string): ThunkAction<void, RootState, unknown, any> => {
     return async (dispatch) => {
         try {
+            console.log('slug from dispatch:', slug);
             dispatch(setProductLoading());
-            const data = getSingleProductFromDB(id);
+            const data = await getSingleProductFromDB(slug);
             dispatch(setSingleProduct(data));
         } catch (error) {
             console.log(error);

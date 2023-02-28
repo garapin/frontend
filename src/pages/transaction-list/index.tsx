@@ -12,12 +12,14 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {faker} from '@faker-js/faker';
+import Link from "next/link";
 
 const TransactionListIndex = () => {
     const auth = useFirebaseAuth();
     const {categories} = useAppSelector(state => state.appDefaults);
     const {products, isProductLoading, allProductsLoaded, isFetchingNext} = useAppSelector(state => state.products);
     const dispatch = useDispatch()
+    
 
     const firestore = getFirestore();
 
@@ -44,12 +46,14 @@ const TransactionListIndex = () => {
                 <Divider />
 
                 <Grid container>
-                {products.map((product) => (
+                {!isProductLoading && products.map((product) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={product.id} sx={{py:4}} direction="column"
                     display="flex"
                     alignItems="center"
                 >
-                    <CardVertical key={product.id} productName={product.productName} price={`Rp${product.minPrice} - Rp${product.maxPrice}`} location="Jakarta" imageUrl={product.img[0]}/>
+                    <Link href={`/product-detail/${encodeURIComponent(product.slug)}`}>
+                        <CardVertical key={product.id} objectId={product.id??""} productName={product.productName} price={`Rp${product.minPrice} - Rp${product.maxPrice}`} location="Jakarta" imageUrl={product.img[0]}/>
+                    </Link>
                     </Grid>
                 ))}
                 </Grid>

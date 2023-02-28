@@ -19,11 +19,15 @@ type ProductListDB = {
 /* Functions
  * This is all the functions to get data from database.
 */
-export const getSingleProductFromDB = async (docId: string):Promise<Product|undefined> => {
+export const getSingleProductFromDB = async (slug: string):Promise<Product|undefined> => {
+    console.log("slug from db", slug);
     const data = await db.collection('products')
-        .doc(docId)
+        .where('slug', '==', slug)
+        .where('active', '==', true)
+        .where('deleted', '==', false)
+        .limit(1)
         .get();
-    return (data.exists && data.get('active') === true && data.get('deleted') === false) ? {...data.data() as Product, id: data.id} : undefined;
+    return (!data.empty) ? {...data.docs[0].data() as Product, id: data.docs[0].id} : undefined;
 }
 
 export const getAllProductsFromDB = async (): Promise<ProductListDB> => {
