@@ -1,4 +1,5 @@
 import { getFirestore } from "@/configs/firebase";
+import { getAllProductsFromDB, getAllProductsNextFromDB, getSingleProductFromDB, pageSize } from "@/db";
 import { RootState } from "@/store";
 import { Product } from "@/types/product";
 import { createSlice, ThunkAction } from "@reduxjs/toolkit";
@@ -21,7 +22,6 @@ const defaultState: {
     errors: undefined,
 }
 
-const pageSize = 20;
 
 
 const productsSlice = createSlice({
@@ -64,27 +64,15 @@ export const getAllProducts = ():ThunkAction<void, RootState, unknown, any> => {
             const firestore = getFirestore();
             dispatch(setAllProductsLoaded(false));
             dispatch(setProductLoading());
-            const response = await firestore.collection('products')
-                .where('active', '==', true)
-                .where('deleted', '==', false)
-                .where('channel', '==', 'printing')
-                // .where('__name__', '>=', '')
-                // .orderBy('__name__')
-                .limit(pageSize).get();
-            const data: Product[] = response.docs.map(doc => {
-                return {
-                    ...doc.data() as Product,
-                    id: doc.id,
-                }
-            });
+            const data = await getAllProductsFromDB();
             dispatch(setProducts(data));
 
-            if(response.docs.length < pageSize) {
+            if(data.data.length < pageSize) {
                 console.log('All products loaded');
                 dispatch(setLastProductQuery(undefined));
                 dispatch(setAllProductsLoaded(true));
             } else {
-                dispatch(setLastProductQuery(response.docs[response.docs.length - 1]));
+                dispatch(setLastProductQuery(data.lastProductQuery));
             }
         } catch (error) {
             console.log(error);
@@ -99,30 +87,29 @@ export const getAllProductNext = (): ThunkAction<void, RootState, unknown, any> 
         try {
             dispatch(setIsFetchingNext(true));
             dispatch(setAllProductsLoaded(false));
-            const firestore = getFirestore();
-            const response = await firestore.collection('products')
-                .where('active', '==', true)
-                .where('deleted', '==', false)
-                .where('channel', '==', 'printing')
-                // .where('__name__', '>=', '')
-                // .orderBy('__name__')
-                .startAfter(lastProductQuery)
-                .limit(pageSize).get();
-            const data: Product[] = response.docs.map(doc => {
-                return {
-                    ...doc.data() as Product,
-                    id: doc.id,
-                }
-            });
+            const data = await getAllProductsNextFromDB(lastProductQuery);            
             dispatch(setIsFetchingNext(false));
-            dispatch(setProducts([...products, ...data]));
-            if(response.docs.length < pageSize) {
+            dispatch(setProducts([...products, ...data.data]));
+            if(data.data.length < pageSize) {
                 console.log('All products loaded');
                 dispatch(setLastProductQuery(undefined));
                 dispatch(setAllProductsLoaded(true));
             } else {
-                dispatch(setLastProductQuery(response.docs[response.docs.length - 1]));
+                dispatch(setLastProductQuery(data.lastProductQuery));
             }
+        } catch (error) {
+            console.log(error);
+            dispatch(setError((error as any).message));
+        }
+    }
+}
+
+export const getSingleProduct = (id: string): ThunkAction<void, RootState, unknown, any> => {
+    return async (dispatch) => {
+        try {
+            dispatch(setProductLoading());
+            const data = getSingleProductFromDB(id);
+            dispatch(setSingleProduct(data));
         } catch (error) {
             console.log(error);
             dispatch(setError((error as any).message));
