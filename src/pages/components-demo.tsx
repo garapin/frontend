@@ -4,9 +4,11 @@ import GarapinAppBar from "@/components/GarapinAppBar";
 import GarapinFooter from "@/components/GarapinFooter";
 import ImageCarousel, { CarouselImageSet } from "@/components/ImageCarousel";
 import ListDetail from "@/components/ListDetail";
+import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
 import { Container, List, ListItem, Paper, Typography, Link as MuiLink, TextField, Button, Theme, createStyles } from "@mui/material";
 import { Box } from "@mui/system"
 import NextLink from "next/link";
+import { useState } from "react";
 
 
 const ComponentsDemo = () => {
@@ -19,9 +21,40 @@ const ComponentsDemo = () => {
             srcUrl: 'https://images.pexels.com/photos/14005688/pexels-photo-14005688.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
         },
     ];
+    const [selectedVariant, setSelectedVariant] = useState('');
+
+    const corrugatedBoxOptions = [
+        {
+            name: 'Shipping Box',
+            imgSrc: 'https://ph-prod.imgix.net/wp-content/uploads/2019/06/06153013/plain-shipping-boxes-packhelp-kva.jpg',
+            value: 'shipping-box'
+        },
+        {
+            name: 'Mailer Box',
+            imgSrc: 'https://cf.shopee.co.id/file/3d856acdb1e975165881e4ab47d2d36a',
+            value: 'mailer-box'
+        },
+        {
+            name: 'Handle Box',
+            imgSrc: 'https://cdn.shopify.com/s/files/1/1516/1182/products/CakeBoxwithHandle1Cropped3.png?v=1592811934',
+            value: 'handle-box'
+        },
+        {
+            name: 'Top-Bottom Box',
+            imgSrc: 'https://pacmart.in/wp-content/uploads/2020/08/p3.png',
+            value: 'top-bottom-box'
+        },
+        {
+            name: 'Sliding Box',
+            imgSrc: 'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2022/6/28/cfe13c8b-d7a9-44ed-ac3a-83a18bafbd5f.jpg',
+            value: 'sliding-box'
+        },
+
+    ];
+
     return (
         <Box 
-        className='h-screen align-middle justify-center p-5'
+        className='align-middle justify-center p-5'
         sx={{
             bgcolor: 'background.paper',
             pt: 3,
@@ -35,9 +68,13 @@ const ComponentsDemo = () => {
             </Box>
             <CardHorizontal imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/>
             <Box className="py-5">
-            <CardVertical imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/>
+            {/* <CardVertical imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/> */}
             </Box>
-            <GarapinFooter />
+
+            <Box className="py-5">
+                <GarapinProductCustomizer options={corrugatedBoxOptions} value={selectedVariant} handleChange={setSelectedVariant} />
+            </Box>
+            {/* <GarapinFooter /> */}
 
         {/* <Paper elevation={5} className='flex-shrink'>
             <Container>
