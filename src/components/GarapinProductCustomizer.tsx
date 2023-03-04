@@ -74,7 +74,7 @@ function CardItemsOption(props: CardExtended) {
         }}
         {...other}>
         <CardContent className='cursor-pointer' sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py:4, justifyContent: 'center',}}>
-            <img src={props.imgSrc} style={{ borderRadius: '5px', width: '80px' }}></img>
+            {props.imgSrc !== undefined && <img src={props.imgSrc} style={{ borderRadius: '5px', width: '80px' }}></img> }
             <Typography variant="body1" fontWeight={props.active ? 600 : 400} textAlign="center" sx={{
                 pt: 2,
                 lineHeight: 1.0,
