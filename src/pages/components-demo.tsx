@@ -4,11 +4,13 @@ import GarapinAppBar from "@/components/GarapinAppBar";
 import GarapinFooter from "@/components/GarapinFooter";
 import ImageCarousel, { CarouselImageSet } from "@/components/ImageCarousel";
 import ListDetail from "@/components/ListDetail";
-import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
+import GarapinVariantSelector from "@/components/GarapinVariantSelector";
 import { Container, List, ListItem, Paper, Typography, Link as MuiLink, TextField, Button, Theme, createStyles } from "@mui/material";
 import { Box } from "@mui/system"
 import NextLink from "next/link";
 import { useState } from "react";
+import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
+import { Template, TemplateInput } from "@/types/product";
 
 
 const ComponentsDemo = () => {
@@ -27,30 +29,85 @@ const ComponentsDemo = () => {
         {
             name: 'Shipping Box',
             imgSrc: 'https://ph-prod.imgix.net/wp-content/uploads/2019/06/06153013/plain-shipping-boxes-packhelp-kva.jpg',
-            value: 'shipping-box'
+            value: 'shipping-box',
+            price: 8000
         },
         {
             name: 'Mailer Box',
             imgSrc: 'https://cf.shopee.co.id/file/3d856acdb1e975165881e4ab47d2d36a',
-            value: 'mailer-box'
+            value: 'mailer-box',
+            price: 3000
         },
         {
             name: 'Handle Box',
             imgSrc: 'https://cdn.shopify.com/s/files/1/1516/1182/products/CakeBoxwithHandle1Cropped3.png?v=1592811934',
-            value: 'handle-box'
+            value: 'handle-box',
+            price: 6500
         },
         {
             name: 'Top-Bottom Box',
             imgSrc: 'https://pacmart.in/wp-content/uploads/2020/08/p3.png',
-            value: 'top-bottom-box'
+            value: 'top-bottom-box',
+            price: 7000
         },
         {
             name: 'Sliding Box',
             imgSrc: 'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2022/6/28/cfe13c8b-d7a9-44ed-ac3a-83a18bafbd5f.jpg',
-            value: 'sliding-box'
+            value: 'sliding-box',
+            price: 8000
         },
 
     ];
+
+    const variants = [
+        {
+            name: 'Packaging Material',
+            id: 'packaging-material',
+            description: "Packaging material can be like this",
+            options: [
+                {
+                    name: 'Corrugated Box',
+                    imgSrc: 'https://picsum.photos/60',
+                    value: 'corrugated-box',
+                    price: 5000
+                },
+                {
+                    name: 'Hard Box',
+                    imgSrc: 'https://picsum.photos/60?random=1',
+                    value: 'hard-box',
+                    price: 7000
+                },
+                {
+                    name: 'Thin Paper',
+                    imgSrc: 'https://picsum.photos/60?random=2',
+                    value: 'thin-paper',
+                    price: 3000
+                },
+                {
+                    name: 'Not sure',
+                    imgSrc: 'https://picsum.photos/60?random=3',
+                    value: 'not-sure',
+                    price: 0
+                }
+            ]
+        },
+        {
+            name: 'Corrugated Box Options',
+            id: 'corrugated-box-options',
+            description: "Box options can be like this",
+            options: corrugatedBoxOptions
+        }
+    ];
+    
+    const template:Template = {
+        active: true,
+        deleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        variants: variants
+    }
+
+    const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
     return (
         <Box 
@@ -72,7 +129,8 @@ const ComponentsDemo = () => {
             </Box>
 
             <Box className="py-5">
-                <GarapinProductCustomizer options={corrugatedBoxOptions} value={selectedVariant} handleChange={setSelectedVariant} />
+                <GarapinVariantSelector options={corrugatedBoxOptions} value={selectedVariant} handleChange={setSelectedVariant} />
+                <GarapinProductCustomizer template={template} value={variantSelectorValue} handleChange={(variant, selected) => { if (selected !== undefined) {setVariantSelectorValue({...variantSelectorValue, [variant.id]: {variant, selectedOption: selected}})}}} options={{alignVariantOptions: 'left'}}/>
             </Box>
             {/* <GarapinFooter /> */}
 

@@ -1,87 +1,48 @@
-import { Box, Card, CardContent, CardTypeMap, Grid, Typography } from '@mui/material'
-import { display } from '@mui/system';
-import React, { useState } from 'react'
+import { rupiah } from '@/tools/rupiah';
+import { Template, TemplateInput, Variant, VariantOption } from '@/types/product';
+import { Box, Divider, Grid, Typography } from '@mui/material';
+import React from 'react'
+import GarapinVariantSelector from './GarapinVariantSelector';
 
-type CardExtended = CardTypeMap['props'] & {
-    active: boolean;
-    imgSrc: string;
-    text: string;
-    selectHandler: () => void;
+interface options {
+    showPriceCalculation?: boolean
+    allowNotSure?: boolean
+    alignVariantOptions?: 'left' | 'center' | 'right'
 }
 
-const variants = [
-    {
-        name: 'Packaging Material',
-        description: "Packaging material can be like this",
-        options: [
-            {
-                name: 'Corrugated Box',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'corrugated-box'
-            },
-            {
-                name: 'Hard Box',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'hard-box'
-            },
-            {
-                name: 'Thin Paper',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'thin-paper'
-            },
-            {
-                name: 'Not sure',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'not-sure'
-            }
-        ]
-    },
-];
+export default function GarapinProductCustomizer({handleChange, template, value, options}: 
+    {handleChange: (variant: Variant, selected: VariantOption|undefined) => void, template: Template, value: TemplateInput, options?: options}) {
+        const [selectedVariant, setSelectedVariant] = React.useState<string | null>(null);
 
-export default function GarapinProductCustomizer({handleChange, options, value}: {handleChange: (value: string) => void, options: {name: string, imgSrc: string, value: string}[], value: string}) {
-    const [selected, setSelected] = useState(1);
+
+
   return (
     <div>
-        <Grid container
-  justifyContent="center">
-            {options.map((item) => <Grid item xs={6} md={3} lg={2} key={item.value} sx={{p: 2 }}>
-                <CardItemsOption active={item.value === value} imgSrc={item.imgSrc} text={item.name} selectHandler={() => handleChange(item.value)} />
-                </Grid>)}
+        <Typography variant='h5' sx={{pb:5}}>GarapinProductCustomizer</Typography>
+        {template.variants.map((variant) => 
+            <div key={variant.name}>
+                <Grid container sx={{pt:5}}>
+                    <Grid item xs={7} md={6}>
+                        <Typography variant='h6' sx={{lineHeight: 1}}>{variant.name}</Typography>
+                        <Typography variant='body1' sx={{pt:1}}>{variant.description}</Typography>
+                    </Grid>
+                    <Grid item xs={5} md={6}>
+                        <Grid container alignItems={{xs: 'flex-start', md: 'center',}} justifyContent={'flex-end'} sx={{height: '100%'}}>
+                            <Grid item>
+                                <Typography variant='body1'>{rupiah(value[variant.id].selectedOption.price)}</Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <GarapinVariantSelector handleChange={(val) => {handleChange(variant, variant.options.find((varOptSingle) => varOptSingle.value === val))}} options={variant.options} value={
+                    value[variant.id]?.selectedOption.value
+                    }
+                    justifyContent={options?.alignVariantOptions === 'left' ? 'flex-start' : options?.alignVariantOptions === 'right' ? 'flex-end' : 'center'}
+                    />
+            </div>
+            )}
 
-        </Grid>
     </div>
+
   )
 }
-function CardItemsOption(props: CardExtended) {
-    const {selectHandler, imgSrc, text, ...other} = props;
-    return (<Card 
-        aria-selected={props.active}
-        tabIndex={0}
-        variant="outlined"
-        sx={{
-            height: '100%',
-            boxShadow: (theme) => props.active? `inset 0px 0px 0px 2px ${theme.palette.primary.main}` : `inset 0px 0px 1px ${theme.palette.grey[900]}`,
-            backgroundColor: (theme) => props.active ? 'rgba(235, 228, 240,0.4)' : theme.palette.background.paper,
-
-            border: 'none',
-            transition: 'box-shadow 0.2s ease-in-out',
-        }} 
-        onClick={props.selectHandler}
-        onKeyUp={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                props.selectHandler();
-            }
-        }}
-        {...other}>
-        <CardContent className='cursor-pointer' sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', px: 4, py:4, justifyContent: 'center',}}>
-            {props.imgSrc !== undefined && <img src={props.imgSrc} style={{ borderRadius: '5px', width: '80px' }}></img> }
-            <Typography variant="body1" fontWeight={props.active ? 600 : 400} textAlign="center" sx={{
-                pt: 2,
-                lineHeight: 1.0,
-                transition: 'font-weight 0.05s linear',
-                transitionDelay: 'font-weight 0.1s'
-            }}>{props.text}</Typography>
-        </CardContent>
-    </Card>);
-}
-
