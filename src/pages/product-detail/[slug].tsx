@@ -26,6 +26,9 @@ import CardHorizontal from "@/components/CardHorizontal";
 import InputBase from "@mui/material/InputBase";
 import Link from "next/link";
 import CardVertical from "@/components/CardVertical";
+import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
+import {useState} from "react";
+import {Template, TemplateInput} from "@/types/product";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -118,6 +121,91 @@ const ProductDetailPage = () => {
         }
     }, [slug])
 
+    const [selectedVariant, setSelectedVariant] = useState('');
+
+    const corrugatedBoxOptions = [
+        {
+            name: 'Shipping Box',
+            imgSrc: 'https://ph-prod.imgix.net/wp-content/uploads/2019/06/06153013/plain-shipping-boxes-packhelp-kva.jpg',
+            value: 'shipping-box',
+            price: 8000
+        },
+        {
+            name: 'Mailer Box',
+            imgSrc: 'https://cf.shopee.co.id/file/3d856acdb1e975165881e4ab47d2d36a',
+            value: 'mailer-box',
+            price: 3000
+        },
+        {
+            name: 'Handle Box',
+            imgSrc: 'https://cdn.shopify.com/s/files/1/1516/1182/products/CakeBoxwithHandle1Cropped3.png?v=1592811934',
+            value: 'handle-box',
+            price: 6500
+        },
+        {
+            name: 'Top-Bottom Box',
+            imgSrc: 'https://pacmart.in/wp-content/uploads/2020/08/p3.png',
+            value: 'top-bottom-box',
+            price: 7000
+        },
+        {
+            name: 'Sliding Box',
+            imgSrc: 'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2022/6/28/cfe13c8b-d7a9-44ed-ac3a-83a18bafbd5f.jpg',
+            value: 'sliding-box',
+            price: 8000
+        },
+
+    ];
+
+    const variants = [
+        {
+            name: 'Packaging Material',
+            id: 'packaging-material',
+            description: "Packaging material can be like this",
+            options: [
+                {
+                    name: 'Corrugated Box',
+                    imgSrc: 'https://picsum.photos/60',
+                    value: 'corrugated-box',
+                    price: 5000
+                },
+                {
+                    name: 'Hard Box',
+                    imgSrc: 'https://picsum.photos/60?random=1',
+                    value: 'hard-box',
+                    price: 7000
+                },
+                {
+                    name: 'Thin Paper',
+                    imgSrc: 'https://picsum.photos/60?random=2',
+                    value: 'thin-paper',
+                    price: 3000
+                },
+                {
+                    name: 'Not sure',
+                    imgSrc: 'https://picsum.photos/60?random=3',
+                    value: 'not-sure',
+                    price: 0
+                }
+            ]
+        },
+        {
+            name: 'Corrugated Box Options',
+            id: 'corrugated-box-options',
+            description: "Box options can be like this",
+            options: corrugatedBoxOptions
+        }
+    ];
+
+    const template:Template = {
+        active: true,
+        deleted: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        variants: variants
+    }
+
+    const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
     if (isProductLoading) {
         return <FallbackSpinner/>
@@ -170,6 +258,7 @@ const ProductDetailPage = () => {
                                 open={open}
                                 slots={{backdrop: Backdrop}}
                                 scroll={scroll}
+                                maxWidth={"lg"}
                             >
                                 <DialogTitle>Minta Penawaran</DialogTitle>
                                 <DialogContent dividers={scroll === 'paper'}>
@@ -180,6 +269,10 @@ const ProductDetailPage = () => {
                                         imageUrl='https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg'
                                         productName='test product' price='10000' location='Jakarta'
                                         slug='test-product' clickable={false}/>
+                                    <br/>
+                                    <Divider/>
+                                    <br/>
+                                    <GarapinProductCustomizer template={template} value={variantSelectorValue} handleChange={(variant, selected) => { if (selected !== undefined) {setVariantSelectorValue({...variantSelectorValue, [variant.id]: {variant, selectedOption: selected}})}}} options={{alignVariantOptions: 'left'}}/>
                                     <br/>
                                     <Divider/>
                                     <br/>
