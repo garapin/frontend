@@ -141,8 +141,7 @@ const ProductListPage = () => {
                         {isProductLoading? <CircularProgress /> : products.filter((productSingle) => q !== undefined ? productSingle.productName.includes(q as string) : true).map((product) => (
                             <Grid key={product.id} item xs={6} sm={6} md={3} lg={2} className="content-center">
                                 <CardVertical key={product.id} imageUrl={product.img[0]} productName={product.productName}
-                                              price={`${rupiah(product.minPrice)} - ${rupiah(product.maxPrice)}`} location="Jakarta"
-                                              objectId={product.id?.toString() ?? product.sku}/>
+                                              price={`${rupiah(product.minPrice)} - ${rupiah(product.maxPrice)}`} location="Jakarta" slug={product.slug?.toString() ?? product.sku}/>
                             </Grid>
                         ))}
                         {!allProductsLoaded &&<Grid item xs={12} alignItems="center" display={'flex'} justifyContent={'center'}>
