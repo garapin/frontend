@@ -19,7 +19,7 @@ export default function CardVertical({
     const router = useRouter();
 
     return (
-        <Card sx={{maxWidth: 190}} onClick={() => {
+        <Card sx={{maxWidth: 190, height: '100%'}} onClick={() => {
             router.push('/product-detail');
         }}>
             <CardActionArea>

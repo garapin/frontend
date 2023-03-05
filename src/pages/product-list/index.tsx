@@ -1,4 +1,4 @@
-import {Box, Container, Divider, Grid, InputAdornment, TextField} from "@mui/material";
+import {Box, CircularProgress, Container, Divider, Grid, InputAdornment, TextField} from "@mui/material";
 import LoginPage from "@/pages/login";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import CardVertical from "@/components/CardVertical";
@@ -8,6 +8,9 @@ import Button from "@mui/material/Button";
 import {useRouter} from 'next/router';
 import {i18n, useTranslation} from "next-i18next";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
+import { getAllProductNext, getAllProducts } from "@/store/modules/products";
+import { rupiah } from "@/tools/rupiah";
 
 const productData = [
     {
@@ -102,6 +105,17 @@ const ProductListPage = () => {
 
     const {t} = useTranslation('products');
 
+    const {products, isProductLoading, allProductsLoaded, isFetchingNext} = useAppSelector(state => state.products);
+    const dispatch = useAppDispatch()
+    const {q} = router.query;
+
+    console.log(q, typeof q);
+
+
+    React.useEffect(() => {
+        dispatch(getAllProducts());
+      }, [])
+
     return (
         <Box>
             <GarapinAppBar searchVariant={true}/>
@@ -121,16 +135,19 @@ const ProductListPage = () => {
             <Container>
                 <Box className="flex flex-col py-4 md:py-20">
                     <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
-                        {t('searchResult', {result: 543, searchTerm: 'Food Packaging'})}
+                        {t('searchResult', {result: products.filter((productSingle) => q !== undefined ? productSingle.productName.includes(q as string) : true).length, searchTerm: q??''})}
                     </Typography>
-                    <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4}>
-                        {productData.map((product) => (
-                            <Grid key={product.id} item xs={6} sm={6} md={3} lg={3} className="content-center">
-                                <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
-                                              price={`Rp${product.price}`} location="Jakarta"
-                                              objectId={product.id.toString()}/>
+                    <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4} alignItems='stretch'>
+                        {isProductLoading? <CircularProgress /> : products.filter((productSingle) => q !== undefined ? productSingle.productName.includes(q as string) : true).map((product) => (
+                            <Grid key={product.id} item xs={6} sm={6} md={3} lg={2} className="content-center">
+                                <CardVertical key={product.id} imageUrl={product.img[0]} productName={product.productName}
+                                              price={`${rupiah(product.minPrice)} - ${rupiah(product.maxPrice)}`} location="Jakarta"
+                                              objectId={product.id?.toString() ?? product.sku}/>
                             </Grid>
                         ))}
+                        {!allProductsLoaded &&<Grid item xs={12} alignItems="center" display={'flex'} justifyContent={'center'}>
+                            <Button variant="contained" disabled={isFetchingNext} onClick={() => dispatch(getAllProductNext())}>Load more... {isFetchingNext && <CircularProgress size={10}/>}</Button>
+                            </Grid> }
                     </Grid>
                 </Box>
             </Container>
