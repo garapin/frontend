@@ -31,7 +31,7 @@ export default function GarapinProductCustomizer({handleChange, template, value,
                     { options?.showPriceCalculation !== false && <Grid item xs={5} md={6}>
                         <Grid container alignItems={{xs: 'flex-start', md: 'center',}} justifyContent={'flex-end'} sx={{height: '100%'}}>
                             <Grid item>
-                                <Typography variant='body1'>{rupiah(value[variant.id].selectedOption.price)}</Typography>
+                                <Typography variant='body1'>{value[variant.id] !== undefined ? rupiah(value[variant.id].selectedOption.price): ''}</Typography>
                             </Grid>
                         </Grid>
                     </Grid> }
