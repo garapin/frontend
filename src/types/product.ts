@@ -38,7 +38,7 @@ export type Variant = {
 
 export type VariantOption = {
     name: string
-    imgSrc: string
+    imgSrc?: string
     value: string
     price: number
 }
