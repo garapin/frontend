@@ -8,12 +8,9 @@ import {
     Divider,
     Typography,
     styled,
-    Theme,
     TextField,
-    css,
     InputAdornment,
-    MenuItem,
-    Menu, Dialog, DialogProps, DialogContent, DialogTitle, DialogActions
+    Dialog, DialogProps, DialogContent, DialogTitle, DialogActions
 } from "@mui/material";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import {useRouter} from "next/router";
@@ -22,13 +19,12 @@ import FallbackSpinner from "@/components/spinner";
 import {getSingleProduct} from "@/store/modules/products";
 import {i18n} from "next-i18next";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
-import CardHorizontal from "@/components/CardHorizontal";
 import InputBase from "@mui/material/InputBase";
-import Link from "next/link";
 import CardVertical from "@/components/CardVertical";
 import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
 import {useState} from "react";
 import {Template, TemplateInput} from "@/types/product";
+import {useFormik} from "formik";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -45,7 +41,7 @@ const BackdropUnstyled = React.forwardRef<
     );
 });
 
-const Modal = styled(ModalUnstyled)(`
+styled(ModalUnstyled)(`
   position: fixed;
   z-index: 1300;
   right: 0;
@@ -70,8 +66,7 @@ const Backdrop = styled(BackdropUnstyled)`
   background-color: rgba(0, 0, 0, 0.5);
   -webkit-tap-highlight-color: transparent;
 `;
-
-const StyledInputBase = styled(InputBase)(({theme}) => ({
+styled(InputBase)(({theme}) => ({
     color: '#713F97',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 3),
@@ -90,6 +85,22 @@ const ProductDetailPage = () => {
     const [open, setOpen] = React.useState(false);
 
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+
+    const formik = useFormik({
+        initialValues: {
+            orderDescription: '',
+            quantity: '',
+            contactName: '',
+            phoneNumber: '',
+            email: '',
+            address: ''
+        },
+        onSubmit: async (values) => {
+            console.log(values);
+        },
+    });
+
+
     const handleOpen = () => {
         setOpen(true);
         setScroll('paper');
@@ -99,29 +110,12 @@ const ProductDetailPage = () => {
     const {slug} = router.query;
     const {isProductLoading, singleProduct} = useAppSelector(state => state.products);
 
-    const style = (theme: Theme) => ({
-        backgroundColor: theme.palette.mode === 'dark' ? '#0A1929' : 'white',
-    });
-
-    const styleUpload = (theme: Theme) => ({
-        display: 'flex',
-        justifyContent: 'space-between',
-        borderRadius: 4,
-        backgroundColor: 'white',
-        '&:hover': {
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        },
-        width: '100%'
-    });
-
     console.log("SLUG:", slug);
     React.useEffect(() => {
         if (slug !== undefined) {
             dispatch(getSingleProduct(slug as string));
         }
     }, [slug])
-
-    const [selectedVariant, setSelectedVariant] = useState('');
 
     const corrugatedBoxOptions = [
         {
@@ -197,7 +191,7 @@ const ProductDetailPage = () => {
         }
     ];
 
-    const template:Template = {
+    const template: Template = {
         active: true,
         deleted: false,
         createdAt: new Date(),
@@ -252,74 +246,98 @@ const ProductDetailPage = () => {
                             <Button className="my-10 w-fit" variant="contained"
                                     sx={{backgroundColor: '#713F97', color: 'white'}} onClick={handleOpen}>Minta
                                 Penawaran</Button>
-                            <Dialog
-                                aria-labelledby="scroll-dialog-title"
-                                aria-describedby="scroll-dialog-description"
-                                open={open}
-                                slots={{backdrop: Backdrop}}
-                                scroll={scroll}
-                                maxWidth={"lg"}
-                            >
-                                <DialogTitle>Minta Penawaran</DialogTitle>
-                                <DialogContent dividers={scroll === 'paper'}>
-                                    <Typography variant="body2">Anda mengajukan penawaran untuk produk
-                                        berikut:</Typography>
-                                    <br/>
-                                    <CardVertical
-                                        imageUrl='https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg'
-                                        productName='test product' price='10000' location='Jakarta'
-                                        slug='test-product' clickable={false}/>
-                                    <br/>
-                                    <Divider/>
-                                    <br/>
-                                    <GarapinProductCustomizer template={template} value={variantSelectorValue} handleChange={(variant, selected) => { if (selected !== undefined) {setVariantSelectorValue({...variantSelectorValue, [variant.id]: {variant, selectedOption: selected}})}}} options={{alignVariantOptions: 'left'}}/>
-                                    <br/>
-                                    <Divider/>
-                                    <br/>
-                                    <Typography variant="body1"><b>Detail Produk</b></Typography>
-                                    <br/>
-                                    <Typography variant="body2">Masukkan informasi seputar kebutuhan anda atau
-                                        pertanyaan terkait produk ini</Typography>
-                                    <br/>
-                                    <TextField fullWidth label='Order description'/>
-                                    <br/><br/>
-                                    <TextField fullWidth label='Qty'/>
-                                    <br/><br/>
-                                    <Box className="max-w-xl mt-24 mb-20">
-                                        <TextField placeholder={'Upload Files'} fullWidth
-                                                   InputProps={{
-                                                       endAdornment: <InputAdornment position="end"><Button
-                                                           variant="contained"
-                                                           color="garapinColor"
-                                                           onClick={(event) => {
+                            <form onSubmit={formik.handleSubmit}>
+                                <Dialog
+                                    aria-labelledby="scroll-dialog-title"
+                                    aria-describedby="scroll-dialog-description"
+                                    open={open}
+                                    slots={{backdrop: Backdrop}}
+                                    scroll={scroll}
+                                    maxWidth={"lg"}
+                                >
+                                    <DialogTitle>Minta Penawaran</DialogTitle>
+                                    <DialogContent dividers={scroll === 'paper'}>
+                                        <Typography variant="body2">Anda mengajukan penawaran untuk produk
+                                            berikut:</Typography>
+                                        <br/>
+                                        <CardVertical
+                                            imageUrl='https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg'
+                                            productName='test product' price='10000' location='Jakarta'
+                                            slug='test-product' clickable={false}/>
+                                        <br/>
+                                        <Divider/>
+                                        <br/>
+                                        <GarapinProductCustomizer template={template} value={variantSelectorValue}
+                                                                  handleChange={(variant, selected) => {
+                                                                      if (selected !== undefined) {
+                                                                          setVariantSelectorValue({
+                                                                              ...variantSelectorValue,
+                                                                              [variant.id]: {
+                                                                                  variant,
+                                                                                  selectedOption: selected
+                                                                              }
+                                                                          })
+                                                                      }
+                                                                  }} options={{alignVariantOptions: 'left'}}/>
+                                        <br/>
+                                        <Divider/>
+                                        <br/>
+                                        <Typography variant="body1"><b>Detail Produk</b></Typography>
+                                        <br/>
+                                        <Typography variant="body2">Masukkan informasi seputar kebutuhan anda atau
+                                            pertanyaan terkait produk ini</Typography>
+                                        <br/>
+                                        <TextField fullWidth label='Order description'
+                                                   value={formik.values.orderDescription} name={'orderDescription'}
+                                                   onChange={formik.handleChange}/>
+                                        <br/><br/>
+                                        <TextField fullWidth label='Qty' value={formik.values.quantity} name={'quantity'}
+                                                   onChange={formik.handleChange}/>
+                                        <br/><br/>
+                                        <Box className="max-w-xl mt-24 mb-20">
+                                            <TextField placeholder={'Upload Files'} fullWidth
+                                                       InputProps={{
+                                                           endAdornment: <InputAdornment position="end"><Button
+                                                               variant="contained"
+                                                               color="garapinColor"
+                                                               onClick={(event) => {
 
-                                                           }}
-                                                       >{'SELECT FILE'}</Button></InputAdornment>,
-                                                   }}
-                                        ></TextField>
-                                    </Box>
-                                    <br/>
-                                    <Divider/>
-                                    <br/>
-                                    <Typography variant="body1"><b>Data Kontak</b></Typography>
-                                    <br/>
-                                    <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan
-                                        menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
-                                    <br/>
-                                    <TextField fullWidth label='Nama Contact Person'/>
-                                    <br/><br/>
-                                    <TextField fullWidth label='081234567890'/>
-                                    <br/><br/>
-                                    <TextField fullWidth label='emailanda@nama-perusahaan.co.id'/>
-                                    <br/><br/>
-                                    <TextField fullWidth label='Alamat Perusahaan (opsional)'/>
-                                    <br/><br/>
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button variant='text' onClick={handleClose}>Batal</Button>
-                                    <Button variant='text' onClick={handleClose}>Kirim Permintaan</Button>
-                                </DialogActions>
-                            </Dialog>
+                                                               }}
+                                                           >{'SELECT FILE'}</Button></InputAdornment>,
+                                                       }}
+                                            ></TextField>
+                                        </Box>
+                                        <br/>
+                                        <Divider/>
+                                        <br/>
+                                        <Typography variant="body1"><b>Data Kontak</b></Typography>
+                                        <br/>
+                                        <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan
+                                            menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
+                                        <br/>
+                                        <TextField fullWidth label='Nama Contact Person' value={formik.values.contactName}
+                                                   name={'contactName'}
+                                                   onChange={formik.handleChange}/>
+                                        <br/><br/>
+                                        <TextField fullWidth label='081234567890' value={formik.values.phoneNumber}
+                                                   name={'phoneNumber'}
+                                                   onChange={formik.handleChange}/>
+                                        <br/><br/>
+                                        <TextField fullWidth label='emailanda@nama-perusahaan.co.id'
+                                                   value={formik.values.email} name={'email'}
+                                                   onChange={formik.handleChange}/>
+                                        <br/><br/>
+                                        <TextField fullWidth label='Alamat Perusahaan (opsional)'
+                                                   value={formik.values.address} name={'address'}
+                                                   onChange={formik.handleChange}/>
+                                        <br/><br/>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button variant='text' onClick={handleClose}>Batal</Button>
+                                        <Button variant='text' type='submit'>Kirim Permintaan</Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </form>
                             <Divider className="pt-2"/>
                             <Box>
                                 <Typography className="pt-16" color="#7C7C7C" variant="h5">Tentang Produk</Typography>
