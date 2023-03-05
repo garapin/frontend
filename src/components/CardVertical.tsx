@@ -13,8 +13,9 @@ export default function CardVertical({
                                          productName,
                                          price,
                                          location,
-                                         objectId
-                                     }: { imageUrl: string, productName: string, price: string, location: string, objectId: string}) {
+                                         slug,
+                                         clickable = true
+                                     }: { imageUrl: string, productName: string, price: string, location: string, slug: string, clickable?: boolean }) {
 
     const router = useRouter();
 

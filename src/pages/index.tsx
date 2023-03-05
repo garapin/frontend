@@ -278,7 +278,7 @@ export default function LandingPage() {
                             {productData.map((product) => (
                                 <Grid key={product.id} item xs={6} sm={6} md={4} lg={3}>
                                     <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
-                                                  price={`Rp${product.price}`} location="Jakarta" objectId={product.id.toString()}/>
+                                                  price={`Rp${product.price}`} location="Jakarta" slug={product.id.toString()}/>
                                 </Grid>
                             ))}
                         </Grid>

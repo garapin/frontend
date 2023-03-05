@@ -6,16 +6,25 @@ import Typography from '@mui/material/Typography';
 import {CardActionArea} from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
+import {useRouter} from "next/router";
 
 export default function CardHorizontal({
                                            imageUrl,
                                            productName,
                                            price,
-                                           location
-                                       }: { imageUrl: string, productName: string, price: string, location: string }) {
+                                           location,
+                                           slug,
+                                           clickable = true
+                                       }: { imageUrl: string, productName: string, price: string, location: string, slug: string, clickable?: boolean }) {
+
+    const router = useRouter();
 
     return (
-        <Card className="flex flex-row" sx={{maxWidth: 400}}>
+        <Card className="flex flex-row" sx={{maxWidth: 400}} onClick={() => {
+            if (clickable) {
+                router.push('/product-detail/' + slug);
+            }
+        }}>
             <CardActionArea>
                 <Box className="flex flex-row">
                     <CardMedia
