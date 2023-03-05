@@ -21,7 +21,9 @@ export default function CardVertical({
 
     return (
         <Card sx={{maxWidth: 190, height: '100%'}} onClick={() => {
-            router.push('/product-detail');
+            if (clickable) {
+                router.push('/product-detail/'+slug);
+            }
         }}>
             <CardActionArea>
                 <CardMedia

@@ -123,7 +123,7 @@ const ComponentsDemo = () => {
             <Box className="py-5">
                 <GarapinAppBar searchVariant/>
             </Box>
-            <CardHorizontal imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/>
+            <CardHorizontal imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta" slug={"test"}/>
             <Box className="py-5">
             {/* <CardVertical imageUrl="https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" productName="Product name" price="Rp.1.000-100.000" location="Jakarta"/> */}
             </Box>

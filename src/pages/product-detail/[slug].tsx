@@ -13,7 +13,7 @@ import {
     css,
     InputAdornment,
     MenuItem,
-    Menu
+    Menu, Dialog, DialogProps, DialogContent, DialogTitle, DialogActions
 } from "@mui/material";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import {useRouter} from "next/router";
@@ -25,6 +25,7 @@ import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import CardHorizontal from "@/components/CardHorizontal";
 import InputBase from "@mui/material/InputBase";
 import Link from "next/link";
+import CardVertical from "@/components/CardVertical";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -84,18 +85,19 @@ const ProductDetailPage = () => {
     const dispatch = useAppDispatch();
 
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
+
+    const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+    const handleOpen = () => {
+        setOpen(true);
+        setScroll('paper');
+    }
     const handleClose = () => setOpen(false);
 
     const {slug} = router.query;
     const {isProductLoading, singleProduct} = useAppSelector(state => state.products);
 
     const style = (theme: Theme) => ({
-        display: 'flex',
-        flexDirection: 'column',
-        width: 1000,
         backgroundColor: theme.palette.mode === 'dark' ? '#0A1929' : 'white',
-        padding: '16px 16px 24px 16px',
     });
 
     const styleUpload = (theme: Theme) => ({
@@ -162,26 +164,34 @@ const ProductDetailPage = () => {
                             <Button className="my-10 w-fit" variant="contained"
                                     sx={{backgroundColor: '#713F97', color: 'white'}} onClick={handleOpen}>Minta
                                 Penawaran</Button>
-                            <Modal
-                                aria-labelledby="keep-mounted-modal-title"
-                                aria-describedby="keep-mounted-modal-description"
+                            <Dialog
+                                aria-labelledby="scroll-dialog-title"
+                                aria-describedby="scroll-dialog-description"
                                 open={open}
-                                onClose={handleClose}
                                 slots={{backdrop: Backdrop}}
-                                keepMounted
+                                scroll={scroll}
                             >
-                                <Box sx={style}>
-                                    <Typography variant="h6"><b>Minta Penawaran</b></Typography>
+                                <DialogTitle>Minta Penawaran</DialogTitle>
+                                <DialogContent dividers={scroll === 'paper'}>
                                     <Typography variant="body2">Anda mengajukan penawaran untuk produk
                                         berikut:</Typography>
-                                    <CardHorizontal
+                                    <br/>
+                                    <CardVertical
                                         imageUrl='https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg'
-                                        productName='test product' price='10000' location='Jakarta' slug='test-product' clickable={false}/>
+                                        productName='test product' price='10000' location='Jakarta'
+                                        slug='test-product' clickable={false}/>
+                                    <br/>
                                     <Divider/>
+                                    <br/>
                                     <Typography variant="body1"><b>Detail Produk</b></Typography>
-                                    <Typography variant="body2">Masukkan informasi seputar kebutuhan anda atau pertanyaan terkait produk ini</Typography>
-                                    <TextField label='Order description'/>
-                                    <TextField label='Qty'/>
+                                    <br/>
+                                    <Typography variant="body2">Masukkan informasi seputar kebutuhan anda atau
+                                        pertanyaan terkait produk ini</Typography>
+                                    <br/>
+                                    <TextField fullWidth label='Order description'/>
+                                    <br/><br/>
+                                    <TextField fullWidth label='Qty'/>
+                                    <br/><br/>
                                     <Box className="max-w-xl mt-24 mb-20">
                                         <TextField placeholder={'Upload Files'} fullWidth
                                                    InputProps={{
@@ -195,16 +205,28 @@ const ProductDetailPage = () => {
                                                    }}
                                         ></TextField>
                                     </Box>
+                                    <br/>
                                     <Divider/>
+                                    <br/>
                                     <Typography variant="body1"><b>Data Kontak</b></Typography>
-                                    <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
-                                    <TextField label='Nama Contact Person'/>
-                                    <TextField label='081234567890'/>
-                                    <TextField label='emailanda@nama-perusahaan.co.id'/>
-                                    <TextField label='Alamat Perusahaan (opsional)'/>
-                                    <Button variant='text'>Kirim Permintaan</Button>
-                                </Box>
-                            </Modal>
+                                    <br/>
+                                    <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan
+                                        menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
+                                    <br/>
+                                    <TextField fullWidth label='Nama Contact Person'/>
+                                    <br/><br/>
+                                    <TextField fullWidth label='081234567890'/>
+                                    <br/><br/>
+                                    <TextField fullWidth label='emailanda@nama-perusahaan.co.id'/>
+                                    <br/><br/>
+                                    <TextField fullWidth label='Alamat Perusahaan (opsional)'/>
+                                    <br/><br/>
+                                </DialogContent>
+                                <DialogActions>
+                                    <Button variant='text' onClick={handleClose}>Batal</Button>
+                                    <Button variant='text' onClick={handleClose}>Kirim Permintaan</Button>
+                                </DialogActions>
+                            </Dialog>
                             <Divider className="pt-2"/>
                             <Box>
                                 <Typography className="pt-16" color="#7C7C7C" variant="h5">Tentang Produk</Typography>
