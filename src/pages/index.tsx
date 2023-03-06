@@ -44,6 +44,7 @@ makeStyles({
     },
 });
 
+
 const productData = [
     {
         id: 1,
@@ -109,6 +110,10 @@ export default function LandingPage() {
 
     const {t} = useTranslation('landing');
     const router = useRouter();
+    const fieldRef = React.useRef<HTMLFormElement>(null);
+    const handleSubmit = (event:any) => {
+        router.push(`/product-list${fieldRef?.current?.value !== undefined ? `?search=${fieldRef?.current?.value}` : ''}`);
+    }
 
     return (
         <>
@@ -139,15 +144,19 @@ export default function LandingPage() {
                                 </Box>
                                 <Box className="max-w-xl mt-24 mb-20">
                                     <TextField placeholder={`${t('section1.searchbar')}`} fullWidth
-                                               InputProps={{
-                                                   endAdornment: <InputAdornment position="end"><Button
-                                                       variant="contained"
-                                                       color="garapinColor"
-                                                       onClick={(event) => {
-                                                           router.push('/product-list');
-                                                       }}
-                                                   >{t('section1.searchButton')}</Button></InputAdornment>,
-                                               }}
+                                        inputRef={fieldRef}
+                                        onKeyUp={(event) => {
+                                            if (event.key === 'Enter') {
+                                                handleSubmit(event);
+                                            }
+                                        }}
+                                        InputProps={{
+                                            endAdornment: <InputAdornment position="end"><Button
+                                                variant="contained"
+                                                color="garapinColor"
+                                                onClick={handleSubmit}
+                                            >{t('section1.searchButton')}</Button></InputAdornment>,
+                                        }}
                                     ></TextField>
                                 </Box>
                                 <Box className="mt-28">

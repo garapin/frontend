@@ -7,7 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
 import {Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography} from "@mui/material";
-import {FormEventHandler, useCallback, useEffect, useState} from "react";
+import {FormEventHandler, useCallback, useEffect, useRef, useState} from "react";
 import {useTranslation, withTranslation} from 'next-i18next';
 import {useRouter} from 'next/router';
 import useFirebaseAuth from '@/hooks/useFirebaseAuth';
@@ -75,6 +75,8 @@ const GarapinAppBar = ({
     const locales = router.locales ?? [currentLanguage];
     const auth = useFirebaseAuth();
     const [anchorEl, setAnchorEl] = useState(null);
+    const {search} = router.query;
+    const fieldRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
     }, [auth]);
@@ -101,6 +103,16 @@ const GarapinAppBar = ({
         },
         [router]
     );
+
+    useEffect(() => {
+        if (search !== undefined && fieldRef.current !== null) {
+            fieldRef.current.value = search as string;
+        }
+    }, [search]);
+
+    const handleSubmit = (event) => {
+        router.push(`/product-list${fieldRef?.current?.value !== undefined ? `?search=${fieldRef?.current?.value}` : ''}`);
+    }
 
     console.log("resolved lang:", i18n.resolvedLanguage);
     const {t} = useTranslation('common');
@@ -129,11 +141,15 @@ const GarapinAppBar = ({
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     className="items-center h-full"
+                                    inputRef={fieldRef}
                                     placeholder={t('appBar.searchBarText')??'Cari...'}
                                     inputProps={{'aria-label': 'search'}}
-                                    onSubmit={(event) => {
-                                        router.push('/product-list');
+                                    onKeyUp={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSubmit(e);
+                                        }
                                     }}
+                                    onSubmit={handleSubmit}
                                 />
                             </Search>}
                         </Box>
