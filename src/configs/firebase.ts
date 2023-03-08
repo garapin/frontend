@@ -27,3 +27,5 @@ if (!Firebase.apps.length) {
 export default Firebase
 // export {firebaseApp};
 export const getFirestore = () => firebaseApp.firestore();
+
+export const getStorage = () => firebaseApp.storage();

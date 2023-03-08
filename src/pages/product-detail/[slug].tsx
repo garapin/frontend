@@ -25,6 +25,7 @@ import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
 import {useState} from "react";
 import {Template, TemplateInput} from "@/types/product";
 import {useFormik} from "formik";
+import {getStorage} from "@/configs/firebase";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -86,6 +87,8 @@ const ProductDetailPage = () => {
 
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
     const formik = useFormik({
         initialValues: {
             orderDescription: '',
@@ -96,6 +99,8 @@ const ProductDetailPage = () => {
             address: ''
         },
         onSubmit: async (values) => {
+            console.log("test masuk gak sih")
+            handleFileUpload();
             console.log(values);
         },
     });
@@ -122,6 +127,29 @@ const ProductDetailPage = () => {
             dispatch(getProductTemplate(singleProduct.templateId!));
         }
     }, [singleProduct]);
+
+    const handleButtonClick = () => {
+        const fileInput = document.getElementById('file-input')
+        if (fileInput) {
+            fileInput.click()
+        }
+    }
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files
+        if (files && files.length > 0) {
+            setSelectedFile(files[0])
+        }
+    }
+
+    const handleFileUpload = async () => {
+        if (selectedFile) {
+            const storageRef = getStorage().ref()
+            const fileRef = storageRef.child("/printing/inquiry/custom/uploads"+selectedFile.name)
+            await fileRef.put(selectedFile)
+            console.log(`File ${selectedFile.name} uploaded successfully`)
+        }
+    }
 
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
@@ -221,18 +249,26 @@ const ProductDetailPage = () => {
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <Box className="max-w-xl mt-24 mb-20">
-                                            <TextField placeholder={'Upload Files'} fullWidth
+                                            <TextField placeholder={'Upload Files'} fullWidth value={selectedFile?.name ?? ''}
                                                        InputProps={{
-                                                           endAdornment: <InputAdornment position="end"><Button
-                                                               variant="contained"
-                                                               color="garapinColor"
-                                                               onClick={(event) => {
-
-                                                               }}
-                                                           >{'SELECT FILE'}</Button></InputAdornment>,
+                                                           endAdornment: <InputAdornment position="end">
+                                                               <Box>
+                                                                   <Button variant="contained" color="garapinColor"
+                                                                           onClick={handleButtonClick}>SELECT FILE</Button>
+                                                                   <input
+                                                                       id="file-input"
+                                                                       type="file"
+                                                                       onChange={handleFileChange}
+                                                                       style={{display: 'none'}}
+                                                                   />
+                                                               </Box>
+                                                           </InputAdornment>,
                                                        }}
                                             ></TextField>
                                         </Box>
+                                        <br/>
+                                        <Button variant="contained" color="garapinColor"
+                                                onClick={handleFileUpload}>UPLOAD FILE</Button>
                                         <br/>
                                         <Divider/>
                                         <br/>
