@@ -19,6 +19,8 @@ export type Product = {
 
 export type Template = {
     id?: string
+    name: string,
+    description: string,
     active: boolean,
     deleted: boolean,
     createdAt: Date,
