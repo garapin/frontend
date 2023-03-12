@@ -10,7 +10,7 @@ import {
     styled,
     TextField,
     InputAdornment,
-    Dialog, DialogProps, DialogContent, DialogTitle, DialogActions, CircularProgress, Alert
+    Dialog, DialogProps, DialogContent, DialogTitle, DialogActions, Alert
 } from "@mui/material";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import {useRouter} from "next/router";
@@ -26,6 +26,8 @@ import {useState} from "react";
 import {Template, TemplateInput} from "@/types/product";
 import {useFormik} from "formik";
 import {getStorage} from "@/configs/firebase";
+import AddressPicker from "@/components/AddressPicker";
+import {toast} from "react-toastify";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -87,7 +89,7 @@ const ProductDetailPage = () => {
 
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
-    const [selectedFile, setSelectedFile] = useState<File | null>(null)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const formik = useFormik({
         initialValues: {
@@ -99,18 +101,26 @@ const ProductDetailPage = () => {
             address: ''
         },
         onSubmit: async (values) => {
-            console.log("test masuk gak sih")
-            handleFileUpload();
-            console.log(values);
+            try {
+                await handleFileUpload();
+                handleClose()
+            } catch (e: any) {
+                console.log(e)
+                toast.error(e.message);
+            }
         },
     });
-
 
     const handleOpen = () => {
         setOpen(true);
         setScroll('paper');
     }
-    const handleClose = () => setOpen(false);
+
+    const handleClose = () => {
+        setOpen(false);
+        formik.resetForm();
+        setSelectedFile(null);
+    }
 
     const {slug} = router.query;
     const {isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors} = useAppSelector(state => state.products);
@@ -145,13 +155,18 @@ const ProductDetailPage = () => {
     const handleFileUpload = async () => {
         if (selectedFile) {
             const storageRef = getStorage().ref()
-            const fileRef = storageRef.child("/printing/inquiry/custom/uploads"+selectedFile.name)
+            const fileRef = storageRef.child("/printing/inquiry/custom/uploads/" + selectedFile.name)
             await fileRef.put(selectedFile)
             console.log(`File ${selectedFile.name} uploaded successfully`)
         }
     }
 
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
+
+    const handleAddressSelect = (address: string) => {
+        console.log("Selected address:", address);
+        // do something with the selected address
+    };
 
     if (isProductLoading) {
         return <FallbackSpinner/>
@@ -245,16 +260,19 @@ const ProductDetailPage = () => {
                                                    value={formik.values.orderDescription} name={'orderDescription'}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
-                                        <TextField fullWidth label='Qty' value={formik.values.quantity} name={'quantity'}
+                                        <TextField fullWidth label='Qty' value={formik.values.quantity}
+                                                   name={'quantity'}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <Box className="max-w-xl mt-24 mb-20">
-                                            <TextField placeholder={'Upload Files'} fullWidth value={selectedFile?.name ?? ''}
+                                            <TextField placeholder={'Upload Files'} fullWidth
+                                                       value={selectedFile?.name ?? ''}
                                                        InputProps={{
                                                            endAdornment: <InputAdornment position="end">
                                                                <Box>
                                                                    <Button variant="contained" color="garapinColor"
-                                                                           onClick={handleButtonClick}>SELECT FILE</Button>
+                                                                           onClick={handleButtonClick}>SELECT
+                                                                       FILE</Button>
                                                                    <input
                                                                        id="file-input"
                                                                        type="file"
@@ -267,9 +285,6 @@ const ProductDetailPage = () => {
                                             ></TextField>
                                         </Box>
                                         <br/>
-                                        <Button variant="contained" color="garapinColor"
-                                                onClick={handleFileUpload}>UPLOAD FILE</Button>
-                                        <br/>
                                         <Divider/>
                                         <br/>
                                         <Typography variant="body1"><b>Data Kontak</b></Typography>
@@ -277,10 +292,24 @@ const ProductDetailPage = () => {
                                         <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan
                                             menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
                                         <br/>
-                                        <TextField fullWidth label='Nama Contact Person' value={formik.values.contactName}
+                                        <TextField fullWidth label='Nama Contact Person'
+                                                   value={formik.values.contactName}
                                                    name={'contactName'}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
+                                        <AddressPicker onLocationSelect={(place) => {
+                                            console.log(place)
+                                            const postalCode = place.address_components?.find((component) => {
+                                                return component.types.includes("postal_code")
+                                            })?.long_name
+                                            const completeAddress = place.formatted_address
+                                            const geometry = place?.geometry?.location
+                                            let latLong = undefined
+                                            if (geometry != undefined) {
+                                                 latLong = {lat: geometry.lat(), lng: geometry.lng()}
+                                            }
+                                        }}/>
+                                        <br/>
                                         <TextField fullWidth label='081234567890' value={formik.values.phoneNumber}
                                                    name={'phoneNumber'}
                                                    onChange={formik.handleChange}/>
@@ -288,15 +317,11 @@ const ProductDetailPage = () => {
                                         <TextField fullWidth label='emailanda@nama-perusahaan.co.id'
                                                    value={formik.values.email} name={'email'}
                                                    onChange={formik.handleChange}/>
-                                        <br/><br/>
-                                        <TextField fullWidth label='Alamat Perusahaan (opsional)'
-                                                   value={formik.values.address} name={'address'}
-                                                   onChange={formik.handleChange}/>
-                                        <br/><br/>
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant='text' onClick={handleClose}>Batal</Button>
-                                        <Button variant='text' type='submit'>Kirim Permintaan</Button>
+                                        <Button variant='text' type='submit' onClick={formik.submitForm}>Kirim
+                                            Permintaan</Button>
                                     </DialogActions>
                                 </Dialog>
                             </form>
