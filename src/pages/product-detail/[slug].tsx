@@ -1,16 +1,21 @@
 import LoginPage from "@/pages/login";
 import * as React from 'react';
+import {useState} from 'react';
 import clsx from 'clsx';
 import ModalUnstyled from '@mui/base/ModalUnstyled';
 import {
     Box,
     Button,
-    Divider,
-    Typography,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogProps,
+    DialogTitle,
+    Divider, Grid,
+    InputAdornment,
     styled,
     TextField,
-    InputAdornment,
-    Dialog, DialogProps, DialogContent, DialogTitle, DialogActions, Alert
+    Typography
 } from "@mui/material";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import {useRouter} from "next/router";
@@ -22,12 +27,13 @@ import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import InputBase from "@mui/material/InputBase";
 import CardVertical from "@/components/CardVertical";
 import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
-import {useState} from "react";
-import {Template, TemplateInput} from "@/types/product";
+import {ProductType, StoragePath, Template, TemplateInput} from "@/types/product";
 import {useFormik} from "formik";
 import {getStorage} from "@/configs/firebase";
 import AddressPicker from "@/components/AddressPicker";
 import {toast} from "react-toastify";
+import CircularProgress from "@mui/material/CircularProgress";
+import ImageCarousel from "@/components/ImageCarousel";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -104,6 +110,7 @@ const ProductDetailPage = () => {
             try {
                 await handleFileUpload();
                 handleClose()
+                toast.success("Permintaan Anda Berhasil Dikirimkan");
             } catch (e: any) {
                 console.log(e)
                 toast.error(e.message);
@@ -155,7 +162,11 @@ const ProductDetailPage = () => {
     const handleFileUpload = async () => {
         if (selectedFile) {
             const storageRef = getStorage().ref()
-            const fileRef = storageRef.child("/printing/inquiry/custom/uploads/" + selectedFile.name)
+            const productType = ProductType.CUSTOM_PACKAGING
+            const fileRef =
+                (productType == ProductType.READY_TO_BUY.toString()) ? storageRef.child(`${StoragePath.PATH_RTB}${selectedFile.name}`)
+                    : (productType == ProductType.DIGITAL_PACKAGING.toString()) ? storageRef.child(`${StoragePath.PATH_DIGITAL}${selectedFile.name}`)
+                        : storageRef.child(`${StoragePath.PATH_CUSTOM}${selectedFile.name}`)
             await fileRef.put(selectedFile)
             console.log(`File ${selectedFile.name} uploaded successfully`)
         }
@@ -163,24 +174,21 @@ const ProductDetailPage = () => {
 
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
-    const handleAddressSelect = (address: string) => {
-        console.log("Selected address:", address);
-        // do something with the selected address
-    };
-
     if (isProductLoading) {
         return <FallbackSpinner/>
     } else {
         return (
-            <Box className="flex flex-col items-center">
+            <Box className="items-center">
                 <GarapinAppBar searchVariant={true}/>
-                <Box className="flex flex-row pt-20 md:px-72 justify-between">
-                    <Box className="rounded-xl">
-                        <img className="w-80 h-80"
-                             src="https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg"
-                             alt="Image with stock photos"/>
-                    </Box>
-                    <Box className="flex flex-col pl-20 w-full">
+                <Grid container className="pt-20 md:px-72 justify-between">
+                    <Grid item lg={4} alignItems="center" justifyContent="center" className="w-full px-5">
+                        <ImageCarousel dataSource={singleProduct?.img.map((image) => {
+                            return {
+                                srcUrl: image
+                            }
+                        }) ?? []}/>
+                    </Grid>
+                    <Grid item lg={8} className="flex flex-col px-5 w-full">
                         <Typography className="pt-10" variant="h4">{singleProduct?.productName}</Typography>
                         <Typography className="pt-2" variant="h5"
                                     color="#713F97">Rp {singleProduct?.minPrice?.toLocaleString('id-ID')} -
@@ -306,7 +314,7 @@ const ProductDetailPage = () => {
                                             const geometry = place?.geometry?.location
                                             let latLong = undefined
                                             if (geometry != undefined) {
-                                                 latLong = {lat: geometry.lat(), lng: geometry.lng()}
+                                                latLong = {lat: geometry.lat(), lng: geometry.lng()}
                                             }
                                         }}/>
                                         <br/>
@@ -320,8 +328,7 @@ const ProductDetailPage = () => {
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant='text' onClick={handleClose}>Batal</Button>
-                                        <Button variant='text' type='submit' onClick={formik.submitForm}>Kirim
-                                            Permintaan</Button>
+                                        <Button variant='text' type='submit' onClick={formik.submitForm} disabled={formik.isSubmitting}>Kirim Permintaan {formik.isSubmitting && <CircularProgress size={10}/>}</Button>
                                     </DialogActions>
                                 </Dialog>
                             </form>
@@ -332,10 +339,10 @@ const ProductDetailPage = () => {
                                             variant="body2">{singleProduct?.description}</Typography>
                             </Box>
                         </Box>
-                    </Box>
-                </Box>
-                <Box className="py-20">
-                    <img src="/banner_inquiry.svg" alt="banner inquiry"/>
+                    </Grid>
+                </Grid>
+                <Box className="py-20 md:px-60">
+                    <img width="100%" src="/banner_inquiry.svg" alt="banner inquiry"/>
                 </Box>
             </Box>
         )

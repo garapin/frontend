@@ -52,3 +52,15 @@ export type TemplateInput = {
     selectedOption: VariantOption
     }
 }
+
+export enum ProductType {
+    READY_TO_BUY = "rtb",
+    CUSTOM_PACKAGING = "custom",
+    DIGITAL_PACKAGING = "digital",
+}
+
+export enum StoragePath {
+    PATH_RTB = "/printing/inquiry/rtb/uploads/",
+    PATH_CUSTOM = "/printing/inquiry/custom/uploads/",
+    PATH_DIGITAL = "/printing/inquiry/digital/uploads/",
+}
