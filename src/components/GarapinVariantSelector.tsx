@@ -10,35 +10,6 @@ type CardExtended = CardTypeMap['props'] & {
     selectHandler: () => void;
 }
 
-const variants = [
-    {
-        name: 'Packaging Material',
-        description: "Packaging material can be like this",
-        options: [
-            {
-                name: 'Corrugated Box',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'corrugated-box'
-            },
-            {
-                name: 'Hard Box',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'hard-box'
-            },
-            {
-                name: 'Thin Paper',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'thin-paper'
-            },
-            {
-                name: 'Not sure',
-                imgSrc: 'https://picsum.photos/60',
-                value: 'not-sure'
-            }
-        ]
-    },
-];
-
 export default function GarapinVariantSelector({handleChange, options, value, justifyContent='center', allowNotSure=true}: 
     {   handleChange: (value: string) => void, 
         options: VariantOption[], value?: string, 
@@ -69,6 +40,7 @@ function CardItemsOption(props: CardExtended) {
         tabIndex={0}
         variant="outlined"
         sx={{
+            cursor: 'pointer',
             height: '100%',
             boxShadow: (theme) => props.active? `inset 0px 0px 0px 2px ${theme.palette.primary.main}` : `inset 0px 0px 1px ${theme.palette.grey[900]}`,
             backgroundColor: (theme) => props.active ? 'rgba(235, 228, 240,0.4)' : theme.palette.background.paper,

@@ -1,5 +1,5 @@
 import { getFirestore } from "@/configs/firebase";
-import { Product } from "@/types/product";
+import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
 
 /* Default Variables (used in all functions)
@@ -63,4 +63,13 @@ export const getAllProductsNextFromDB = async (lastProductQuery: Firebase.firest
         }
     });
     return {data, lastProductQuery: response.docs[response.docs.length - 1]};
+}
+
+export const getProductTemplateFromDB = async (templateId: string): Promise<Template|undefined> => {
+    const templateRef = db.collection('templates').doc(templateId);
+    const template = await templateRef.get();
+    if(template.exists) {
+        return template.data() as Template;
+    }
+    return undefined;
 }

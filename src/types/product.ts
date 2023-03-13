@@ -14,7 +14,8 @@ export type Product = {
     maxPrice: number
     minPrice: number
     moq: number
-    template: Template
+    template?: Template
+    templateId?: string
 }
 
 export type Template = {

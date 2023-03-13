@@ -1,7 +1,7 @@
 import { getFirestore } from "@/configs/firebase";
-import { getAllProductsFromDB, getAllProductsNextFromDB, getSingleProductFromDB, pageSize } from "@/db";
+import { getAllProductsFromDB, getAllProductsNextFromDB, getProductTemplateFromDB, getSingleProductFromDB, pageSize } from "@/db";
 import { RootState } from "@/store";
-import { Product } from "@/types/product";
+import { Product, Template } from "@/types/product";
 import { createSlice, ThunkAction } from "@reduxjs/toolkit";
 import Firebase from '../../../configs/firebase'
 
@@ -11,15 +11,19 @@ const defaultState: {
     allProductsLoaded: boolean,
     lastProductQuery?: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
     isProductLoading: boolean;
+    isTemplateLoading: boolean;
     isFetchingNext: boolean;
     errors?: string;
+    productTemplate?: Template;
 } = {
     products: [],
     allProductsLoaded: false,
     singleProduct: undefined,
     isProductLoading: false,
+    isTemplateLoading: false,
     isFetchingNext: false,
     errors: undefined,
+    productTemplate: undefined,
 }
 
 
@@ -42,6 +46,7 @@ const productsSlice = createSlice({
         setError: (state, action) => {
             state.errors = action.payload;
             state.isProductLoading = false;
+            state.isTemplateLoading = false;
         },
         setLastProductQuery: (state, action) => {
             state.lastProductQuery = action.payload;
@@ -51,6 +56,14 @@ const productsSlice = createSlice({
         },
         setIsFetchingNext: (state, action) => {
             state.isFetchingNext = action.payload;
+        },
+        setTemplateLoading: (state) => {
+            state.isTemplateLoading = true;
+        },
+        setProductTemplate: (state, action) => {
+            state.productTemplate = action.payload;
+            state.errors = undefined;
+            state.isTemplateLoading = false;
         }
 
     },
@@ -118,7 +131,33 @@ export const getSingleProduct = (slug: string): ThunkAction<void, RootState, unk
     }
 }
 
+export const getProductTemplate = (templateId: string): ThunkAction<void, RootState, unknown, any> => {
+    return async (dispatch) => {
+        try {
+            dispatch(setTemplateLoading());
+            const templateData = await getProductTemplateFromDB(templateId);
+            if (templateData!== undefined) {
+                dispatch(setProductTemplate(templateData));
+            } else {
+                dispatch(setError('Template not found'));
+            }
+        } catch (error) {  
+            console.log(error);
+            dispatch(setError((error as any).message));
+        }
+    }
+}
 
-export const {setProducts, setProductLoading, setSingleProduct, setError, setLastProductQuery, setAllProductsLoaded, setIsFetchingNext} = productsSlice.actions;
+
+export const {
+    setProducts, 
+    setProductLoading, 
+    setSingleProduct, 
+    setError, 
+    setLastProductQuery, 
+    setAllProductsLoaded, 
+    setIsFetchingNext, 
+    setTemplateLoading, 
+    setProductTemplate} = productsSlice.actions;
 
 export default productsSlice.reducer;

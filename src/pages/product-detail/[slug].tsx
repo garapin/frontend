@@ -10,13 +10,13 @@ import {
     styled,
     TextField,
     InputAdornment,
-    Dialog, DialogProps, DialogContent, DialogTitle, DialogActions
+    Dialog, DialogProps, DialogContent, DialogTitle, DialogActions, CircularProgress, Alert
 } from "@mui/material";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import {useRouter} from "next/router";
 import {useAppDispatch, useAppSelector} from "@/hooks/useAppRedux";
 import FallbackSpinner from "@/components/spinner";
-import {getSingleProduct} from "@/store/modules/products";
+import {getProductTemplate, getSingleProduct} from "@/store/modules/products";
 import {i18n} from "next-i18next";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
 import InputBase from "@mui/material/InputBase";
@@ -108,7 +108,7 @@ const ProductDetailPage = () => {
     const handleClose = () => setOpen(false);
 
     const {slug} = router.query;
-    const {isProductLoading, singleProduct} = useAppSelector(state => state.products);
+    const {isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors} = useAppSelector(state => state.products);
 
     console.log("SLUG:", slug);
     React.useEffect(() => {
@@ -117,87 +117,11 @@ const ProductDetailPage = () => {
         }
     }, [slug])
 
-    const corrugatedBoxOptions = [
-        {
-            name: 'Shipping Box',
-            imgSrc: 'https://ph-prod.imgix.net/wp-content/uploads/2019/06/06153013/plain-shipping-boxes-packhelp-kva.jpg',
-            value: 'shipping-box',
-            price: 8000
-        },
-        {
-            name: 'Mailer Box',
-            imgSrc: 'https://cf.shopee.co.id/file/3d856acdb1e975165881e4ab47d2d36a',
-            value: 'mailer-box',
-            price: 3000
-        },
-        {
-            name: 'Handle Box',
-            imgSrc: 'https://cdn.shopify.com/s/files/1/1516/1182/products/CakeBoxwithHandle1Cropped3.png?v=1592811934',
-            value: 'handle-box',
-            price: 6500
-        },
-        {
-            name: 'Top-Bottom Box',
-            imgSrc: 'https://pacmart.in/wp-content/uploads/2020/08/p3.png',
-            value: 'top-bottom-box',
-            price: 7000
-        },
-        {
-            name: 'Sliding Box',
-            imgSrc: 'https://images.tokopedia.net/img/cache/500-square/VqbcmM/2022/6/28/cfe13c8b-d7a9-44ed-ac3a-83a18bafbd5f.jpg',
-            value: 'sliding-box',
-            price: 8000
-        },
-
-    ];
-
-    const variants = [
-        {
-            name: 'Packaging Material',
-            id: 'packaging-material',
-            description: "Packaging material can be like this",
-            options: [
-                {
-                    name: 'Corrugated Box',
-                    imgSrc: 'https://picsum.photos/60',
-                    value: 'corrugated-box',
-                    price: 5000
-                },
-                {
-                    name: 'Hard Box',
-                    imgSrc: 'https://picsum.photos/60?random=1',
-                    value: 'hard-box',
-                    price: 7000
-                },
-                {
-                    name: 'Thin Paper',
-                    imgSrc: 'https://picsum.photos/60?random=2',
-                    value: 'thin-paper',
-                    price: 3000
-                },
-                {
-                    name: 'Not sure',
-                    imgSrc: 'https://picsum.photos/60?random=3',
-                    value: 'not-sure',
-                    price: 0
-                }
-            ]
-        },
-        {
-            name: 'Corrugated Box Options',
-            id: 'corrugated-box-options',
-            description: "Box options can be like this",
-            options: corrugatedBoxOptions
+    React.useEffect(() => {
+        if (singleProduct !== null && singleProduct !== undefined) {
+            dispatch(getProductTemplate(singleProduct.templateId!));
         }
-    ];
-
-    const template: Template = {
-        active: true,
-        deleted: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        variants: variants
-    }
+    }, [singleProduct]);
 
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
@@ -267,7 +191,9 @@ const ProductDetailPage = () => {
                                         <br/>
                                         <Divider/>
                                         <br/>
-                                        <GarapinProductCustomizer template={template} value={variantSelectorValue}
+                                        { errors !== undefined && <Alert severity="error">{errors}</Alert> }
+                                        { (productTemplate == undefined || isTemplateLoading) && <CircularProgress /> } 
+                                        { (productTemplate !== undefined && !isTemplateLoading) && <GarapinProductCustomizer template={productTemplate} value={variantSelectorValue}
                                                                   handleChange={(variant, selected) => {
                                                                       if (selected !== undefined) {
                                                                           setVariantSelectorValue({
@@ -278,7 +204,7 @@ const ProductDetailPage = () => {
                                                                               }
                                                                           })
                                                                       }
-                                                                  }} options={{alignVariantOptions: 'left'}}/>
+                                                                  }} options={{alignVariantOptions: 'left'}}/> }
                                         <br/>
                                         <Divider/>
                                         <br/>
