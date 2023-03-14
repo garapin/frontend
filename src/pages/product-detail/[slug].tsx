@@ -34,6 +34,8 @@ import AddressPicker from "@/components/AddressPicker";
 import {toast} from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "@/components/ImageCarousel";
+import useFirebaseAuth from "@/hooks/useFirebaseAuth";
+import { storeRequestInquiryToDB } from "@/db";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -90,33 +92,54 @@ styled(InputBase)(({theme}) => ({
 const ProductDetailPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
+    const auth = useFirebaseAuth();
 
     const [open, setOpen] = React.useState(false);
 
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
     const formik = useFormik({
         initialValues: {
             orderDescription: '',
             quantity: '',
-            contactName: '',
-            phoneNumber: '',
-            email: '',
+            contactName: auth.authUser?.displayName ?? '',
+            phoneNumber: auth.authUser?.phoneNumber ?? '',
+            email: auth.authUser?.email ?? '',
             address: ''
         },
         onSubmit: async (values) => {
             try {
-                await handleFileUpload();
-                handleClose()
+                const fileData = await handleFileUpload();
+                const dataBody = {
+                    ...values,
+                    product: singleProduct,
+                    template: productTemplate,
+                    selectedOptions: variantSelectorValue,
+                    files: [fileData],
+                    createdAt: new Date()
+                };
+                await storeRequestInquiryToDB(dataBody);
                 toast.success("Permintaan Anda Berhasil Dikirimkan");
+                handleClose()
             } catch (e: any) {
-                console.log(e)
+                console.error(e)
                 toast.error(e.message);
             }
         },
     });
+
+    React.useEffect(() => {
+        console.log('auth state changed. here\'s the data');
+        console.log(auth.authUser);
+        if(auth.authUser !== null) {
+            formik.setFieldValue('contactName', auth.authUser?.displayName);
+            formik.setFieldValue('email', auth.authUser?.email);
+        }
+    }, [auth.loading, auth.authUser, open])
+    
 
     const handleOpen = () => {
         setOpen(true);
@@ -126,13 +149,13 @@ const ProductDetailPage = () => {
     const handleClose = () => {
         setOpen(false);
         formik.resetForm();
+        setVariantSelectorValue({});
         setSelectedFile(null);
     }
 
     const {slug} = router.query;
     const {isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors} = useAppSelector(state => state.products);
 
-    console.log("SLUG:", slug);
     React.useEffect(() => {
         if (slug !== undefined) {
             dispatch(getSingleProduct(slug as string));
@@ -166,13 +189,15 @@ const ProductDetailPage = () => {
             const fileRef =
                 (productType == ProductType.READY_TO_BUY.toString()) ? storageRef.child(`${StoragePath.PATH_RTB}${selectedFile.name}`)
                     : (productType == ProductType.DIGITAL_PACKAGING.toString()) ? storageRef.child(`${StoragePath.PATH_DIGITAL}${selectedFile.name}`)
-                        : storageRef.child(`${StoragePath.PATH_CUSTOM}${selectedFile.name}`)
-            await fileRef.put(selectedFile)
+                        : storageRef.child(`${StoragePath.PATH_CUSTOM}${Date.now()}-${auth.authUser?.uid??'anon'}-${selectedFile.name}`)
+            const uploadedFile = await fileRef.put(selectedFile);
             console.log(`File ${selectedFile.name} uploaded successfully`)
+            return {
+                uri: uploadedFile.metadata.fullPath,
+                url: await uploadedFile.ref.getDownloadURL()
+            }
         }
     }
-
-    const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
 
     if (isProductLoading) {
         return <FallbackSpinner/>
@@ -230,8 +255,10 @@ const ProductDetailPage = () => {
                                     scroll={scroll}
                                     maxWidth={"lg"}
                                 >
-                                    <DialogTitle>Minta Penawaran</DialogTitle>
+                                    <DialogTitle>{auth.authUser !== null ? 'Minta Penawaran': 'Login untuk minta penawaran'}</DialogTitle>
                                     <DialogContent dividers={scroll === 'paper'}>
+                                        {auth.authUser !== null ?
+                                        <>
                                         <Typography variant="body2">Anda mengajukan penawaran untuk produk
                                             berikut:</Typography>
                                         <br/>
@@ -266,6 +293,8 @@ const ProductDetailPage = () => {
                                         <br/>
                                         <TextField fullWidth label='Order description'
                                                    value={formik.values.orderDescription} name={'orderDescription'}
+                                                   multiline
+                                                   rows={6}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <TextField fullWidth label='Qty' value={formik.values.quantity}
@@ -318,17 +347,26 @@ const ProductDetailPage = () => {
                                             }
                                         }}/>
                                         <br/>
-                                        <TextField fullWidth label='081234567890' value={formik.values.phoneNumber}
+                                        <TextField fullWidth label="Nomor HP/WA" placeholder='081234567890' value={formik.values.phoneNumber}
                                                    name={'phoneNumber'}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
-                                        <TextField fullWidth label='emailanda@nama-perusahaan.co.id'
+                                        <TextField fullWidth label="Email" placeholder='emailanda@nama-perusahaan.co.id'
                                                    value={formik.values.email} name={'email'}
                                                    onChange={formik.handleChange}/>
+                                        </> : 
+                                        <>
+                                            <Typography variant="body2">Silahkan login terlebih dahulu untuk mengajukan penawaran.</Typography>
+                                        </>
+                                        }
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant='text' onClick={handleClose}>Batal</Button>
-                                        <Button variant='text' type='submit' onClick={formik.submitForm} disabled={formik.isSubmitting}>Kirim Permintaan {formik.isSubmitting && <CircularProgress size={10}/>}</Button>
+                                        {auth.authUser == null ?
+                                            <Button variant="contained" color="garapinColor" onClick={() => router.push('/login')}>Login</Button>
+                                                :
+                                            <Button variant='text' type='submit' onClick={formik.submitForm} disabled={formik.isSubmitting}>Kirim Permintaan {formik.isSubmitting && <CircularProgress size={10}/>}</Button>
+                                        }
                                     </DialogActions>
                                 </Dialog>
                             </form>

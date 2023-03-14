@@ -73,3 +73,7 @@ export const getProductTemplateFromDB = async (templateId: string): Promise<Temp
     }
     return undefined;
 }
+
+export const storeRequestInquiryToDB = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {
+    return await db.collection('product_inquiries').add(data);
+}
