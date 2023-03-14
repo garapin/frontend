@@ -40,12 +40,10 @@ const useFirebaseAuth = () => {
           console.log("User data from update snapshot:", doc.data());
           authState.getIdToken(true);
           setLoading(true);
+          console.log('data authState: ',authState, )
           authState.getIdTokenResult().then((claimsData) => {
-            setAuthUser({
-                ...authState,
-                authTokenData: claimsData
-              }
-            );
+              authState['authTokenData'] = claimsData;
+            setAuthUser(authState);
             setLoading(false);
           });
           
@@ -77,7 +75,7 @@ const useFirebaseAuth = () => {
 
   // listen for Firebase state change
   useEffect(() => {
-    const unsubscribe = Firebase.auth().onAuthStateChanged((user) => authStateChanged(user))
+    const unsubscribe = Firebase.auth().onAuthStateChanged(authStateChanged)
 
     return () => unsubscribe()
   }, [])
