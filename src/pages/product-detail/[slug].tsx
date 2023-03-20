@@ -36,6 +36,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { storeRequestInquiryToDB } from "@/db";
+import * as yup from "yup";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -110,6 +111,13 @@ const ProductDetailPage = () => {
             email: auth.authUser?.email ?? '',
             address: ''
         },
+        validationSchema: yup.object({
+            orderDescription: yup.string().required("Order Description is required"),
+            quantity: yup.number().required("Quantity is required"),
+            contactName: yup.string().required("Contact Name is required"),
+            phoneNumber: yup.string().required("Phone Number is required"),
+            email: yup.string().required("Email is required"),
+        }),
         onSubmit: async (values) => {
             try {
                 const fileData = await handleFileUpload();
@@ -139,7 +147,7 @@ const ProductDetailPage = () => {
             formik.setFieldValue('email', auth.authUser?.email);
         }
     }, [auth.loading, auth.authUser, open])
-    
+
 
     const handleOpen = () => {
         setOpen(true);
@@ -270,7 +278,7 @@ const ProductDetailPage = () => {
                                         <Divider/>
                                         <br/>
                                         { errors !== undefined && <Alert severity="error">{errors}</Alert> }
-                                        { (productTemplate == undefined || isTemplateLoading) && <CircularProgress /> } 
+                                        { (productTemplate == undefined || isTemplateLoading) && <CircularProgress /> }
                                         { (productTemplate !== undefined && !isTemplateLoading) && <GarapinProductCustomizer template={productTemplate} value={variantSelectorValue}
                                                                   handleChange={(variant, selected) => {
                                                                       if (selected !== undefined) {
@@ -292,12 +300,16 @@ const ProductDetailPage = () => {
                                             pertanyaan terkait produk ini</Typography>
                                         <br/>
                                         <TextField fullWidth label='Order description'
+                                                   error={formik.touched.orderDescription && Boolean(formik.errors.orderDescription)}
+                                                   helperText={Boolean(formik.errors) && formik.errors.orderDescription}
                                                    value={formik.values.orderDescription} name={'orderDescription'}
                                                    multiline
                                                    rows={6}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <TextField fullWidth label='Qty' value={formik.values.quantity}
+                                                   error={formik.touched.quantity && Boolean(formik.errors.quantity)}
+                                                   helperText={Boolean(formik.errors) && formik.errors.quantity}
                                                    name={'quantity'}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
@@ -330,6 +342,8 @@ const ProductDetailPage = () => {
                                             menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
                                         <br/>
                                         <TextField fullWidth label='Nama Contact Person'
+                                                   error={formik.touched.contactName && Boolean(formik.errors.contactName)}
+                                                   helperText={Boolean(formik.errors) && formik.errors.contactName}
                                                    value={formik.values.contactName}
                                                    name={'contactName'}
                                                    onChange={formik.handleChange}/>
@@ -348,13 +362,17 @@ const ProductDetailPage = () => {
                                         }}/>
                                         <br/>
                                         <TextField fullWidth label="Nomor HP/WA" placeholder='081234567890' value={formik.values.phoneNumber}
+                                                   error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                                                   helperText={Boolean(formik.errors) && formik.errors.phoneNumber}
                                                    name={'phoneNumber'}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <TextField fullWidth label="Email" placeholder='emailanda@nama-perusahaan.co.id'
+                                                   error={formik.touched.email && Boolean(formik.errors.email)}
+                                                   helperText={Boolean(formik.errors) && formik.errors.email}
                                                    value={formik.values.email} name={'email'}
                                                    onChange={formik.handleChange}/>
-                                        </> : 
+                                        </> :
                                         <>
                                             <Typography variant="body2">Silahkan login terlebih dahulu untuk mengajukan penawaran.</Typography>
                                         </>
@@ -365,7 +383,9 @@ const ProductDetailPage = () => {
                                         {auth.authUser == null ?
                                             <Button variant="contained" color="garapinColor" onClick={() => router.push('/login')}>Login</Button>
                                                 :
-                                            <Button variant='text' type='submit' onClick={formik.submitForm} disabled={formik.isSubmitting}>Kirim Permintaan {formik.isSubmitting && <CircularProgress size={10}/>}</Button>
+                                            <Button variant='text' type='submit' onClick={formik.submitForm}
+                                                disabled={formik.isSubmitting}>Kirim Permintaan {formik.isSubmitting &&
+                                            <CircularProgress size={10}/>}</Button>
                                         }
                                     </DialogActions>
                                 </Dialog>
