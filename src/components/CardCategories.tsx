@@ -4,7 +4,6 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import {CardActionArea} from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Box from '@mui/material/Box';
 import {useRouter} from 'next/router';
 
@@ -22,18 +21,18 @@ export default function CardCategories({
             router.push(`/product-category${slug !== undefined ? `?search=${slug}` : ''}`);
         }}>
             <CardActionArea>
-                <CardMedia
-                    component="img"
-                    image={imageUrl}
-                    alt="Card Image"
-                    sx={{width: 150, height: 150, objectFit: "cover", objectPosition: "center"}}
-                />
-                <Box className="flex flex-col justify-between">
+                <Box sx={{height: '100%'}}>
+                    <CardMedia
+                        component="img"
+                        image={imageUrl}
+                        alt="Card Image"
+                        sx={{width: 190, height: 190, objectFit: "cover", objectPosition: "center"}}
+                    />
                     <CardContent>
                         <Typography variant="h5">
                             <b>{categoryName}</b>
                         </Typography>
-                        <Typography color="text.secondary" sx={{fontSize: 12}} className="pb-3">
+                        <Typography color="text.secondary" sx={{fontSize: 14}}>
                             {description}
                         </Typography>
                     </CardContent>

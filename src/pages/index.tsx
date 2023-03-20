@@ -302,7 +302,7 @@ export default function LandingPage() {
                             {categories.map((category) => (
                                 <Grid key={category.id} item xs={6} sm={6} md={4} lg={3}>
                                     <CardCategories key={category.id} imageUrl={category.image} categoryName={category.name}
-                                                  description={`Rp${category.name}`} slug={category.slug}/>
+                                                  description={category.description} slug={category.slug}/>
                                 </Grid>
                             ))}
                         </Grid>
