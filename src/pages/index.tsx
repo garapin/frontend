@@ -15,6 +15,8 @@ import CardVertical from "@/components/CardVertical";
 import {Container, Divider, Grid, InputAdornment, TextField} from "@mui/material";
 import ImageCarousel, {CarouselImageSet} from "@/components/ImageCarousel";
 import {useRouter} from 'next/router';
+import {useAppSelector} from "@/hooks/useAppRedux";
+import CardCategories from "@/components/CardCategories";
 
 const StyledInputBase = styled(InputBase)(({theme}) => ({
     color: '#713F97',
@@ -111,6 +113,7 @@ export default function LandingPage() {
     const {t} = useTranslation('landing');
     const router = useRouter();
     const fieldRef = React.useRef<HTMLFormElement>(null);
+    const {categories} = useAppSelector(state => state.appDefaults);
     const handleSubmit = (event:any) => {
         router.push(`/product-list${fieldRef?.current?.value !== undefined ? `?search=${fieldRef?.current?.value}` : ''}`);
     }
@@ -288,6 +291,18 @@ export default function LandingPage() {
                                 <Grid key={product.id} item xs={6} sm={6} md={4} lg={3}>
                                     <CardVertical key={product.id} imageUrl={product.image} productName={product.name}
                                                   price={`Rp${product.price}`} location="Jakarta" slug={product.id.toString()}/>
+                                </Grid>
+                            ))}
+                        </Grid>
+                        <Box className="flex flex-col md:flex-row pt-20 justify-between">
+                            <Typography className="px-10 md:px-0" variant="h4" color="#713F97">Jelajahi Berdasar Kategori</Typography>
+                        </Box>
+                        <Divider className="mx-10 md:mx-0 pt-6"/>
+                        <Grid className="px-10 md:px-0 pt-8 md:pt-12" container spacing={4}>
+                            {categories.map((category) => (
+                                <Grid key={category.id} item xs={6} sm={6} md={4} lg={3}>
+                                    <CardCategories key={category.id} imageUrl={category.image} categoryName={category.name}
+                                                  description={`Rp${category.name}`} slug={category.slug}/>
                                 </Grid>
                             ))}
                         </Grid>
