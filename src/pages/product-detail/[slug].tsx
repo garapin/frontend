@@ -37,6 +37,7 @@ import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { storeRequestInquiryToDB } from "@/db";
 import * as yup from "yup";
+import CardHorizontal from "@/components/CardHorizontal";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -90,10 +91,18 @@ styled(InputBase)(({theme}) => ({
     },
 }));
 
+interface addressMap {
+    postalCode?: string,
+    completeAddress: string,
+    latLong?: {lat: string, long: string}
+}
+
 const ProductDetailPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const auth = useFirebaseAuth();
+    const {slug} = router.query;
+    const {isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors} = useAppSelector(state => state.products);
 
     const [open, setOpen] = React.useState(false);
 
@@ -101,6 +110,7 @@ const ProductDetailPage = () => {
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
+    const [addressMap, setAddressMap] = useState<addressMap>({postalCode: '', completeAddress: '', latLong: {lat: '', long: ''}});
 
     const formik = useFormik({
         initialValues: {
@@ -109,11 +119,10 @@ const ProductDetailPage = () => {
             contactName: auth.authUser?.displayName ?? '',
             phoneNumber: auth.authUser?.phoneNumber ?? '',
             email: auth.authUser?.email ?? '',
-            address: ''
         },
         validationSchema: yup.object({
             orderDescription: yup.string().required("Order Description is required"),
-            quantity: yup.number().required("Quantity is required"),
+            quantity: yup.lazy((val) => singleProduct !== undefined && singleProduct.moq !== undefined ? yup.number().required("Quantity is required").min(singleProduct.moq, `Minimum order is ${singleProduct.moq}`) : yup.number().required("Quantity is required")),
             contactName: yup.string().required("Contact Name is required"),
             phoneNumber: yup.string().required("Phone Number is required"),
             email: yup.string().required("Email is required"),
@@ -123,6 +132,7 @@ const ProductDetailPage = () => {
                 const fileData = await handleFileUpload();
                 const dataBody = {
                     ...values,
+                    address: addressMap,
                     product: singleProduct,
                     template: productTemplate,
                     selectedOptions: variantSelectorValue,
@@ -159,10 +169,9 @@ const ProductDetailPage = () => {
         formik.resetForm();
         setVariantSelectorValue({});
         setSelectedFile(null);
+        setAddressMap({postalCode: '', completeAddress: '', latLong: {lat: '', long: ''}});
     }
 
-    const {slug} = router.query;
-    const {isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors} = useAppSelector(state => state.products);
 
     React.useEffect(() => {
         if (slug !== undefined) {
@@ -271,9 +280,10 @@ const ProductDetailPage = () => {
                                             berikut:</Typography>
                                         <br/>
                                         <CardVertical
-                                            imageUrl='https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg'
-                                            productName='test product' price='10000' location='Jakarta'
-                                            slug='test-product' clickable={false}/>
+                                            imageUrl={singleProduct?.img[0]!}
+                                            productName={singleProduct?.productName??''} price={`Rp ${singleProduct?.minPrice?.toLocaleString('id-ID')} -
+                                            Rp ${singleProduct?.maxPrice?.toLocaleString('id-ID')}`} location='Jakarta'
+                                            slug={singleProduct?.slug??''} clickable={false}/>
                                         <br/>
                                         <Divider/>
                                         <br/>
@@ -300,17 +310,21 @@ const ProductDetailPage = () => {
                                             pertanyaan terkait produk ini</Typography>
                                         <br/>
                                         <TextField fullWidth label='Order description'
+                                                    required
                                                    error={formik.touched.orderDescription && Boolean(formik.errors.orderDescription)}
-                                                   helperText={Boolean(formik.errors) && formik.errors.orderDescription}
+                                                   helperText={Boolean(formik.touched.orderDescription) && formik.errors.orderDescription}
                                                    value={formik.values.orderDescription} name={'orderDescription'}
                                                    multiline
                                                    rows={6}
+                                                   onBlur={formik.handleBlur}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <TextField fullWidth label='Qty' value={formik.values.quantity}
+                                                    required
                                                    error={formik.touched.quantity && Boolean(formik.errors.quantity)}
-                                                   helperText={Boolean(formik.errors) && formik.errors.quantity}
+                                                   helperText={Boolean(formik.touched.quantity) && formik.errors.quantity}
                                                    name={'quantity'}
+                                                   onBlur={formik.handleBlur}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <Box className="max-w-xl mt-24 mb-20">
@@ -343,9 +357,11 @@ const ProductDetailPage = () => {
                                         <br/>
                                         <TextField fullWidth label='Nama Contact Person'
                                                    error={formik.touched.contactName && Boolean(formik.errors.contactName)}
-                                                   helperText={Boolean(formik.errors) && formik.errors.contactName}
+                                                   helperText={Boolean(formik.touched.contactName) && formik.errors.contactName}
                                                    value={formik.values.contactName}
                                                    name={'contactName'}
+                                                   required
+                                                   onBlur={formik.handleBlur}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <AddressPicker onLocationSelect={(place) => {
@@ -359,18 +375,28 @@ const ProductDetailPage = () => {
                                             if (geometry != undefined) {
                                                 latLong = {lat: geometry.lat(), lng: geometry.lng()}
                                             }
+                                            const objAddress= {
+                                                completeAddress,
+                                                postalCode,
+                                                latLong
+                                            }
+
+                                            setAddressMap(objAddress);
                                         }}/>
                                         <br/>
                                         <TextField fullWidth label="Nomor HP/WA" placeholder='081234567890' value={formik.values.phoneNumber}
                                                    error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
                                                    helperText={Boolean(formik.errors) && formik.errors.phoneNumber}
                                                    name={'phoneNumber'}
+                                                   onBlur={formik.handleBlur}
                                                    onChange={formik.handleChange}/>
                                         <br/><br/>
                                         <TextField fullWidth label="Email" placeholder='emailanda@nama-perusahaan.co.id'
+                                                    required
                                                    error={formik.touched.email && Boolean(formik.errors.email)}
-                                                   helperText={Boolean(formik.errors) && formik.errors.email}
+                                                   helperText={Boolean(formik.touched.email) && formik.errors.email}
                                                    value={formik.values.email} name={'email'}
+                                                   onBlur={formik.handleBlur}
                                                    onChange={formik.handleChange}/>
                                         </> :
                                         <>
@@ -384,7 +410,7 @@ const ProductDetailPage = () => {
                                             <Button variant="contained" color="garapinColor" onClick={() => router.push('/login')}>Login</Button>
                                                 :
                                             <Button variant='text' type='submit' onClick={formik.submitForm}
-                                                disabled={formik.isSubmitting}>Kirim Permintaan {formik.isSubmitting &&
+                                                disabled={formik.isSubmitting || !formik.isValid}>Kirim Permintaan {formik.isSubmitting &&
                                             <CircularProgress size={10}/>}</Button>
                                         }
                                     </DialogActions>

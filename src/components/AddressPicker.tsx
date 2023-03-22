@@ -34,7 +34,7 @@ const AddressPicker: React.FC<LocationInputProps> = ({onLocationSelect}) => {
 
     return (
         <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-            <TextField fullWidth label='Alamat Perusahaan (opsional)' placeholder="Type location..."
+            <TextField fullWidth label='Alamat Perusahaan/Pengiriman (opsional)' placeholder="Type location..."
                        inputProps={{autoComplete: "off"}}/>
         </Autocomplete>
     );
