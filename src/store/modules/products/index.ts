@@ -11,6 +11,7 @@ import { RootState } from "@/store";
 import { Product, Template } from "@/types/product";
 import { createSlice, ThunkAction } from "@reduxjs/toolkit";
 import Firebase from '../../../configs/firebase'
+import axios from 'axios';
 
 const defaultState: {
     products: Product[];
@@ -23,6 +24,8 @@ const defaultState: {
     isFetchingNext: boolean;
     errors?: string;
     productTemplate?: Template;
+    scrollId?: string;
+    searchHit?: number;
 } = {
     products: [],
     productCategories: [],
@@ -33,6 +36,8 @@ const defaultState: {
     isFetchingNext: false,
     errors: undefined,
     productTemplate: undefined,
+    scrollId: undefined,
+    searchHit: 0
 }
 
 
@@ -73,8 +78,13 @@ const productsSlice = createSlice({
             state.productTemplate = action.payload;
             state.errors = undefined;
             state.isTemplateLoading = false;
+        },
+        setScrollId: (state, action) => {
+            state.scrollId = action.payload
+        },
+        setSearchHits: (state, action) => {
+            state.searchHit = action.payload
         }
-
     },
     extraReducers: (builder) => {
     }
@@ -126,6 +136,34 @@ export const getAllProductsBasedOnCategories = (categoryId: string):ThunkAction<
     }
 }
 
+export const getSearchProduct = (productName: string):ThunkAction<void, RootState, unknown, any> => {
+    return async (dispatch) => {
+        try {
+            const requestBody = {
+                query: productName,
+            };
+            dispatch(setAllProductsLoaded(false));
+            dispatch(setProductLoading());
+            const data = await axios.post('https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/search', requestBody);
+            dispatch(setProducts(data.data.result));
+            dispatch(setSearchHits(data.data.hits));
+            console.log("data.data");
+            console.log(data.data);
+
+            if(data.data.result.length < 25) {
+                console.log('All products loaded');
+                dispatch(setScrollId(undefined));
+                dispatch(setAllProductsLoaded(true));
+            } else {
+                dispatch(setScrollId(data.data.scrollId));
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(setError((error as any).message));
+        }
+    }
+}
+
 export const getAllProductNext = (): ThunkAction<void, RootState, unknown, any> => {
     return async (dispatch, getState) => {
         const {lastProductQuery, products} = getState().products;
@@ -141,6 +179,33 @@ export const getAllProductNext = (): ThunkAction<void, RootState, unknown, any> 
                 dispatch(setAllProductsLoaded(true));
             } else {
                 dispatch(setLastProductQuery(data.lastProductQuery));
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(setError((error as any).message));
+        }
+    }
+}
+
+export const getNextSearchProduct = (): ThunkAction<void, RootState, unknown, any> => {
+    return async (dispatch, getState) => {
+        const {scrollId, products} = getState().products;
+        try {
+            const requestBody = {
+                scrollId: scrollId,
+            };
+            dispatch(setIsFetchingNext(true));
+            dispatch(setAllProductsLoaded(false));
+            const data = await axios.post('https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/scroll', requestBody);
+            dispatch(setIsFetchingNext(false));
+            dispatch(setProducts([...products, ...data.data.result]));
+
+            if(data.data.result.length < 25) {
+                console.log('All products loaded');
+                dispatch(setScrollId(undefined));
+                dispatch(setAllProductsLoaded(true));
+            } else {
+                dispatch(setScrollId(data.data.scrollId));
             }
         } catch (error) {
             console.log(error);
@@ -190,6 +255,9 @@ export const {
     setAllProductsLoaded, 
     setIsFetchingNext, 
     setTemplateLoading, 
-    setProductTemplate} = productsSlice.actions;
+    setProductTemplate,
+    setScrollId,
+    setSearchHits
+} = productsSlice.actions;
 
 export default productsSlice.reducer;

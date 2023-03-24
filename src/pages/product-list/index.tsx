@@ -133,7 +133,7 @@ const ProductListPage = () => {
                                    variant="contained"
                                    color="garapinColor"
                                    onClick={(event) => {
-                                       router.push(`/product-list${searchRef?.current?.value !== undefined ? `?search=${searchRef?.current?.value}` : ''}`);
+                                       router.push(`/search${searchRef?.current?.value !== undefined ? `?q=${searchRef?.current?.value}` : ''}`);
                                    }}
                                >Cari</Button></InputAdornment>,
                            }}

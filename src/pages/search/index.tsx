@@ -8,10 +8,10 @@ import Button from "@mui/material/Button";
 import {useRouter} from 'next/router';
 import {i18n, useTranslation} from "next-i18next";
 import {serverSideTranslations} from "next-i18next/serverSideTranslations";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
-import {getAllProductNext, getAllProducts, getAllProductsBasedOnCategories} from "@/store/modules/products";
-import { rupiah } from "@/tools/rupiah";
-import { useRef } from "react";
+import {useAppDispatch, useAppSelector} from "@/hooks/useAppRedux";
+import {getAllProductNext, getAllProducts, getNextSearchProduct, getSearchProduct} from "@/store/modules/products";
+import {rupiah} from "@/tools/rupiah";
+import {useRef} from "react";
 
 const productData = [
     {
@@ -100,38 +100,34 @@ const productData = [
     }
 ];
 
-const ProductCategoryPage = () => {
+const ProductListPage = () => {
 
     const router = useRouter();
 
     const {t} = useTranslation('products');
 
-    const {products, isProductLoading, allProductsLoaded, isFetchingNext} = useAppSelector(state => state.products);
+    const {products, isProductLoading, allProductsLoaded, isFetchingNext, searchHit} = useAppSelector(state => state.products);
     const dispatch = useAppDispatch()
-    const {slug} = router.query;
-    const {categories} = useAppSelector(state => state.appDefaults);
+    const {q} = router.query;
     const searchRef = useRef<HTMLFormElement>(null);
-    const category = categories.find((e) => {
-        return e.slug == slug
-    })
 
     React.useEffect(() => {
-        dispatch(getAllProductsBasedOnCategories(category!.id))
-      }, [])
+        dispatch(getSearchProduct(q as string));
+    }, [q])
 
-      // React.useEffect(() => {
-      //   if (searchRef.current !== null){
-      //       searchRef.current.value = slug;
-      //   }
-      // }, [slug])
-      
+    React.useEffect(() => {
+        if (searchRef.current !== null) {
+            searchRef.current.value = q;
+        }
+    }, [q])
+
 
     return (
         <Box>
             <GarapinAppBar searchVariant={true}/>
             <Box className="max-w-xl px-10 pt-20 block md:hidden">
                 <TextField placeholder="Saya mau buat..." fullWidth
-                    inputRef={searchRef}
+                           inputRef={searchRef}
                            InputProps={{
                                endAdornment: <InputAdornment position="end"><Button
                                    variant="contained"
@@ -145,19 +141,28 @@ const ProductCategoryPage = () => {
             </Box>
             <Container>
                 <Box className="flex flex-col py-4 md:py-20">
-                    { slug !== undefined && <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
-                        {t('searchResult', {result: products.length, searchTerm: slug??''})}
-                    </Typography> }
+                    {q !== undefined && <Typography className="px-10 md:px-0" variant="h6" color="text.primary">
+                        {t('searchResult', {
+                            result: searchHit,
+                            searchTerm: q ?? ''
+                        })}
+                    </Typography>}
                     <Grid className="px-10 md:px-0 pt-4 md:pt-8" container spacing={4} alignItems='stretch'>
-                        {isProductLoading? <CircularProgress /> : products.map((product) => (
-                            <Grid key={product.id} item xs={6} sm={6} md={3} lg={2} className="content-center">
-                                <CardVertical key={product.id} imageUrl={product.img[0]} productName={product.productName}
-                                              price={`${rupiah(product.minPrice)} - ${rupiah(product.maxPrice)}`} location="Jakarta" slug={product.slug?.toString() ?? product.sku}/>
-                            </Grid>
-                        ))}
-                        {!allProductsLoaded &&<Grid item xs={12} alignItems="center" display={'flex'} justifyContent={'center'}>
-                            <Button variant="contained" disabled={isFetchingNext} onClick={() => dispatch(getAllProductNext())}>Load more... {isFetchingNext && <CircularProgress size={10}/>}</Button>
-                            </Grid> }
+                        {isProductLoading ?
+                            <CircularProgress/> : products.map((product) => (
+                                <Grid key={product.id} item xs={6} sm={6} md={3} lg={2} className="content-center">
+                                    <CardVertical key={product.id} imageUrl={product.img[0]}
+                                                  productName={product.productName}
+                                                  price={`${rupiah(product.minPrice)} - ${rupiah(product.maxPrice)}`}
+                                                  location="Jakarta" slug={product.slug?.toString() ?? product.sku}/>
+                                </Grid>
+                            ))}
+                        {!allProductsLoaded &&
+                            <Grid item xs={12} alignItems="center" display={'flex'} justifyContent={'center'}>
+                                <Button variant="contained" disabled={isFetchingNext}
+                                        onClick={() => dispatch(getNextSearchProduct())}>Load more... {isFetchingNext &&
+                                    <CircularProgress size={10}/>}</Button>
+                            </Grid>}
                     </Grid>
                 </Box>
             </Container>
@@ -168,7 +173,7 @@ const ProductCategoryPage = () => {
 LoginPage.authGuard = false;
 LoginPage.guestGuard = true;
 
-export default ProductCategoryPage;
+export default ProductListPage;
 
 export const getServerSideProps = async ({locale}: { locale: string }) => {
     if (process.env.NODE_ENV === "development") {

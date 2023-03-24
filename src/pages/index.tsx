@@ -115,7 +115,7 @@ export default function LandingPage() {
     const fieldRef = React.useRef<HTMLFormElement>(null);
     const {categories} = useAppSelector(state => state.appDefaults);
     const handleSubmit = (event:any) => {
-        router.push(`/product-list${fieldRef?.current?.value !== undefined ? `?search=${fieldRef?.current?.value}` : ''}`);
+        router.push(`search${fieldRef?.current?.value !== undefined ? `?q=${fieldRef?.current?.value}` : ''}`);
     }
 
     return (

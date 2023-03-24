@@ -111,7 +111,7 @@ const GarapinAppBar = ({
     }, [search]);
 
     const handleSubmit = (event) => {
-        router.push(`/product-list${fieldRef?.current?.value !== undefined ? `?search=${fieldRef?.current?.value}` : ''}`);
+        router.push(`/search${fieldRef?.current?.value !== undefined ? `?q=${fieldRef?.current?.value}` : ''}`);
     }
 
     console.log("resolved lang:", i18n.resolvedLanguage);
