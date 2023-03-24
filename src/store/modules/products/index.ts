@@ -1,5 +1,12 @@
 import { getFirestore } from "@/configs/firebase";
-import { getAllProductsFromDB, getAllProductsNextFromDB, getProductTemplateFromDB, getSingleProductFromDB, pageSize } from "@/db";
+import {
+    getAllProductsFromDB,
+    getAllProductsFromDBBasedOnCategories,
+    getAllProductsNextFromDB,
+    getProductTemplateFromDB,
+    getSingleProductFromDB,
+    pageSize
+} from "@/db";
 import { RootState } from "@/store";
 import { Product, Template } from "@/types/product";
 import { createSlice, ThunkAction } from "@reduxjs/toolkit";
@@ -7,6 +14,7 @@ import Firebase from '../../../configs/firebase'
 
 const defaultState: {
     products: Product[];
+    productCategories: [];
     singleProduct?: Product;
     allProductsLoaded: boolean,
     lastProductQuery?: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
@@ -17,6 +25,7 @@ const defaultState: {
     productTemplate?: Template;
 } = {
     products: [],
+    productCategories: [],
     allProductsLoaded: false,
     singleProduct: undefined,
     isProductLoading: false,
@@ -78,6 +87,29 @@ export const getAllProducts = ():ThunkAction<void, RootState, unknown, any> => {
             dispatch(setAllProductsLoaded(false));
             dispatch(setProductLoading());
             const data = await getAllProductsFromDB();
+            dispatch(setProducts(data.data));
+
+            if(data.data.length < pageSize) {
+                console.log('All products loaded');
+                dispatch(setLastProductQuery(undefined));
+                dispatch(setAllProductsLoaded(true));
+            } else {
+                dispatch(setLastProductQuery(data.lastProductQuery));
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(setError((error as any).message));
+        }
+    }
+}
+
+export const getAllProductsBasedOnCategories = (categoryId: string):ThunkAction<void, RootState, unknown, any> => {
+    return async (dispatch) => {
+        try {
+            const firestore = getFirestore();
+            dispatch(setAllProductsLoaded(false));
+            dispatch(setProductLoading());
+            const data = await getAllProductsFromDBBasedOnCategories(categoryId);
             dispatch(setProducts(data.data));
 
             if(data.data.length < pageSize) {

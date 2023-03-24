@@ -47,6 +47,28 @@ export const getAllProductsFromDB = async (): Promise<ProductListDB> => {
     return {data, lastProductQuery: response.docs[response.docs.length - 1]};
 }
 
+export const getAllProductsFromDBBasedOnCategories = async (categoryId: string): Promise<ProductListDB> => {
+    console.log("CATEGORY ID")
+    console.log(categoryId)
+    const response = await db.collection('products')
+        .where('active', '==', true)
+        .where('deleted', '==', false)
+        .where('channel', '==', 'printing')
+        .where('category', '==', categoryId)
+        // .where('__name__', '>=', '')
+        // .orderBy('__name__')
+        .limit(pageSize).get();
+    const data: Product[] = response.docs.map(doc => {
+        return {
+            ...doc.data() as Product,
+            id: doc.id,
+        }
+    });
+    console.log("data")
+    console.log(data)
+    return {data, lastProductQuery: response.docs[response.docs.length - 1]};
+}
+
 export const getAllProductsNextFromDB = async (lastProductQuery: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData> | undefined): Promise<ProductListDB> => {
     const response = await db.collection('products')
         .where('active', '==', true)

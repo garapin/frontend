@@ -18,7 +18,7 @@ export default function CardCategories({
 
     return (
         <Card sx={{maxWidth: 190, height: '100%'}} onClick={() => {
-            router.push(`/product-category${slug !== undefined ? `?search=${slug}` : ''}`);
+            router.push(`/product-category/${slug}`);
         }}>
             <CardActionArea>
                 <Box sx={{height: '100%'}}>
