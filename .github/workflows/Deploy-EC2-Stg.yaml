@@ -1,0 +1,27 @@
+name: Deploy-Staging-EC2-stg
+
+# Trigger deployment only on push to master branch
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build:
+    name: Deploy to EC2 on staging branch push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.HOST_SSH }}
+          script: |
+            cd ${{ secrets.HOST_DIR }}
+            git pull
+            git switch origin/staging
+            yarn install
+            yarn build
+            pm2 restart ${{ secrets.HOST_PKG_NAME }}
