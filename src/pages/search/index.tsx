@@ -106,7 +106,7 @@ const ProductListPage = () => {
 
     const {t} = useTranslation('products');
 
-    const {products, isProductLoading, allProductsLoaded, isFetchingNext, searchHit} = useAppSelector(state => state.products);
+    const {products, isProductLoading, allProductsLoaded, isFetchingNext, searchHit} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch()
     const {q} = router.query;
     const searchRef = useRef<HTMLFormElement>(null);
