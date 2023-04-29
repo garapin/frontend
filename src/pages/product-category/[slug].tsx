@@ -106,17 +106,26 @@ const ProductCategoryPage = () => {
 
     const {t} = useTranslation('products');
 
-    const {products, isProductLoading, allProductsLoaded, isFetchingNext} = useAppSelector(state => state.products);
+    const {products, isProductLoading, allProductsLoaded, isFetchingNext} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch()
     const {slug} = router.query;
-    const {categories} = useAppSelector(state => state.appDefaults);
+    // const {categories} = useAppSelector(state => state.appDefaults);
     const searchRef = useRef<HTMLFormElement>(null);
-    const category = categories.find((e) => {
-        return e.slug == slug
-    })
+    const category = () => {
+        switch (slug) {
+            case 'ready-to-buy':
+                return '01'
+            case 'digital-packaging':
+                return '02'
+            default:
+                return '03'
+        }
+    }
+
+    console.log(slug, 'test');
 
     React.useEffect(() => {
-        dispatch(getAllProductsBasedOnCategories(category!.id))
+        dispatch(getAllProductsBasedOnCategories(category()))
       }, [])
 
       // React.useEffect(() => {

@@ -21,7 +21,7 @@ export default function GarapinProductCustomizer({handleChange, template, value,
   return (
     <div>
         {options?.showTitle !== false && <Typography variant='h5' sx={{pb:1}}>{options?.title !== undefined ? options.title : 'Customize your Product'}</Typography> }
-        {template.variants.map((variant) => 
+        {template?.variants?.map((variant) => 
             <div key={variant.name}>
                 <Grid container sx={{pt:4}}>
                     <Grid item xs={options?.showPriceCalculation !== false? 7 : 12} md={options?.showPriceCalculation !== false?6:12}>

@@ -11,14 +11,12 @@ import GuestGuard from '@/components/auth/GuestGuard';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { NextPage } from 'next';
 import Spinner from '@/components/spinner';
-import { Provider, useDispatch } from 'react-redux';
-import { store } from '@/store';
+import { wrapper } from '@/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import GarapinAppBar from '@/components/GarapinAppBar';
 import GarapinFooter from '@/components/GarapinFooter';
 import FirestoreLoader from '@/components/FirestoreLoader';
-
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -101,7 +99,6 @@ const GarapinApp = (props: ExtendedAppProps) => {
     const showAppBar = Component.showAppBar ?? true    
 
     return <>
-      <Provider store={store}>
           <Head>
               <title>Garapin</title>
               <meta name='viewport' content='initial-scale=1, width=device-width' />
@@ -111,7 +108,7 @@ const GarapinApp = (props: ExtendedAppProps) => {
                   <ThemeProvider theme={garapinTheme}>
                       <Suspense fallback={<div>Loading...</div>}>
                           {showAppBar && <GarapinAppBar /> }
-                              <FirestoreLoader />
+                              {/* <FirestoreLoader /> */}
                             <Component {...pageProps}/>
                             {showFooter && <GarapinFooter /> }
                           <ToastContainer />
@@ -119,8 +116,8 @@ const GarapinApp = (props: ExtendedAppProps) => {
                   </ThemeProvider>
               </Guard>
           </FirebaseAuthProvider>
-      </Provider>
     </>
 }
 
-export default appWithTranslation(GarapinApp);
+
+export default wrapper.withRedux(appWithTranslation(GarapinApp));

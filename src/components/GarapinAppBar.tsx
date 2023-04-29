@@ -1,19 +1,20 @@
 import * as React from 'react';
-import {styled, alpha} from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import SearchIcon from '@mui/icons-material/Search';
-import {Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography} from "@mui/material";
-import {FormEventHandler, useCallback, useEffect, useRef, useState} from "react";
-import {useTranslation, withTranslation} from 'next-i18next';
-import {useRouter} from 'next/router';
+import { Avatar, Container, FormControl, IconButton, Menu, MenuItem, NativeSelect, Typography } from "@mui/material";
+import { FormEventHandler, useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation, withTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import useFirebaseAuth from '@/hooks/useFirebaseAuth';
 import Link from 'next/link';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
-const Search = styled('div')(({theme}) => ({
+const Search = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.common.white,
@@ -28,7 +29,7 @@ const Search = styled('div')(({theme}) => ({
     },
 }));
 
-const SearchIconWrapper = styled('div')(({theme}) => ({
+const SearchIconWrapper = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
@@ -38,7 +39,7 @@ const SearchIconWrapper = styled('div')(({theme}) => ({
     justifyContent: 'center',
 }));
 
-const StyledInputBase = styled(InputBase)(({theme}) => ({
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
     color: '#713F97',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
@@ -55,7 +56,7 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }));
 
-const LanguageSelector = styled('div')(({theme}) => ({
+const LanguageSelector = styled('div')(({ theme }) => ({
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.common.white,
@@ -65,17 +66,17 @@ const LanguageSelector = styled('div')(({theme}) => ({
 
 
 const GarapinAppBar = ({
-                                          searchVariant = false,
-                                          onSearchSubmit
-                                      }: { searchVariant?: boolean, onSearchSubmit?: FormEventHandler<HTMLDivElement> }) => {
+    searchVariant = false,
+    onSearchSubmit
+}: { searchVariant?: boolean, onSearchSubmit?: FormEventHandler<HTMLDivElement> }) => {
 
-    const {i18n} = useTranslation();
-    const {language: currentLanguage} = i18n;
+    const { i18n } = useTranslation();
+    const { language: currentLanguage } = i18n;
     const router = useRouter();
     const locales = router.locales ?? [currentLanguage];
     const auth = useFirebaseAuth();
     const [anchorEl, setAnchorEl] = useState(null);
-    const {search} = router.query;
+    const { search } = router.query;
     const fieldRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -99,7 +100,7 @@ const GarapinAppBar = ({
         (locale: string) => {
             const path = router.asPath;
 
-            return router.push(path, path, {locale});
+            return router.push(path, path, { locale });
         },
         [router]
     );
@@ -115,10 +116,10 @@ const GarapinAppBar = ({
     }
 
     console.log("resolved lang:", i18n.resolvedLanguage);
-    const {t} = useTranslation('common');
+    const { t } = useTranslation('common');
     return (
         <Container maxWidth="xl">
-            <AppBar position="fixed" style={{zIndex: 1300}}>
+            <AppBar position="fixed" style={{ zIndex: 1300 }}>
                 <Toolbar>
                     <Box className={`flex flex-row justify-between w-full`}>
                         <Box className="flex flex-row">
@@ -129,21 +130,21 @@ const GarapinAppBar = ({
                                 flexShrink: 1
                             }}>
                                 <Link href="/" className="hidden md:block">
-                                    <img src="/garapin_logo_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
+                                    <img src="/garapin_logo_white.svg" alt="Garapin Logo" style={{ maxHeight: '40px' }} />
                                 </Link>
                                 <Link href="/" className="block md:hidden">
-                                    <img src="/garapin_logo_g_white.svg" alt="Garapin Logo" style={{maxHeight: '40px'}}/>
+                                    <img src="/garapin_logo_g_white.svg" alt="Garapin Logo" style={{ maxHeight: '40px' }} />
                                 </Link>
                             </Box>
                             {searchVariant && <Search className="flex flex-col justify-center  hidden md:block">
                                 <SearchIconWrapper>
-                                    <SearchIcon style={{color: '#713F97'}}/>
+                                    <SearchIcon style={{ color: '#713F97' }} />
                                 </SearchIconWrapper>
                                 <StyledInputBase
                                     className="items-center h-full"
                                     inputRef={fieldRef}
-                                    placeholder={t('appBar.searchBarText')??'Cari...'}
-                                    inputProps={{'aria-label': 'search'}}
+                                    placeholder={t('appBar.searchBarText') ?? 'Cari...'}
+                                    inputProps={{ 'aria-label': 'search' }}
                                     onKeyUp={(e) => {
                                         if (e.key === 'Enter') {
                                             handleSubmit(e);
@@ -165,7 +166,7 @@ const GarapinAppBar = ({
                                 flexShrink: 1
                             }}>
                                 <LanguageSelector>
-                                    <Box sx={{minWidth: 120}}>
+                                    <Box sx={{ minWidth: 120 }}>
                                         <FormControl fullWidth>
                                             <NativeSelect
                                                 disableUnderline={true}
@@ -177,7 +178,7 @@ const GarapinAppBar = ({
                                                 onChange={(e) => switchToLocale(e.target.value as string)}
                                             >
                                                 <option value={"id"}
-                                                        disabled={i18n.resolvedLanguage === 'id'}>Indonesia
+                                                    disabled={i18n.resolvedLanguage === 'id'}>Indonesia
                                                 </option>
                                                 <option value={"en"} disabled={i18n.resolvedLanguage === 'en'}>English
                                                 </option>
@@ -187,22 +188,27 @@ const GarapinAppBar = ({
                                 </LanguageSelector>
                             </Box>
                             {(!auth.loading && auth.authUser == null && router.pathname !== '/login') &&
-                                <Link href="/login" style={{paddingTop:'4px', paddingBottom:'4px'}}><Button variant="contained"
-                                                            sx={{
-                                                                backgroundColor: '#FFFFFF',
-                                                                color: '#713F97',
-                                                            }}
+                                <Link href="/login" style={{ paddingTop: '4px', paddingBottom: '4px' }}><Button variant="contained"
+                                    sx={{
+                                        backgroundColor: '#FFFFFF',
+                                        color: '#713F97',
+                                    }}
                                 >{t('appBar.loginButton')}</Button> </Link>}
+                            {(!auth.loading && auth.authUser !== null) && <>
+                                <Box className="self-center cursor-pointer" onClick={() => router.push('/cart')} >
+                                    <ShoppingCartOutlinedIcon />
+                                </Box>
+                            </>}
                             {(!auth.loading && auth.authUser !== null) && <>
                                 <Box>
                                     <IconButton onClick={handleClick}>
-                                        <Avatar sx={{ml: 2}}/>
+                                        <Avatar sx={{ ml: 2 }} />
                                         <Typography variant='body1'
-                                                    sx={{color: '#ffffff', pl: 2}}>{auth.authUser.displayName??auth.authUser.email}</Typography>
+                                            sx={{ color: '#ffffff', pl: 2 }}>{auth.authUser.displayName ?? auth.authUser.email}</Typography>
                                     </IconButton>
                                 </Box>
                                 <Menu
-                                    sx={{mt: '45px'}}
+                                    sx={{ mt: '45px' }}
                                     id="menu-appbar"
                                     anchorEl={anchorEl}
                                     anchorOrigin={{

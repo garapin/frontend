@@ -1,6 +1,6 @@
 import LoginPage from "@/pages/login";
 import * as React from 'react';
-import {useState} from 'react';
+import { useState } from 'react';
 import clsx from 'clsx';
 import ModalUnstyled from '@mui/base/ModalUnstyled';
 import {
@@ -18,24 +18,24 @@ import {
     Typography
 } from "@mui/material";
 import GarapinAppBar from "@/components/GarapinAppBar";
-import {useRouter} from "next/router";
-import {useAppDispatch, useAppSelector} from "@/hooks/useAppRedux";
+import { useRouter } from "next/router";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import FallbackSpinner from "@/components/spinner";
-import {getProductTemplate, getSingleProduct} from "@/store/modules/products";
-import {i18n} from "next-i18next";
-import {serverSideTranslations} from "next-i18next/serverSideTranslations";
+import { getProductTemplate, getSingleProduct } from "@/store/modules/products";
+import { i18n } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import InputBase from "@mui/material/InputBase";
 import CardVertical from "@/components/CardVertical";
 import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
-import {ProductType, StoragePath, Template, TemplateInput} from "@/types/product";
-import {useFormik} from "formik";
-import {getStorage} from "@/configs/firebase";
+import { ProductType, StoragePath, Template, TemplateInput } from "@/types/product";
+import { useFormik } from "formik";
+import { getStorage } from "@/configs/firebase";
 import AddressPicker from "@/components/AddressPicker";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
-import { storeRequestInquiryToDB } from "@/db";
+import { storeRequestInquiryToDB, addToCart, deleteItemCart } from "@/db";
 import * as yup from "yup";
 import CardHorizontal from "@/components/CardHorizontal";
 
@@ -44,10 +44,10 @@ const BackdropUnstyled = React.forwardRef<
     HTMLDivElement,
     { open?: boolean; className: string }
 >((props, ref) => {
-    const {open, className, ...other} = props;
+    const { open, className, ...other } = props;
     return (
         <div
-            className={clsx({'MuiBackdrop-open': open}, className)}
+            className={clsx({ 'MuiBackdrop-open': open }, className)}
             ref={ref}
             {...other}
         />
@@ -79,7 +79,7 @@ const Backdrop = styled(BackdropUnstyled)`
   background-color: rgba(0, 0, 0, 0.5);
   -webkit-tap-highlight-color: transparent;
 `;
-styled(InputBase)(({theme}) => ({
+styled(InputBase)(({ theme }) => ({
     color: '#713F97',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 3),
@@ -94,23 +94,24 @@ styled(InputBase)(({theme}) => ({
 interface addressMap {
     postalCode?: string,
     completeAddress: string,
-    latLong?: {lat: string, long: string}
+    latLong?: { lat: string, long: string }
 }
 
 const ProductDetailPage = () => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const auth = useFirebaseAuth();
-    const {slug} = router.query;
-    const {isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors} = useAppSelector(state => state.products);
+    const { slug } = router.query;
+    const { isProductLoading, singleProduct, isTemplateLoading, productTemplate, errors } = useAppSelector(state => state.product);
 
     const [open, setOpen] = React.useState(false);
+    const [itemQty, setItemQty] = React.useState(0)
 
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});
-    const [addressMap, setAddressMap] = useState<addressMap>({postalCode: '', completeAddress: '', latLong: {lat: '', long: ''}});
+    const [addressMap, setAddressMap] = useState<addressMap>({ postalCode: '', completeAddress: '', latLong: { lat: '', long: '' } });
 
     const formik = useFormik({
         initialValues: {
@@ -152,7 +153,7 @@ const ProductDetailPage = () => {
     React.useEffect(() => {
         console.log('auth state changed. here\'s the data');
         console.log(auth.authUser);
-        if(auth.authUser !== null) {
+        if (auth.authUser !== null) {
             formik.setFieldValue('contactName', auth.authUser?.displayName);
             formik.setFieldValue('email', auth.authUser?.email);
         }
@@ -169,7 +170,7 @@ const ProductDetailPage = () => {
         formik.resetForm();
         setVariantSelectorValue({});
         setSelectedFile(null);
-        setAddressMap({postalCode: '', completeAddress: '', latLong: {lat: '', long: ''}});
+        setAddressMap({ postalCode: '', completeAddress: '', latLong: { lat: '', long: '' } });
     }
 
 
@@ -206,7 +207,7 @@ const ProductDetailPage = () => {
             const fileRef =
                 (productType == ProductType.READY_TO_BUY.toString()) ? storageRef.child(`${StoragePath.PATH_RTB}${selectedFile.name}`)
                     : (productType == ProductType.DIGITAL_PACKAGING.toString()) ? storageRef.child(`${StoragePath.PATH_DIGITAL}${selectedFile.name}`)
-                        : storageRef.child(`${StoragePath.PATH_CUSTOM}${Date.now()}-${auth.authUser?.uid??'anon'}-${selectedFile.name}`)
+                        : storageRef.child(`${StoragePath.PATH_CUSTOM}${Date.now()}-${auth.authUser?.uid ?? 'anon'}-${selectedFile.name}`)
             const uploadedFile = await fileRef.put(selectedFile);
             console.log(`File ${selectedFile.name} uploaded successfully`)
             return {
@@ -216,27 +217,74 @@ const ProductDetailPage = () => {
         }
     }
 
+    const addButton = (val: any) => {
+        setItemQty(val + 1)
+    }
+
+    const descButton = (val: any) => {
+        setItemQty(val - 1)
+    }
+
+    const handleAddToCart = async () => {
+        const data = {
+            channel: 'printing',
+            createAt: new Date(),
+            delete: false,
+            product: singleProduct,
+            productCategoryId: singleProduct?.category,
+            productId: singleProduct?.id,
+            qty: itemQty,
+            status: 'cart',
+            unitPrice: singleProduct?.maxPrice,
+            updatedAt: null,
+            userId: auth?.authUser?.uid,
+        }
+
+        await addToCart(data);
+        toast.success("Berhasil Menambahkan Ke Cart");
+    }
+
+    const renderButton = () => {
+        if (singleProduct?.category === '01') {
+            return (
+                <Box className="flex items-center my-10">
+                    <button disabled={itemQty === 0} onClick={() => descButton(itemQty)} className='w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer'>-</button>
+                    <Typography fontSize={17} marginLeft="15px" marginRight="15px" fontWeight={600} color="text.primary">{itemQty}</Typography>
+                    <button disabled={itemQty === singleProduct?.stock} onClick={() => addButton(itemQty)} className='w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer'>+</button>
+                    <Button className="w-fit ml-8" variant="contained"
+                        sx={{ backgroundColor: '#713F97', color: 'white' }} onClick={() => handleAddToCart()}>Add TO Cart</Button>
+                </Box>
+            )
+        } else {
+            return (
+                <Button className="my-10 w-fit" variant="contained"
+                    sx={{ backgroundColor: '#713F97', color: 'white' }} onClick={handleOpen}>Minta
+                    Penawaran</Button>
+            )
+        }
+    }
+
     if (isProductLoading) {
-        return <FallbackSpinner/>
+        return <FallbackSpinner />
     } else {
         return (
             <Box className="items-center">
-                <GarapinAppBar searchVariant={true}/>
+                <GarapinAppBar searchVariant={true} />
                 <Grid container className="pt-20 md:px-72 justify-between">
                     <Grid item lg={4} alignItems="center" justifyContent="center" className="w-full px-5">
-                        <ImageCarousel dataSource={singleProduct?.img.map((image) => {
+                        <ImageCarousel dataSource={singleProduct?.img?.map((image) => {
                             return {
                                 srcUrl: image
                             }
-                        }) ?? []}/>
+                        }) ?? []} />
                     </Grid>
                     <Grid item lg={8} className="flex flex-col px-5 w-full">
                         <Typography className="pt-10" variant="h4">{singleProduct?.productName}</Typography>
                         <Typography className="pt-2" variant="h5"
-                                    color="#713F97">Rp {singleProduct?.minPrice?.toLocaleString('id-ID')} -
+                            color="#713F97">Rp {singleProduct?.minPrice?.toLocaleString('id-ID')} -
                             Rp {singleProduct?.maxPrice?.toLocaleString('id-ID')} / pcs</Typography>
-                        <Box className="flex flex-row p-4 mt-6" sx={{borderRadius: '10px', backgroundColor: '#FADEFF'}}>
-                            <img src="/warning_icon.svg" alt="icon warning"/>
+                        <Box className="flex flex-row p-4 mt-6" sx={{ borderRadius: '10px', backgroundColor: '#FADEFF' }}>
+                            <img src="/warning_icon.svg" alt="icon warning" />
                             <Typography className="pl-4">Harga yang tertera merupakan estimasi dan dapat berubah sesuai
                                 kebutuhan atau permintaan yang diajukan</Typography>
                         </Box>
@@ -246,187 +294,188 @@ const ProductDetailPage = () => {
                                 <Typography
                                     variant="body1"><b>{singleProduct?.moq?.toLocaleString('id-ID')} pcs</b></Typography>
                             </Box>
-                            <Divider className="pt-2"/>
+                            <Divider className="pt-2" />
                             <Box className="flex flex-row items-center justify-between pt-2">
                                 <Box className="flex flex-row items-center">
                                     <Typography className="mr-2" variant="body2">Lama Pengerjaan</Typography>
-                                    <img className="w-3 h-3" src="/warning_icon.svg" alt="icon warning"/>
+                                    <img className="w-3 h-3" src="/warning_icon.svg" alt="icon warning" />
                                 </Box>
                                 <Typography variant="body1"><b>{singleProduct?.leadTime} hari</b></Typography>
                             </Box>
-                            <Divider className="pt-2"/>
+                            <Divider className="pt-2" />
                             {/* <Box className="flex flex-row items-center justify-between pt-2">
                             <Typography variant="body2">Dikirim dari</Typography>
                             <Typography variant="body1"><b>{}</b></Typography>
                         </Box> */}
                             {/*<Divider className="pt-2"/>*/}
-                            <Button className="my-10 w-fit" variant="contained"
-                                    sx={{backgroundColor: '#713F97', color: 'white'}} onClick={handleOpen}>Minta
-                                Penawaran</Button>
+
+                            {renderButton()}
+
                             <form onSubmit={formik.handleSubmit}>
                                 <Dialog
                                     aria-labelledby="scroll-dialog-title"
                                     aria-describedby="scroll-dialog-description"
                                     open={open}
-                                    slots={{backdrop: Backdrop}}
+                                    slots={{ backdrop: Backdrop }}
                                     scroll={scroll}
                                     maxWidth={"lg"}
                                 >
-                                    <DialogTitle>{auth.authUser !== null ? 'Minta Penawaran': 'Login untuk minta penawaran'}</DialogTitle>
+                                    <DialogTitle>{auth.authUser !== null ? 'Minta Penawaran' : 'Login untuk minta penawaran'}</DialogTitle>
                                     <DialogContent dividers={scroll === 'paper'}>
                                         {auth.authUser !== null ?
-                                        <>
-                                        <Typography variant="body2">Anda mengajukan penawaran untuk produk
-                                            berikut:</Typography>
-                                        <br/>
-                                        <CardVertical
-                                            imageUrl={singleProduct?.img[0]!}
-                                            productName={singleProduct?.productName??''} price={`Rp ${singleProduct?.minPrice?.toLocaleString('id-ID')} -
+                                            <>
+                                                <Typography variant="body2">Anda mengajukan penawaran untuk produk
+                                                    berikut:</Typography>
+                                                <br />
+                                                <CardVertical
+                                                    imageUrl={singleProduct?.img?.[0]!}
+                                                    productName={singleProduct?.productName ?? ''} price={`Rp ${singleProduct?.minPrice?.toLocaleString('id-ID')} -
                                             Rp ${singleProduct?.maxPrice?.toLocaleString('id-ID')}`} location='Jakarta'
-                                            slug={singleProduct?.slug??''} clickable={false}/>
-                                        <br/>
-                                        <Divider/>
-                                        <br/>
-                                        { errors !== undefined && <Alert severity="error">{errors}</Alert> }
-                                        { (productTemplate == undefined || isTemplateLoading) && <CircularProgress /> }
-                                        { (productTemplate !== undefined && !isTemplateLoading) && <GarapinProductCustomizer template={productTemplate} value={variantSelectorValue}
-                                                                  handleChange={(variant, selected) => {
-                                                                      if (selected !== undefined) {
-                                                                          setVariantSelectorValue({
-                                                                              ...variantSelectorValue,
-                                                                              [variant.id]: {
-                                                                                  variant,
-                                                                                  selectedOption: selected
-                                                                              }
-                                                                          })
-                                                                      }
-                                                                  }} options={{alignVariantOptions: 'left'}}/> }
-                                        <br/>
-                                        <Divider/>
-                                        <br/>
-                                        <Typography variant="body1"><b>Detail Produk</b></Typography>
-                                        <br/>
-                                        <Typography variant="body2">Masukkan informasi seputar kebutuhan anda atau
-                                            pertanyaan terkait produk ini</Typography>
-                                        <br/>
-                                        <TextField fullWidth label='Order description'
+                                                    slug={singleProduct?.slug ?? ''} clickable={false} />
+                                                <br />
+                                                <Divider />
+                                                <br />
+                                                {errors !== undefined && <Alert severity="error">{errors}</Alert>}
+                                                {(productTemplate == undefined || isTemplateLoading) && <CircularProgress />}
+                                                {(productTemplate !== undefined && !isTemplateLoading) && <GarapinProductCustomizer template={productTemplate} value={variantSelectorValue}
+                                                    handleChange={(variant, selected) => {
+                                                        if (selected !== undefined) {
+                                                            setVariantSelectorValue({
+                                                                ...variantSelectorValue,
+                                                                [variant.id]: {
+                                                                    variant,
+                                                                    selectedOption: selected
+                                                                }
+                                                            })
+                                                        }
+                                                    }} options={{ alignVariantOptions: 'left' }} />}
+                                                <br />
+                                                <Divider />
+                                                <br />
+                                                <Typography variant="body1"><b>Detail Produk</b></Typography>
+                                                <br />
+                                                <Typography variant="body2">Masukkan informasi seputar kebutuhan anda atau
+                                                    pertanyaan terkait produk ini</Typography>
+                                                <br />
+                                                <TextField fullWidth label='Order description'
                                                     required
-                                                   error={formik.touched.orderDescription && Boolean(formik.errors.orderDescription)}
-                                                   helperText={Boolean(formik.touched.orderDescription) && formik.errors.orderDescription}
-                                                   value={formik.values.orderDescription} name={'orderDescription'}
-                                                   multiline
-                                                   rows={6}
-                                                   onBlur={formik.handleBlur}
-                                                   onChange={formik.handleChange}/>
-                                        <br/><br/>
-                                        <TextField fullWidth label='Qty' value={formik.values.quantity}
+                                                    error={formik.touched.orderDescription && Boolean(formik.errors.orderDescription)}
+                                                    helperText={Boolean(formik.touched.orderDescription) && formik.errors.orderDescription}
+                                                    value={formik.values.orderDescription} name={'orderDescription'}
+                                                    multiline
+                                                    rows={6}
+                                                    onBlur={formik.handleBlur}
+                                                    onChange={formik.handleChange} />
+                                                <br /><br />
+                                                <TextField fullWidth label='Qty' value={formik.values.quantity}
                                                     required
-                                                   error={formik.touched.quantity && Boolean(formik.errors.quantity)}
-                                                   helperText={Boolean(formik.touched.quantity) && formik.errors.quantity}
-                                                   name={'quantity'}
-                                                   onBlur={formik.handleBlur}
-                                                   onChange={formik.handleChange}/>
-                                        <br/><br/>
-                                        <Box className="max-w-xl mt-24 mb-20">
-                                            <TextField placeholder={'Upload Files'} fullWidth
-                                                       value={selectedFile?.name ?? ''}
-                                                       InputProps={{
-                                                           endAdornment: <InputAdornment position="end">
-                                                               <Box>
-                                                                   <Button variant="contained" color="garapinColor"
-                                                                           onClick={handleButtonClick}>SELECT
-                                                                       FILE</Button>
-                                                                   <input
-                                                                       id="file-input"
-                                                                       type="file"
-                                                                       onChange={handleFileChange}
-                                                                       style={{display: 'none'}}
-                                                                   />
-                                                               </Box>
-                                                           </InputAdornment>,
-                                                       }}
-                                            ></TextField>
-                                        </Box>
-                                        <br/>
-                                        <Divider/>
-                                        <br/>
-                                        <Typography variant="body1"><b>Data Kontak</b></Typography>
-                                        <br/>
-                                        <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan
-                                            menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
-                                        <br/>
-                                        <TextField fullWidth label='Nama Contact Person'
-                                                   error={formik.touched.contactName && Boolean(formik.errors.contactName)}
-                                                   helperText={Boolean(formik.touched.contactName) && formik.errors.contactName}
-                                                   value={formik.values.contactName}
-                                                   name={'contactName'}
-                                                   required
-                                                   onBlur={formik.handleBlur}
-                                                   onChange={formik.handleChange}/>
-                                        <br/><br/>
-                                        <AddressPicker onLocationSelect={(place) => {
-                                            console.log(place)
-                                            const postalCode = place.address_components?.find((component) => {
-                                                return component.types.includes("postal_code")
-                                            })?.long_name
-                                            const completeAddress = place.formatted_address
-                                            const geometry = place?.geometry?.location
-                                            let latLong = undefined
-                                            if (geometry != undefined) {
-                                                latLong = {lat: geometry.lat(), lng: geometry.lng()}
-                                            }
-                                            const objAddress= {
-                                                completeAddress,
-                                                postalCode,
-                                                latLong
-                                            }
+                                                    error={formik.touched.quantity && Boolean(formik.errors.quantity)}
+                                                    helperText={Boolean(formik.touched.quantity) && formik.errors.quantity}
+                                                    name={'quantity'}
+                                                    onBlur={formik.handleBlur}
+                                                    onChange={formik.handleChange} />
+                                                <br /><br />
+                                                <Box className="max-w-xl mt-24 mb-20">
+                                                    <TextField placeholder={'Upload Files'} fullWidth
+                                                        value={selectedFile?.name ?? ''}
+                                                        InputProps={{
+                                                            endAdornment: <InputAdornment position="end">
+                                                                <Box>
+                                                                    <Button variant="contained" color="garapinColor"
+                                                                        onClick={handleButtonClick}>SELECT
+                                                                        FILE</Button>
+                                                                    <input
+                                                                        id="file-input"
+                                                                        type="file"
+                                                                        onChange={handleFileChange}
+                                                                        style={{ display: 'none' }}
+                                                                    />
+                                                                </Box>
+                                                            </InputAdornment>,
+                                                        }}
+                                                    ></TextField>
+                                                </Box>
+                                                <br />
+                                                <Divider />
+                                                <br />
+                                                <Typography variant="body1"><b>Data Kontak</b></Typography>
+                                                <br />
+                                                <Typography variant="body2">Mohon berikan kontak yang dapat dihubungi. Kami akan
+                                                    menindaklanjuti permintaan Anda melalui kontak berikut.</Typography>
+                                                <br />
+                                                <TextField fullWidth label='Nama Contact Person'
+                                                    error={formik.touched.contactName && Boolean(formik.errors.contactName)}
+                                                    helperText={Boolean(formik.touched.contactName) && formik.errors.contactName}
+                                                    value={formik.values.contactName}
+                                                    name={'contactName'}
+                                                    required
+                                                    onBlur={formik.handleBlur}
+                                                    onChange={formik.handleChange} />
+                                                <br /><br />
+                                                <AddressPicker onLocationSelect={(place) => {
+                                                    console.log(place)
+                                                    const postalCode = place.address_components?.find((component: any) => {
+                                                        return component.types.includes("postal_code")
+                                                    })?.long_name
+                                                    const completeAddress = place.formatted_address
+                                                    const geometry = place?.geometry?.location
+                                                    let latLong = undefined
+                                                    if (geometry != undefined) {
+                                                        latLong = { lat: geometry.lat(), lng: geometry.lng() }
+                                                    }
+                                                    const objAddress = {
+                                                        completeAddress,
+                                                        postalCode,
+                                                        latLong
+                                                    }
 
-                                            setAddressMap(objAddress);
-                                        }}/>
-                                        <br/>
-                                        <TextField fullWidth label="Nomor HP/WA" placeholder='081234567890' value={formik.values.phoneNumber}
-                                                   error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
-                                                   helperText={Boolean(formik.errors) && formik.errors.phoneNumber}
-                                                   name={'phoneNumber'}
-                                                   onBlur={formik.handleBlur}
-                                                   onChange={formik.handleChange}/>
-                                        <br/><br/>
-                                        <TextField fullWidth label="Email" placeholder='emailanda@nama-perusahaan.co.id'
+                                                    setAddressMap(objAddress);
+                                                }} />
+                                                <br />
+                                                <TextField fullWidth label="Nomor HP/WA" placeholder='081234567890' value={formik.values.phoneNumber}
+                                                    error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
+                                                    helperText={Boolean(formik.errors) && formik.errors.phoneNumber}
+                                                    name={'phoneNumber'}
+                                                    onBlur={formik.handleBlur}
+                                                    onChange={formik.handleChange} />
+                                                <br /><br />
+                                                <TextField fullWidth label="Email" placeholder='emailanda@nama-perusahaan.co.id'
                                                     required
-                                                   error={formik.touched.email && Boolean(formik.errors.email)}
-                                                   helperText={Boolean(formik.touched.email) && formik.errors.email}
-                                                   value={formik.values.email} name={'email'}
-                                                   onBlur={formik.handleBlur}
-                                                   onChange={formik.handleChange}/>
-                                        </> :
-                                        <>
-                                            <Typography variant="body2">Silahkan login terlebih dahulu untuk mengajukan penawaran.</Typography>
-                                        </>
+                                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                                    helperText={Boolean(formik.touched.email) && formik.errors.email}
+                                                    value={formik.values.email} name={'email'}
+                                                    onBlur={formik.handleBlur}
+                                                    disabled
+                                                    onChange={formik.handleChange} />
+                                            </> :
+                                            <>
+                                                <Typography variant="body2">Silahkan login terlebih dahulu untuk mengajukan penawaran.</Typography>
+                                            </>
                                         }
                                     </DialogContent>
                                     <DialogActions>
                                         <Button variant='text' onClick={handleClose}>Batal</Button>
                                         {auth.authUser == null ?
                                             <Button variant="contained" color="garapinColor" onClick={() => router.push('/login')}>Login</Button>
-                                                :
+                                            :
                                             <Button variant='text' type='submit' onClick={formik.submitForm}
                                                 disabled={formik.isSubmitting || !formik.isValid}>Kirim Permintaan {formik.isSubmitting &&
-                                            <CircularProgress size={10}/>}</Button>
+                                                    <CircularProgress size={10} />}</Button>
                                         }
                                     </DialogActions>
                                 </Dialog>
                             </form>
-                            <Divider className="pt-2"/>
+                            <Divider className="pt-2" />
                             <Box>
                                 <Typography className="pt-16" color="#7C7C7C" variant="h5">Tentang Produk</Typography>
                                 <Typography className="pt-6" color="#3A3A3A"
-                                            variant="body2">{singleProduct?.description}</Typography>
+                                    variant="body2">{singleProduct?.description}</Typography>
                             </Box>
                         </Box>
                     </Grid>
                 </Grid>
                 <Box className="py-20 md:px-60">
-                    <img width="100%" src="/banner_inquiry.svg" alt="banner inquiry"/>
+                    <img width="100%" src="/banner_inquiry.svg" alt="banner inquiry" />
                 </Box>
             </Box>
         )
@@ -438,7 +487,7 @@ LoginPage.guestGuard = false;
 
 export default ProductDetailPage;
 
-export const getServerSideProps = async ({locale}: { locale: string }) => {
+export const getServerSideProps = async ({ locale }: { locale: string }) => {
     if (process.env.NODE_ENV === "development") {
         await i18n?.reloadResources();
     }

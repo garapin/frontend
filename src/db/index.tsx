@@ -1,12 +1,16 @@
 import { getFirestore } from "@/configs/firebase";
 import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
+import { Category } from "@/types/category";
+import useFirebaseAuth from "@/hooks/useFirebaseAuth";
+import { toast } from "react-toastify";
 
 /* Default Variables (used in all functions)
  * This is the default variables used in all functions
 */
 const db = getFirestore();
 export const pageSize = 20;
+
 
 /* Return Type Definition
  * This is the return type of the function
@@ -30,6 +34,25 @@ export const getSingleProductFromDB = async (slug: string):Promise<Product|undef
     return (!data.empty) ? {...data.docs[0].data() as Product, id: data.docs[0].id} : undefined;
 }
 
+export const getProductCartFromDB = async (userId: any): Promise<any> => {
+    const response = await db.collection('product_carts')
+    .where('status', '==', 'cart')
+    .where('userId', '==', userId)
+    .get()
+
+    const data = response.docs.map(doc => {
+        return {
+            ...doc.data(),
+            id: doc.id,
+        }
+    });
+
+    console.log(data, 'testdata');
+    
+
+    return data;
+}
+
 export const getAllProductsFromDB = async (): Promise<ProductListDB> => {
     const response = await db.collection('products')
         .where('active', '==', true)
@@ -45,6 +68,18 @@ export const getAllProductsFromDB = async (): Promise<ProductListDB> => {
         }
     });
     return {data, lastProductQuery: response.docs[response.docs.length - 1]};
+}
+
+export const getAllCategoriesFromDB = async (): Promise<any> => {
+    const response = await db.collection('categories').get()
+
+    const data: Category[] = response.docs.map(doc => {
+        return {
+            ...doc.data() as Category,
+            id: doc.id,
+        }
+    });
+    return data;
 }
 
 export const getAllProductsFromDBBasedOnCategories = async (categoryId: string): Promise<ProductListDB> => {
@@ -98,4 +133,33 @@ export const getProductTemplateFromDB = async (templateId: string): Promise<Temp
 
 export const storeRequestInquiryToDB = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {
     return await db.collection('product_inquiries').add(data);
+}
+
+export const addToCart = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {
+    return await db.collection('product_carts').add(data);
+}
+
+export const deleteItemCart = async (productId: any, uid: any) => {
+    const cartCollection = db.collection('product_carts');
+    const batch = db.batch();
+    const query = cartCollection.where('productId', '==', productId);
+
+    // Remove the product from the cart in Firestore
+    const cartRef = db.collection("product_carts").doc(uid).collection("cart").doc(productId);
+
+    // Delete the product document from Firestore
+    await cartRef.delete();
+
+    query.get().then((querySnapshot) => {
+        querySnapshot.docs.forEach((doc) => {
+            const docRef = cartCollection.doc(doc.id);
+            batch.update(docRef, { delete: true });
+        });
+
+        batch.commit().then(() => {
+            toast.success("Berhasil menghapus item");
+        }).catch((error) => {
+            toast.error("Gagal menghapus item: ", error)
+        })
+    })
 }

@@ -58,7 +58,7 @@ const LoginPage = () => {
             <Paper>
             <GarapinAppBar searchVariant/>
             <Box className={`${classes.loginUi} flex flex-row flex-grow`} style={{marginTop:'64px'}}>
-                <Box className='sm:w-0 md:w-2/3  bg-gray-200 p-3'>
+                <Box className='sm:w-0 md:w-2/3 sm:block hidden bg-gray-200 p-3'>
                     <ImageCarousel className={classes.carousel}
                      dataSource={imageSet} 
                      maxWidth={2000} 
@@ -67,7 +67,7 @@ const LoginPage = () => {
                      useMagnifier={false}
                      rimProps={{className: classes.carousel}}/>
                 </Box>
-                <Box className='sm:w-full lg:w-1/3 bg-gray-100'>
+                <Box className='sm:w-full lg:w-1/3 w-full bg-gray-100'>
                     <Box className='flex flex-col justify-center h-full'>
                         <Box className='flex flex-col justify-center items-center' sx={{pb:4}}>
                             <Typography variant="h5">{t('login.title')}</Typography>
@@ -96,7 +96,7 @@ const LoginPage = () => {
                         </Box>
                             </form>
                         <Box>
-                            <Typography variant="subtitle1" className='text-center' sx={{pt:4}}>{t('login.registerCopy.title')} <Link href="/register">{t('login.registerCopy.link')}</Link></Typography>
+                            <Typography variant="subtitle1" className='text-center' sx={{pt:4}}>{t('login.registerCopy.title')} <Link href="/register" className="text-[#713F97]">{t('login.registerCopy.link')}</Link></Typography>
                         </Box>
                     </Box>
                 </Box>

@@ -22,5 +22,12 @@
 
         },
         "loginButton": "Login"
+    },
+    "cart": {
+        "title": "Cart",
+        "confirmButton": "BUY",
+        "totalPrice": "Total Price",
+        "deleteButton": "delete",
+        "selectAll": "Select All"
     }
 }

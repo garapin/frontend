@@ -19,8 +19,14 @@
         "menu": {
             "profile": "Profil",
             "logout": "Keluar"
-
         },
         "loginButton": "Masuk"
+    },
+    "cart": {
+        "title": "Keranjang",
+        "confirmButton": "BELI",
+        "totalPrice": "Total Harga",
+        "deleteButton": "hapus",
+        "selectAll": "Pilih semua"
     }
 }

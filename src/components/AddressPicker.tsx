@@ -5,9 +5,10 @@ import PlaceResult = google.maps.places.PlaceResult;
 
 interface LocationInputProps {
     onLocationSelect: (place: PlaceResult) => void;
+    label: string
 }
 
-const AddressPicker: React.FC<LocationInputProps> = ({onLocationSelect}) => {
+const AddressPicker: React.FC<LocationInputProps> = ({onLocationSelect, label}) => {
     const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete>();
 
     const libraries: ("places")[] = ["places"];
@@ -34,7 +35,7 @@ const AddressPicker: React.FC<LocationInputProps> = ({onLocationSelect}) => {
 
     return (
         <Autocomplete onLoad={onLoad} onPlaceChanged={onPlaceChanged}>
-            <TextField fullWidth label='Alamat Perusahaan/Pengiriman (opsional)' placeholder="Type location..."
+            <TextField fullWidth label={label ? label : 'Alamat Perusahaan/Pengiriman (opsional)'} placeholder="Type location..."
                        inputProps={{autoComplete: "off"}}/>
         </Autocomplete>
     );
