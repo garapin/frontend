@@ -45,7 +45,7 @@ const style = {
   p: 4,
 };
 
-export default function TransactionList({ currentTab }) {
+export default function TransactionList({ currentTab }: any) {
 
   const title = () => {
     if (currentTab === 'cp') {

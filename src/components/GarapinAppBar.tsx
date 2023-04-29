@@ -111,7 +111,7 @@ const GarapinAppBar = ({
         }
     }, [search]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = () => {
         router.push(`/search${fieldRef?.current?.value !== undefined ? `?q=${fieldRef?.current?.value}` : ''}`);
     }
 
@@ -147,7 +147,7 @@ const GarapinAppBar = ({
                                     inputProps={{ 'aria-label': 'search' }}
                                     onKeyUp={(e) => {
                                         if (e.key === 'Enter') {
-                                            handleSubmit(e);
+                                            handleSubmit();
                                         }
                                     }}
                                     onSubmit={handleSubmit}
