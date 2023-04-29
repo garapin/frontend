@@ -20,8 +20,8 @@ jobs:
           key: ${{ secrets.HOST_SSH }}
           script: |
             cd ${{ secrets.HOST_DIR }}
+            git switch staging
             git pull
-            git switch origin/staging
             yarn install
             yarn build
             pm2 restart ${{ secrets.HOST_PKG_NAME }}
