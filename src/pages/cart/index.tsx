@@ -9,6 +9,7 @@ import { getProductCart } from "@/store/modules/products";
 import { deleteItemCart } from '@/db'
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppRedux';
 import useFirebaseAuth from '@/hooks/useFirebaseAuth';
+import { toast } from 'react-toastify';
 
 interface Product {
   id: number;
@@ -75,10 +76,12 @@ function Cart() {
       const product = cartList?.find((p) => p.id === productId);
       return product
     });
-    console.log('Selected products:', selectedProductNames);
-    localStorage.setItem('checkout_data', JSON.stringify(selectedProductNames))
-    router.push('/checkout')
-    // do something to process the selected products here
+    if (selectedProductNames.find(val => val.productCategoryId === '02') !== undefined && selectedProductNames.find(val => val.productCategoryId === '01') !== undefined) {
+      toast.error('Tidak bisa checkout dengan category yang berbeda')
+    } else {
+      localStorage.setItem('checkout_data', JSON.stringify(selectedProductNames))
+      router.push('/checkout')
+    }
   };
 
   const getTotalPrice = () => {
@@ -97,6 +100,9 @@ function Cart() {
     });
     setCartList(updatedProducts);
   };
+
+  console.log(cartList, 'testasd');
+  
 
   return (
     <>
@@ -118,7 +124,7 @@ function Cart() {
                         <Checkbox checked={selectedProducts.includes(val.id)} onChange={() => toggleProductSelection(val.id)} />
                         <img width={120} style={{ borderRadius: '20%' }} className="rounded-lg object-contain mr-3" height={120} src={val?.product?.img?.[0]} alt='image' />
                         <Box>
-                        <Typography style={{ background: 'gray', borderRadius: '10px', textAlign: 'center' }} className="font-bold" fontSize={17} fontWeight={400} color="text.primary">Ready to buy</Typography>
+                        {val?.productCategoryId=== '02' ? <Typography style={{ background: 'gray', borderRadius: '10px', textAlign: 'center' }} className="font-bold" fontSize={17} fontWeight={400} color="text.primary">Digital Packaging</Typography> : <Typography style={{ background: 'gray', borderRadius: '10px', textAlign: 'center' }} className="font-bold" fontSize={17} fontWeight={400} color="text.primary">Ready to buy</Typography>}
                           <Typography fontSize={17} fontWeight={400} color="text.primary">{val?.product?.productName}</Typography>
                           <Typography fontSize={17} fontWeight={600} color="text.primary">{rupiah(val.unitPrice)}</Typography>
                         </Box>

@@ -1,5 +1,5 @@
-import { Box, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography, SelectChangeEvent } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Button, Container, FormControl, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import AddressPicker from "@/components/AddressPicker";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -8,67 +8,116 @@ import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined
 import { useRouter } from 'next/router';
 import { rupiah } from '@/tools/rupiah';
 import { i18n, useTranslation } from "next-i18next";
+import API from '@/configs/api'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { toast } from 'react-toastify';
 
 interface addressMap {
   postalCode?: string,
   completeAddress: string,
-  latLong?: { lat: string, long: string }
+  latLong?: { lat: string, lng: string }
 }
 
 function CheckoutPage() {
   const auth = useFirebaseAuth();
   const router = useRouter();
-  const myData = localStorage.getItem('checkout_data');
+  const myData: any = localStorage.getItem('checkout_data');
   const checkoutData = JSON.parse(myData);
   const priceItem = checkoutData.map(val => val.unitPrice * val?.qty)?.reduce((acc, curr) => acc + curr)
+  const [shipment, setShipment] = useState([])
 
-  console.log(auth.authUser?.email, 'testhu');
+  const [addressMap, setAddressMap] = useState<addressMap>({ postalCode: '', completeAddress: '', latLong: { lat: '', long: '' } });
+  const [ship, setShip] = React.useState('');
+  const [shipPrice, setShipPrice] = useState(0)
+  const [dataPaymnet, setDataPayment] = useState(0)
+
+  useEffect(() => {
+    console.log(addressMap, 'test');
+    
+    const data = {
+       "weight": 1000,
+       "width": 10,
+       "height": 5,
+       "length": 5,
+       "destination_postal": "50241",
+       "destination_lat": addressMap.latLong?.lat,
+       "destination_long": addressMap.latLong?.lng,
+       "totalPrice": priceItem
+       }
+       console.log(data, 'testyu');
+       
+     API.getShipping(data).then(response => {
+       setShipment(response.data)
+       console.log(response.data, 'testnjir');
+     })
+     .catch(error => {
+       console.error(error);
+     });
+   }, [addressMap, priceItem])
+
+  const courierShipment = ship?.courier_name + ' ' + ship?.courier_service_name
+
+  const handleChange = (event: any) => {
+    setShip(event.target.value);
+    setShipPrice(event.target.value?.price + event.target.value?.insurance_fee)
+  };
+
+  const refundedId = checkoutData.map((val: any) => val.id)
 
   const formik = useFormik({
     initialValues: {
-      orderDescription: '',
-      quantity: '',
       contactName: auth.authUser?.displayName ?? '',
       phoneNumber: auth.authUser?.phoneNumber ?? '',
       email: auth.authUser?.email ?? '',
     },
     validationSchema: yup.object({
-      orderDescription: yup.string().required("Order Description is required"),
-      // quantity: yup.lazy((val) => singleProduct !== undefined && singleProduct.moq !== undefined ? yup.number().required("Quantity is required").min(singleProduct.moq, `Minimum order is ${singleProduct.moq}`) : yup.number().required("Quantity is required")),
       contactName: yup.string().required("Contact Name is required"),
       phoneNumber: yup.string().required("Phone Number is required"),
       email: yup.string().required("Email is required"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
-      // try {
-      //     const fileData = await handleFileUpload();
-      //     const dataBody = {
-      //         ...values,
-      //         address: addressMap,
-      //         product: singleProduct,
-      //         template: productTemplate,
-      //         selectedOptions: variantSelectorValue,
-      //         files: [fileData],
-      //         createdAt: new Date()
-      //     };
-      //     await storeRequestInquiryToDB(dataBody);
-      //     toast.success("Permintaan Anda Berhasil Dikirimkan");
-      //     handleClose()
-      // } catch (e: any) {
-      //     console.error(e)
-      //     toast.error(e.message);
-      // }
+      try {
+        console.log(values, 'test');
+          const dataPay = {
+            "cartIds": refundedId,
+            "shippingDetails": {
+            "fullName": values.contactName,
+            "address": addressMap.completeAddress,
+            "phoneNumber": values.phoneNumber,
+            "latLong": {
+            "lat": addressMap.latLong?.lat,
+            "lng": addressMap.latLong?.lng
+            },
+            "postalCode": "50241",
+            "addressNote": "Please leave at door",
+            "totalWeight": 2500
+            },
+            "shippingMethod": {
+            "courierCode": ship?.courier_code,
+            "courierName": ship?.courier_name,
+            "serviceCode": ship?.courier_service_code,
+            "serviceName": ship?.courier_service_name,
+            "type": ship?.type,
+            "duration": ship?.duration,
+            "price": priceItem + shipPrice,
+            "insuranceFee": ship?.insurance_fee
+            }
+            }
+
+            API.paymentApi(dataPay).then(response => {
+              setDataPayment(response.data)
+              window.open(`${response?.data?.paymentLink}`, '_self')
+              console.log(response.data, 'testrr');
+            })
+            .catch(error => {
+              console.error(error);
+            });
+      } catch (e: any) {
+          console.error(e)
+          toast.error(e.message);
+      }
     },
   });
-
-  const [addressMap, setAddressMap] = useState<addressMap>({ postalCode: '', completeAddress: '', latLong: { lat: '', long: '' } });
-  const [ship, setShip] = React.useState('');
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setShip(event.target.value as string);
-  };
 
   return (
     <Container className='flex'>
@@ -87,7 +136,6 @@ function CheckoutPage() {
           </Box>
           <Box className="mb-4">
             <AddressPicker label={"Alamat Pembeli"} onLocationSelect={(place) => {
-              console.log(place)
               const postalCode = place.address_components?.find((component: any) => {
                 return component.types.includes("postal_code")
               })?.long_name
@@ -119,12 +167,12 @@ function CheckoutPage() {
               required
               error={formik.touched.email && Boolean(formik.errors.email)}
               helperText={Boolean(formik.touched.email) && formik.errors.email}
-              value={formik.values.email} name={'email'}
+              valhandleBuyue={formik.values.email} name={'email'}
               onBlur={formik.handleBlur}
               onChange={formik.handleChange} />
           </Box>
           <Box>
-            <FormControl fullWidth>
+            {addressMap.completeAddress.length > 0 ? <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Delivery</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -133,11 +181,16 @@ function CheckoutPage() {
                 label="Delivery"
                 onChange={handleChange}
               >
-                <MenuItem value={10}>JNE</MenuItem>
-                <MenuItem value={20}>J&T</MenuItem>
-                <MenuItem value={30}>SiCepat</MenuItem>
+                {shipment?.map((val: any, i: any) => (
+                  <MenuItem value={val} key={i}>
+                    <Box className='flex justify-between'>
+                      <Box sx={{ fontWeight: 600 }}>{val?.courier_name + ' ' + val?.courier_service_name}</Box>
+                      <Box>{rupiah(val?.price) + ' ' + '(' + val?.shipment_duration_range + ' ' + val?.shipment_duration_unit + ')' }</Box>
+                    </Box>
+                  </MenuItem>
+                ))}
               </Select>
-            </FormControl>
+            </FormControl> : null }
           </Box>
         </form>
       </Box>
@@ -159,7 +212,8 @@ function CheckoutPage() {
                 </Box></>
             )
           })}
-          <Box className="mt-2 p-1">
+          {ship ? <>
+            <Box className="mt-2 p-1">
             <hr />
           </Box>
           <Box className="mt-2 p-1">
@@ -167,22 +221,23 @@ function CheckoutPage() {
               <Typography>Delivery With </Typography>
             </Box>
             <Box className="flex justify-between items-center">
-              <Typography className='font-bold flex items-center'> <LocalShippingOutlinedIcon className='mr-3' /> JNE Sameday </Typography>
-              <Typography>Rp.14.000</Typography>
+              <Typography className='font-bold flex items-center'> <LocalShippingOutlinedIcon className='mr-3' /> {courierShipment} </Typography>
+              <Typography>{rupiah(shipPrice)}</Typography>
             </Box>
-          </Box>
+          </Box></> : null}
+          
           <Box className="mt-2 p-1">
             <hr />
           </Box>
           <Box className="mt-2 p-1 flex justify-between">
             <Typography className='font-bold'>Order Total</Typography>
-            <Typography className='font-bold'>{rupiah(priceItem + 14000)}</Typography>
+            <Typography className='font-bold'>{rupiah(priceItem + shipPrice)}</Typography>
           </Box>
         </Box>
         <Box>
-          <button onClick={() => router.push('/payment-complete')} className="hover:bg-[#bb86fc] bg-[#713F97] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline border-none w-full cursor-pointer" type="submit">
+          <Button onClick={formik.submitForm} disabled={formik.isSubmitting || !formik.isValid} className="hover:bg-[#bb86fc] bg-[#713F97] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline border-none w-full cursor-pointer" type="submit">
             Bayar
-          </button>
+          </Button>
         </Box>
       </Box>
     </Container>

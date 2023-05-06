@@ -35,7 +35,7 @@ import { toast } from "react-toastify";
 import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
-import { storeRequestInquiryToDB, addToCart, deleteItemCart } from "@/db";
+import { storeRequestInquiryToDB, addToCart } from "@/db";
 import * as yup from "yup";
 import CardHorizontal from "@/components/CardHorizontal";
 
@@ -140,8 +140,28 @@ const ProductDetailPage = () => {
                     files: [fileData],
                     createdAt: new Date()
                 };
-                await storeRequestInquiryToDB(dataBody);
-                toast.success("Permintaan Anda Berhasil Dikirimkan");
+
+                const data = {
+                    ...values,
+                    channel: 'printing',
+                    createAt: new Date(),
+                    delete: false,
+                    product: singleProduct,
+                    productCategoryId: singleProduct?.category,
+                    productId: singleProduct?.id,
+                    qty: values.quantity,
+                    status: 'cart',
+                    unitPrice: singleProduct?.maxPrice,
+                    updatedAt: null,
+                    userId: auth?.authUser?.uid,
+                }
+        
+                await addToCart(data);
+                
+
+                singleProduct?.category === '02' ? await addToCart(data) : await storeRequestInquiryToDB(dataBody);
+                
+                singleProduct?.category === '02' ? toast.success("Berhasil Menambahkan Ke Cart") : toast.success("Permintaan Anda Berhasil Dikirimkan");
                 handleClose()
             } catch (e: any) {
                 console.error(e)
@@ -258,8 +278,7 @@ const ProductDetailPage = () => {
         } else {
             return (
                 <Button className="my-10 w-fit" variant="contained"
-                    sx={{ backgroundColor: '#713F97', color: 'white' }} onClick={handleOpen}>Minta
-                    Penawaran</Button>
+                    sx={{ backgroundColor: '#713F97', color: 'white' }} onClick={handleOpen}>Minta Penawaran</Button>
             )
         }
     }
@@ -417,6 +436,7 @@ const ProductDetailPage = () => {
                                                     const postalCode = place.address_components?.find((component: any) => {
                                                         return component.types.includes("postal_code")
                                                     })?.long_name
+                                                    console.log(postalCode)
                                                     const completeAddress = place.formatted_address
                                                     const geometry = place?.geometry?.location
                                                     let latLong = undefined
@@ -458,7 +478,9 @@ const ProductDetailPage = () => {
                                         {auth.authUser == null ?
                                             <Button variant="contained" color="garapinColor" onClick={() => router.push('/login')}>Login</Button>
                                             :
-                                            <Button variant='text' type='submit' onClick={formik.submitForm}
+                                            singleProduct?.category === '02' ? <Button variant='text' type='submit' onClick={formik.submitForm}
+                                            disabled={formik.isSubmitting || !formik.isValid}>Add to cart {formik.isSubmitting &&
+                                                <CircularProgress size={10} />}</Button> : <Button variant='text' type='submit' onClick={formik.submitForm}
                                                 disabled={formik.isSubmitting || !formik.isValid}>Kirim Permintaan {formik.isSubmitting &&
                                                     <CircularProgress size={10} />}</Button>
                                         }

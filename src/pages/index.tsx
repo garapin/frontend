@@ -70,8 +70,6 @@ function LandingPage(props: any) {
     const productList = props?.product?.products
     const categories = props?.product?.category
 
-    console.log(props?.product, 'testa');
-
     return (
         <>
             <Head>

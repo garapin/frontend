@@ -47,9 +47,6 @@ export const getProductCartFromDB = async (userId: any): Promise<any> => {
         }
     });
 
-    console.log(data, 'testdata');
-    
-
     return data;
 }
 
@@ -133,6 +130,20 @@ export const getProductTemplateFromDB = async (templateId: string): Promise<Temp
 
 export const storeRequestInquiryToDB = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {
     return await db.collection('product_inquiries').add(data);
+}
+
+export const getStoreInquiryToDB = async (): Promise<any> => {
+    const response = await db.collection('product_inquiries').get()
+
+    const data = response.docs.map(doc => {
+        return {
+            ...doc.data(),
+            id: doc.id,
+        }
+    });
+    
+
+    return data;
 }
 
 export const addToCart = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {

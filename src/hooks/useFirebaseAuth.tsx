@@ -40,7 +40,8 @@ const useFirebaseAuth = () => {
           console.log("User data from update snapshot:", doc.data());
           authState.getIdToken(true);
           setLoading(true);
-          console.log('data authState: ',authState, )
+          localStorage.setItem('token', JSON.stringify(authState.authTokenData?.token))
+          console.log('data authState: ',authState)
           authState.getIdTokenResult().then((claimsData) => {
               authState['authTokenData'] = claimsData;
             setAuthUser(authState);
