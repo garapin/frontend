@@ -246,7 +246,7 @@ function LandingPage(props: any) {
                         </Box>
                         <Divider className="mx-10 md:mx-0 pt-6" />
                         <Grid className="px-10 md:px-0 pt-8 md:pt-12" container spacing={4}>
-                            {categories.map((category) => (
+                            {categories.map((category: any) => (
                                 <Grid key={category.id} item xs={6} sm={6} md={4} lg={3}>
                                     <CardCategories key={category.id} imageUrl={category.image} categoryName={category.name}
                                         description={category.description} slug={category.slug} />
