@@ -60,8 +60,8 @@ const LoginPage = () => {
           values.email,
           values.password
         );
-        if (res.user) {
-          router.push(redirect ?? "/");
+        if (res) {
+          router.push(redirect || "/");
         }
       } catch (error: any) {
         console.log("there's an error: ", error);
