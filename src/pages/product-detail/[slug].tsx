@@ -300,9 +300,9 @@ const ProductDetailPage = () => {
   };
 
   const handleToLogin = () => {
-    localStorage.setItem("redirect", router.asPath)
-    router.push("/login")
-  }
+    localStorage.setItem("redirect", router.asPath);
+    router.push("/login");
+  };
 
   const renderButton = () => {
     if (singleProduct?.category === "01") {
@@ -462,6 +462,7 @@ const ProductDetailPage = () => {
                           location="Jakarta"
                           slug={singleProduct?.slug ?? ""}
                           clickable={false}
+                          maxWidth="250px"
                         />
                         <br />
                         <Divider />
