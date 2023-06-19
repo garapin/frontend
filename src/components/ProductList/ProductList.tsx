@@ -1,21 +1,8 @@
-import React, { useState } from 'react'
-import { getAllProducts } from "@/store/modules/products";
-import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
+import React from 'react'
 import { Grid } from '@mui/material';
 import CardVertical from '../CardVertical';
 
 const ProductList = ({ productList }: { productList:[] }) => {
-  // const [allProduct, setAllProduct] = useState([])
-  // const dispatch = useAppDispatch()
-
-  // const { products, isProductLoading, allProductsLoaded } = useAppSelector(state => state.products);
-
-  // React.useEffect(() => {
-  //   dispatch(getAllProducts());
-  // }, [])
-
-  console.log(productList, 'testaa');
-
   return (
     <>{productList.map((product: any) => (
       <Grid key={product.id} item xs={6} sm={6} md={4} lg={3}>
