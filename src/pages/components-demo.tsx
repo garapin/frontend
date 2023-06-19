@@ -104,7 +104,9 @@ const ComponentsDemo = () => {
         deleted: false,
         createdAt: new Date(),
         updatedAt: new Date(),
-        variants: variants
+        variants: variants,
+        name: "",
+        description: ""
     }
 
     const [variantSelectorValue, setVariantSelectorValue] = useState<TemplateInput>({});

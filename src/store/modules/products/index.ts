@@ -26,8 +26,8 @@ const defaultState: {
   isTemplateLoading: boolean;
   isFetchingNext: boolean;
   errors?: string;
-  productTemplate?: Template;
-  scrollId?: string;
+  productTemplate?: any;
+  scrollId?: Object;
   searchHit?: number;
   name: any;
   productCart: any
@@ -42,8 +42,8 @@ const defaultState: {
   isProductLoading: false,
   isTemplateLoading: false,
   isFetchingNext: false,
-  errors: {},
-  productTemplate: {},
+  errors: '',
+  productTemplate: null,
   scrollId: {},
   searchHit: 0,
   name: null,
