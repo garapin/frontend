@@ -679,7 +679,9 @@ const ProductDetailPage = () => {
                                     sx={{ paddingBottom: "0.5rem" }}
                                   >
                                     <b>
-                                      Rincian Produk (W: 3cm, L: 4cm, H: 1,5cm)
+                                      Rincian Produk{" "}
+                                      {calculateTemplatePrice &&
+                                        `(W: ${calculateTemplatePrice.dimension.width}cm, L: ${calculateTemplatePrice.dimension.length}cm, H: ${calculateTemplatePrice.dimension.height}cm)`}
                                     </b>
                                   </Typography>
                                   <Button
@@ -699,32 +701,47 @@ const ProductDetailPage = () => {
                                     Hitung Harga
                                   </Button>
                                   <br />
-                                  <br />
-                                  <Divider />
-                                  <Box
-                                    sx={{
-                                      marginTop: "0.5rem",
-                                    }}
-                                  >
-                                    {[1, 2, 3, 4].map((item) => (
-                                      <Typography variant="body2">
-                                        Tuck Top Auto Bottom
-                                      </Typography>
-                                    ))}
-                                    <Divider />
-                                    <Grid container>
-                                      <Grid item md={8}>
-                                        <Typography variant="body2">
-                                          <b>Total Price</b>
-                                        </Typography>
-                                      </Grid>
-                                      <Grid item md={4} sx={{ textAlign: 'right' }}>
-                                        <Typography variant="body2">
-                                          <b>Rp. 15,932,333</b>
-                                        </Typography>
-                                      </Grid>
-                                    </Grid>
-                                  </Box>
+                                  {calculateTemplatePrice && (
+                                    <>
+                                      <br />
+                                      <Divider />
+                                      <Box
+                                        sx={{
+                                          marginTop: "0.5rem",
+                                        }}
+                                      >
+                                        {Object.values(
+                                          calculateTemplatePrice.options
+                                        ).map((option: any, idx) => (
+                                          <Typography variant="body1" key={idx}>
+                                            {option?.selectedOption?.value}
+                                          </Typography>
+                                        ))}
+                                        <Divider />
+                                        <Grid container>
+                                          <Grid item md={8}>
+                                            <Typography variant="body1">
+                                              <b>Total Price</b>
+                                            </Typography>
+                                          </Grid>
+                                          <Grid
+                                            item
+                                            md={4}
+                                            sx={{ textAlign: "right" }}
+                                          >
+                                            <Typography variant="body1">
+                                              <b>
+                                                Rp.{" "}
+                                                {calculateTemplatePrice?.totalPrice?.toLocaleString(
+                                                  "id-ID"
+                                                )}
+                                              </b>
+                                            </Typography>
+                                          </Grid>
+                                        </Grid>
+                                      </Box>
+                                    </>
+                                  )}
                                 </Box>
                               </Grid>
                             </Grid>
