@@ -15,6 +15,7 @@ export default function CardVertical({
   location,
   slug,
   clickable = true,
+  maxWidth = "100%",
 }: {
   imageUrl: string;
   productName: string;
@@ -22,12 +23,12 @@ export default function CardVertical({
   location: string;
   slug: string;
   clickable?: boolean;
+  maxWidth?: string;
 }) {
   const router = useRouter();
-
   return (
     <Card
-      sx={{ maxWidth: 190, height: "100%" }}
+      sx={{ maxWidth: maxWidth, height: "100%" }}
       onClick={() => {
         if (clickable) {
           router.push("/product-detail/" + slug);
@@ -40,7 +41,7 @@ export default function CardVertical({
           image={imageUrl}
           alt="Card Image"
           sx={{
-            width: 190,
+            width: "100%",
             height: 190,
             objectFit: "cover",
             objectPosition: "center",
