@@ -148,17 +148,9 @@ const ProductCategoryPage = () => {
     }
   };
 
-  console.log(slug, "test");
-
   React.useEffect(() => {
     dispatch(getAllProductsBasedOnCategories(category()));
   }, []);
-
-  // React.useEffect(() => {
-  //   if (searchRef.current !== null){
-  //       searchRef.current.value = slug;
-  //   }
-  // }, [slug])
 
   return (
     <Box>
@@ -219,9 +211,7 @@ const ProductCategoryPage = () => {
                   key={product.id}
                   item
                   xs={6}
-                  sm={6}
                   md={3}
-                  lg={2}
                   className="content-center"
                 >
                   <CardVertical

@@ -17,7 +17,8 @@ const host = axios.create({
 
 const api = {
     getShipping: (data: any) => host.post('webShipping/pricing', data),
-    paymentApi: (data: any) => host.post('webCheckout', data)
+    paymentApi: (data: any) => host.post('webCheckout', data),
+    calculateTemplatePrice: (data: any) => host.post('calculate/templatePricing', data),
 }
 
 export default api;

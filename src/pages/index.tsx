@@ -355,7 +355,6 @@ function LandingPage(props: any) {
               spacing={{
                 xs: 2,
                 sm: 4,
-                md: 5,
               }}
             >
               {<ProductList productList={productList} />}
@@ -376,7 +375,6 @@ function LandingPage(props: any) {
               spacing={{
                 xs: 2,
                 sm: 4,
-                md: 5,
               }}
             >
               {categories.map((category: any) => (

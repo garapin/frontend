@@ -31,7 +31,9 @@ export default function CardVertical({
       sx={{ maxWidth: maxWidth, height: "100%" }}
       onClick={() => {
         if (clickable) {
-          router.push("/product-detail/" + slug);
+          router.push({
+            pathname: `/product-detail/${slug}`
+          })
         }
       }}
     >
