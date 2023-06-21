@@ -104,20 +104,21 @@ const TransactionListIndex = () => {
         </Typography>
         <Divider />
 
-        <Grid container>
+        <Grid
+          container
+          spacing={{
+            xs: 2,
+            sm: 4,
+          }}
+          paddingTop={4}
+        >
           {!isProductLoading &&
             products.map((product: any) => (
               <Grid
                 item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
+                sm={4}
+                md={3}
                 key={product.id}
-                sx={{ py: 4 }}
-                direction="column"
-                display="flex"
-                alignItems="center"
               >
                 <Link
                   href={`/product-detail/${encodeURIComponent(product.slug)}`}
@@ -141,6 +142,7 @@ const TransactionListIndex = () => {
             alignItems="center"
             display={"flex"}
             justifyContent={"center"}
+            paddingTop={4}
           >
             <Button
               variant="contained"

@@ -132,8 +132,6 @@ const ProductDetailPage = () => {
     latLong: { lat: "", long: "" },
   });
 
-  console.log("calculateTemplatePrice", calculateTemplatePrice);
-
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {

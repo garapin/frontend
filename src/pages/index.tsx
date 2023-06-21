@@ -335,7 +335,7 @@ function LandingPage(props: any) {
               </Box>
             </Box>
           </Box>
-          <Box className="flex flex-col md:max-w-6xl px-4 md:px-6 mx-auto py-10 md:py-20">
+          <Box maxWidth="lg" className="flex flex-col px-4 mx-auto py-10 md:py-20">
             <Box className="flex flex-col md:flex-row justify-between">
               <Typography
                 className="px-10 md:px-0"
