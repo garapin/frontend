@@ -1,5 +1,3 @@
-"use client";
-
 import axios from 'axios';
 
 let token: any = null
@@ -11,7 +9,7 @@ if (typeof window !== 'undefined') {
 const host = axios.create({
     baseURL: 'https://asia-southeast2-garapin-f35ef.cloudfunctions.net/',
     headers: {
-        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token') as string),
+        'Authorization': 'Bearer ' + JSON.parse(token),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       }
