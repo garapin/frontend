@@ -80,8 +80,6 @@ export const getAllCategoriesFromDB = async (): Promise<any> => {
 }
 
 export const getAllProductsFromDBBasedOnCategories = async (categoryId: string): Promise<ProductListDB> => {
-    console.log("CATEGORY ID")
-    console.log(categoryId)
     const response = await db.collection('products')
         .where('active', '==', true)
         .where('deleted', '==', false)
@@ -96,8 +94,6 @@ export const getAllProductsFromDBBasedOnCategories = async (categoryId: string):
             id: doc.id,
         }
     });
-    console.log("data")
-    console.log(data)
     return {data, lastProductQuery: response.docs[response.docs.length - 1]};
 }
 

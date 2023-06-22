@@ -1,3 +1,5 @@
+"use client";
+
 import axios from 'axios';
 
 let token: any = null
@@ -9,7 +11,7 @@ if (typeof window !== 'undefined') {
 const host = axios.create({
     baseURL: 'https://asia-southeast2-garapin-f35ef.cloudfunctions.net/',
     headers: {
-        'Authorization': 'Bearer ' + JSON.parse(token),
+        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token') as string),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       }
@@ -18,7 +20,7 @@ const host = axios.create({
 const api = {
     getShipping: (data: any) => host.post('webShipping/pricing', data),
     paymentApi: (data: any) => host.post('webCheckout', data),
-    calculateTemplatePrice: (data: any) => host.post('calculate/templatePricing', data),
+    postCalculateTemplatePrice: (data: any) => host.post('calculate/templatePricing', data),
 }
 
 export default api;

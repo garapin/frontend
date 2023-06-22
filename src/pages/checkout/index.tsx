@@ -66,12 +66,10 @@ function CheckoutPage() {
       destination_long: addressMap.latLong?.lng,
       totalPrice: priceItem,
     };
-    console.log(data, "testyu");
 
     API.getShipping(data)
       .then((response) => {
         setShipment(response.data);
-        console.log(response.data, "testnjir");
       })
       .catch((error) => {
         console.error(error);

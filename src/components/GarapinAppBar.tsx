@@ -115,7 +115,6 @@ const GarapinAppBar = ({
         router.push(`/search${fieldRef?.current?.value !== undefined ? `?q=${fieldRef?.current?.value}` : ''}`);
     }
 
-    console.log("resolved lang:", i18n.resolvedLanguage);
     const { t } = useTranslation('common');
     return (
         <Container maxWidth="xl">

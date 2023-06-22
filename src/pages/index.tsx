@@ -335,7 +335,10 @@ function LandingPage(props: any) {
               </Box>
             </Box>
           </Box>
-          <Box maxWidth="lg" className="flex flex-col px-4 mx-auto py-10 md:py-20">
+          <Box
+            maxWidth="lg"
+            className="flex flex-col px-4 mx-auto py-10 md:py-20"
+          >
             <Box className="flex flex-col md:flex-row justify-between">
               <Typography
                 className="px-10 md:px-0"
@@ -424,7 +427,7 @@ function LandingPage(props: any) {
               </Grid>
             </Grid>
           </Box>
-          <Box className="flex flex-col md:flex-row items-center justify-between py-10 md:py-20 md:px-60 bg-white">
+          <Box className="flex flex-col md:flex-row items-center justify-between py-10 md:py-20 px-4 max-w-6xl mx-auto bg-white">
             <Box className="max-w-sm pb-8">
               <Typography
                 variant="h4"
@@ -449,33 +452,35 @@ function LandingPage(props: any) {
             />
           </Box>
           <Box
-            className="flex flex-col items-center justify-around py-10 md:py-20 px-4 md:px-80"
+            className="flex flex-col items-center justify-around py-10 md:py-20 px-4"
             sx={{ backgroundColor: "#F8F4F9" }}
           >
-            <Typography
-              variant="h4"
-              color="#713F97"
-              className="pb-4 md:pb-20"
-              fontWeight="bold"
-            >
-              {t("section5.header")}
-            </Typography>
-            <Typography
-              variant="body1"
-              color="text.primary"
-              className="pb-8 md:pb-20"
-            >
-              {t("section5.content")}
-            </Typography>
-            <Box className="flex justify-between md:relative rounded-4 bg-white hover:bg-opacity-80 w-full sm:w-auto">
-              <StyledInputBase
-                placeholder={t("section5.email") ?? undefined}
-                inputProps={{ "aria-label": "search" }}
-                onSubmit={(e) => {}}
-              />
-              <Button variant="contained" color="primary" className="md:ml-5">
-                {t("section5.register")}
-              </Button>
+            <Box className=" max-w-4xl mx-auto text-center">
+              <Typography
+                variant="h4"
+                color="#713F97"
+                className="pb-4 md:pb-20"
+                fontWeight="bold"
+              >
+                {t("section5.header")}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.primary"
+                className="pb-8 md:pb-20"
+              >
+                {t("section5.content")}
+              </Typography>
+              <Box className="flex justify-between md:relative rounded-4 bg-white hover:bg-opacity-80 w-full sm:w-auto">
+                <StyledInputBase
+                  placeholder={t("section5.email") ?? undefined}
+                  inputProps={{ "aria-label": "search" }}
+                  onSubmit={(e) => {}}
+                />
+                <Button variant="contained" color="primary" className="md:ml-5">
+                  {t("section5.register")}
+                </Button>
+              </Box>
             </Box>
           </Box>
           {/* <GarapinFooter/> */}

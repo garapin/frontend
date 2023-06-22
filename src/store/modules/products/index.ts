@@ -36,6 +36,7 @@ const defaultState: {
   category: any;
   history: any;
   calculateTemplatePrice: any;
+  calculationLoading: boolean | null;
 } = {
   products: [],
   productCategories: [],
@@ -53,6 +54,7 @@ const defaultState: {
   category: [],
   history: [],
   calculateTemplatePrice: null,
+  calculationLoading: null
 };
 
 export const ProductSlice = createSlice({
@@ -113,12 +115,13 @@ export const ProductSlice = createSlice({
     setSearchHits: (state, action) => {
       state.searchHit = action.payload;
     },
+    setCalculateLoading: (state, action) => {
+      state.calculationLoading = action.payload
+    }
   },
 
   extraReducers: {
     [HYDRATE]: (state, action) => {
-      console.log("HYDRATE", action.payload);
-
       state.products = action.payload.product.products;
       state.singleProduct = action.payload.product.singleProduct;
       state.productCart = action.payload.product.productCart;
@@ -151,6 +154,7 @@ export const {
   setCategory,
   setHistory,
   setCalculateTemplatePrice,
+  setCalculateLoading
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -235,8 +239,6 @@ export const getSearchProduct = (productName: string): AppThunk => {
       );
       dispatch(setProducts(data.data.result.map((item: any) => item._source)));
       dispatch(setSearchHits(data.data.hits));
-      console.log("data.data");
-      console.log(data.data);
 
       if (data.data.result.length < 25) {
         console.log("All products loaded");
@@ -289,7 +291,12 @@ export const getNextSearchProduct = (): AppThunk => {
         requestBody
       );
       dispatch(setIsFetchingNext(false));
-      dispatch(setProducts([...products, ...data.data.result.map((item: any) => item._source)]));
+      dispatch(
+        setProducts([
+          ...products,
+          ...data.data.result.map((item: any) => item._source),
+        ])
+      );
 
       if (data.data.result.length < 25) {
         dispatch(setScrollId(undefined));
@@ -332,9 +339,7 @@ export const getProductTemplate = (templateId: string): AppThunk => {
   return async (dispatch) => {
     try {
       dispatch(setTemplateLoading());
-      console.log("templateId", templateId);
-      const templateData = await getProductTemplateFromDB(templateId);
-      console.log("templateData", templateData);
+      const templateData: any = await getProductTemplateFromDB(templateId);
       if (templateData !== undefined) {
         dispatch(setProductTemplate(templateData));
       } else {
@@ -351,6 +356,7 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
     const { product, selectedOptions, quantity, dimension } = data;
     let payload: any = {
       idempotencyKey: uuid(),
+      productId: product.id,
       templateId: product.templateId,
       dimension: dimension,
       quantity: quantity,
@@ -365,24 +371,34 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
         selectedOption: {
           value: selectedOptions[key].selectedOption.value,
         },
-        quantity: selectedOptions[key].variant.hasQtyFields
-          ? selectedOptions[key].variant.qty
-          : null,
       };
+      if (selectedOptions[key].variant.hasQtyFields) {
+        payload.selectedOptions[key].quantity =
+          selectedOptions[key].variant.qty;
+      }
     });
 
     try {
-      dispatch(setTemplateLoading());
-      const templatePrice = await API.calculateTemplatePrice(payload);
-      console.log("templatePrice", templatePrice);
+      dispatch(setCalculateLoading(true));
+      const templatePrice = await axios.post(
+        `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/calculate/templatePricing`,
+        payload, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + JSON.parse(localStorage.getItem('token') as string) || '',
+          },
+        }
+      );
       if (templatePrice !== undefined) {
-        dispatch(setCalculateTemplatePrice(templatePrice));
+        dispatch(setCalculateTemplatePrice(templatePrice.data));
       } else {
         dispatch(setError("Template not found"));
       }
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
+    } finally {
+      dispatch(setCalculateLoading(false));
     }
   };
 };

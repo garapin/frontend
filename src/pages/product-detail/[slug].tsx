@@ -27,6 +27,7 @@ import {
   getProductTemplate,
   getProductTemplatePrice,
   getSingleProduct,
+  setCalculateTemplatePrice,
 } from "@/store/modules/products";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -48,6 +49,9 @@ import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { storeRequestInquiryToDB, addToCart } from "@/db";
 import * as Yup from "yup";
+import API from "@/configs/api";
+import { uuid } from "uuidv4";
+import { rupiah } from "@/tools/rupiah";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -119,6 +123,7 @@ const ProductDetailPage = () => {
     productTemplate,
     errors,
     calculateTemplatePrice,
+    calculationLoading
   } = useAppSelector((state) => state.product);
   const [open, setOpen] = React.useState(false);
   const [itemQty, setItemQty] = React.useState(0);
@@ -192,6 +197,8 @@ const ProductDetailPage = () => {
           unitPrice: singleProduct?.maxPrice,
           updatedAt: null,
           userId: auth?.authUser?.uid,
+          calculationId: calculateTemplatePrice?.calculationId,
+          totalPrice: calculateTemplatePrice?.totalPrice,
         };
 
         await addToCart(data);
@@ -207,6 +214,8 @@ const ProductDetailPage = () => {
       } catch (e: any) {
         console.error(e);
         toast.error(e.message);
+      } finally {
+        dispatch(setCalculateTemplatePrice(null));
       }
     },
   });
@@ -374,7 +383,7 @@ const ProductDetailPage = () => {
     return (
       <Box className="items-center">
         <GarapinAppBar searchVariant={true} />
-        <Grid container className="pt-20 mx-auto max-w-6xl justify-between">
+        <Grid maxWidth="lg" container className="pt-20 mx-auto justify-between">
           <Grid
             item
             lg={4}
@@ -482,25 +491,24 @@ const ProductDetailPage = () => {
                         )}
                         {(productTemplate == undefined ||
                           isTemplateLoading) && <CircularProgress />}
-                        {productTemplate !== undefined &&
-                          !isTemplateLoading && (
-                            <GarapinProductCustomizer
-                              template={productTemplate}
-                              value={variantSelectorValue}
-                              handleChange={(variant, selected) => {
-                                if (selected !== undefined) {
-                                  setVariantSelectorValue({
-                                    ...variantSelectorValue,
-                                    [variant.id]: {
-                                      variant,
-                                      selectedOption: selected,
-                                    },
-                                  });
-                                }
-                              }}
-                              options={{ alignVariantOptions: "left" }}
-                            />
-                          )}
+                        {productTemplate && !isTemplateLoading && (
+                          <GarapinProductCustomizer
+                            template={productTemplate}
+                            value={variantSelectorValue}
+                            handleChange={(variant, selected) => {
+                              if (selected !== undefined) {
+                                setVariantSelectorValue({
+                                  ...variantSelectorValue,
+                                  [variant.id]: {
+                                    variant,
+                                    selectedOption: selected,
+                                  },
+                                });
+                              }
+                            }}
+                            options={{ alignVariantOptions: "left" }}
+                          />
+                        )}
                         <br />
                         <Divider />
                         <br />
@@ -555,7 +563,6 @@ const ProductDetailPage = () => {
                                 fullWidth
                                 label="Width"
                                 value={formik.values.dimension?.width}
-                                required
                                 name={"width"}
                                 className="py-2"
                                 type="number"
@@ -577,7 +584,6 @@ const ProductDetailPage = () => {
                                 fullWidth
                                 label="Length"
                                 value={formik.values.dimension?.length}
-                                required
                                 name={"length"}
                                 type="number"
                                 inputProps={{
@@ -598,7 +604,6 @@ const ProductDetailPage = () => {
                                 fullWidth
                                 label="Height"
                                 value={formik.values.dimension?.height}
-                                required
                                 name={"height"}
                                 type="number"
                                 inputProps={{
@@ -679,7 +684,7 @@ const ProductDetailPage = () => {
                                     <b>
                                       Rincian Produk{" "}
                                       {calculateTemplatePrice &&
-                                        `(W: ${calculateTemplatePrice.dimension.width}cm, L: ${calculateTemplatePrice.dimension.length}cm, H: ${calculateTemplatePrice.dimension.height}cm)`}
+                                        `(W: ${calculateTemplatePrice?.dimension?.width}cm, L: ${calculateTemplatePrice.dimension?.length}cm, H: ${calculateTemplatePrice.dimension?.height}cm)`}
                                     </b>
                                   </Typography>
                                   <Button
@@ -711,9 +716,24 @@ const ProductDetailPage = () => {
                                         {Object.values(
                                           calculateTemplatePrice.options
                                         ).map((option: any, idx) => (
-                                          <Typography variant="body1" key={idx}>
-                                            {option?.selectedOption?.value}
-                                          </Typography>
+                                          <Grid container>
+                                            <Grid item md={6}>
+                                              <Typography
+                                                variant="body1"
+                                                key={idx}
+                                              >
+                                                {option?.variant?.id}
+                                              </Typography>
+                                            </Grid>
+                                            <Grid item md={6}>
+                                              <Typography
+                                                variant="body1"
+                                                key={idx}
+                                              >
+                                                : {option?.selectedOption?.value}
+                                              </Typography>
+                                            </Grid>
+                                          </Grid>
                                         ))}
                                         <Divider />
                                         <Grid container>
@@ -729,9 +749,8 @@ const ProductDetailPage = () => {
                                           >
                                             <Typography variant="body1">
                                               <b>
-                                                Rp.{" "}
-                                                {calculateTemplatePrice?.totalPrice?.toLocaleString(
-                                                  "id-ID"
+                                                {rupiah(
+                                                  calculateTemplatePrice?.totalPrice
                                                 )}
                                               </b>
                                             </Typography>

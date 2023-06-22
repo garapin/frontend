@@ -129,11 +129,11 @@ function Cart() {
   return (
     <>
       <main>
-        <Box className="flex flex-col content-center">
+        <Box maxWidth="lg" className="flex flex-col content-center mx-auto">
           <Box className="h-min-screen flex flex-col justify-center bg-white">
             <Container
               maxWidth="xl"
-              className="px-4 md:px-16 pt-36 pb-28 md:pt-48 md:pb-48"
+              className="px-4 pt-36 pb-28 md:pt-48 md:pb-48"
             >
               <Typography fontSize={26} fontWeight={700} color="text.primary">
                 {t("cart.title")}
