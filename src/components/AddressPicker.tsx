@@ -13,7 +13,7 @@ const AddressPicker: React.FC<LocationInputProps> = ({onLocationSelect, label}) 
 
     const libraries: ("places")[] = ["places"];
     const {isLoaded, loadError} = useLoadScript({
-        googleMapsApiKey: "AIzaSyBd4sCVzZ0ixw4Jxqsn10yIPJF5eFEADdA",
+        googleMapsApiKey: JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG as string).apiKey as string,
         libraries,
     });
 
