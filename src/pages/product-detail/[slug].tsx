@@ -796,7 +796,7 @@ const ProductDetailPage = () => {
                                       >
                                         <Typography variant="body2">
                                           <b>
-                                              {rupiah(calculateTemplatePrice?.totalPrice / calculateTemplatePrice?.quantity)}
+                                              {rupiah(parseFloat(calculateTemplatePrice?.unitPrice as string ?? '0'))}
                                           </b>
                                         </Typography>
                                       </Grid>
@@ -815,7 +815,7 @@ const ProductDetailPage = () => {
                                         <Typography variant="body2">
                                           <b>
                                             {rupiah(
-                                              calculateTemplatePrice?.totalPrice
+                                              parseFloat(calculateTemplatePrice?.totalPrice as string ?? '0')
                                             )}
                                           </b>
                                         </Typography>
