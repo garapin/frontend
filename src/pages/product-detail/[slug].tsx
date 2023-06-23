@@ -505,7 +505,7 @@ const ProductDetailPage = () => {
                                 });
                               }
                             }}
-                            options={{ alignVariantOptions: "left" }}
+                            options={{ alignVariantOptions: "left", showPriceCalculation: false }}
                           />
                         )}
                         <br />
