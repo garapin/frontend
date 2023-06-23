@@ -31,8 +31,6 @@ export const appDefaultSlice = createSlice({
     },
     extraReducers: {
         [HYDRATE]: (state, action) => {  // IMPORTANT - for server side hydration
-          console.log('HYDRATE', action.payload);
-    
           if (!action.payload.appDefaults.categories) {  // IMPORTANT - for not overriding data on client side
             return state;
           }

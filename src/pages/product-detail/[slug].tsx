@@ -123,7 +123,7 @@ const ProductDetailPage = () => {
     productTemplate,
     errors,
     calculateTemplatePrice,
-    calculationLoading
+    calculationLoading,
   } = useAppSelector((state) => state.product);
   const [open, setOpen] = React.useState(false);
   const [itemQty, setItemQty] = React.useState(0);
@@ -166,9 +166,9 @@ const ProductDetailPage = () => {
       addressNote: Yup.string().optional(),
       email: Yup.string().required("Email is required"),
       dimension: Yup.object({
-        width: Yup.number().optional(),
-        height: Yup.number().optional(),
-        length: Yup.number().optional(),
+        width: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
+        height: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
+        length: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
       }),
     }),
     onSubmit: async (values) => {
@@ -221,7 +221,6 @@ const ProductDetailPage = () => {
   });
 
   React.useEffect(() => {
-    console.log("auth state changed. here's the data");
     if (auth.authUser !== null) {
       formik.setFieldValue("contactName", auth.authUser?.displayName);
       formik.setFieldValue("email", auth.authUser?.email);
@@ -556,7 +555,7 @@ const ProductDetailPage = () => {
                               mt: 2,
                             }}
                             spacing={2}
-                            md={4}
+                            md={8}
                           >
                             <Grid item md={4}>
                               <TextField
@@ -564,8 +563,17 @@ const ProductDetailPage = () => {
                                 label="Width"
                                 value={formik.values.dimension?.width}
                                 name={"width"}
+                                required
                                 className="py-2"
                                 type="number"
+                                error={
+                                  formik.touched.dimension?.width &&
+                                  Boolean(formik.errors.dimension?.width)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) && formik.errors.dimension?.width
+                                }
+                                onBlur={formik.handleBlur}
                                 inputProps={{
                                   style: {
                                     padding: "10px 14px",
@@ -586,6 +594,15 @@ const ProductDetailPage = () => {
                                 value={formik.values.dimension?.length}
                                 name={"length"}
                                 type="number"
+                                required
+                                error={
+                                  formik.touched.dimension?.length &&
+                                  Boolean(formik.errors.dimension?.length)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) && formik.errors.dimension?.length
+                                }
+                                onBlur={formik.handleBlur}
                                 inputProps={{
                                   style: {
                                     padding: "10px 14px",
@@ -605,7 +622,16 @@ const ProductDetailPage = () => {
                                 label="Height"
                                 value={formik.values.dimension?.height}
                                 name={"height"}
+                                required
                                 type="number"
+                                error={
+                                  formik.touched.dimension?.height &&
+                                  Boolean(formik.errors.dimension?.height)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) && formik.errors.dimension?.height
+                                }
+                                onBlur={formik.handleBlur}
                                 inputProps={{
                                   style: {
                                     padding: "10px 14px",
@@ -673,95 +699,96 @@ const ProductDetailPage = () => {
                         <br />
                         {singleProduct?.category == "02" && (
                           <>
-                            <Grid container>
-                              <Grid item md={7}></Grid>
-                              <Grid item md={5}>
-                                <Box>
-                                  <Typography
-                                    variant="subtitle2"
-                                    sx={{ paddingBottom: "0.5rem" }}
-                                  >
-                                    <b>
-                                      Rincian Produk{" "}
-                                      {calculateTemplatePrice &&
-                                        `(W: ${calculateTemplatePrice?.dimension?.width}cm, L: ${calculateTemplatePrice.dimension?.length}cm, H: ${calculateTemplatePrice.dimension?.height}cm)`}
-                                    </b>
-                                  </Typography>
-                                  <Button
-                                    variant="contained"
-                                    color="garapinColor"
-                                    onClick={() =>
-                                      dispatch(
-                                        getProductTemplatePrice({
-                                          product: singleProduct,
-                                          selectedOptions: variantSelectorValue,
-                                          dimension: formik.values.dimension,
-                                          quantity: formik.values.quantity,
-                                        })
-                                      )
-                                    }
-                                  >
-                                    Hitung Harga
-                                  </Button>
+                            <Box>
+                              <Typography
+                                variant="subtitle2"
+                                sx={{ paddingBottom: "0.5rem" }}
+                              >
+                                <b>
+                                  Rincian Produk{" "}
+                                  {calculateTemplatePrice &&
+                                    `(W: ${calculateTemplatePrice?.dimension?.width}cm, L: ${calculateTemplatePrice.dimension?.length}cm, H: ${calculateTemplatePrice.dimension?.height}cm)`}
+                                </b>
+                              </Typography>
+                              <Button
+                                variant="contained"
+                                color="garapinColor"
+                                disabled={Boolean(calculationLoading)}
+                                onClick={() =>
+                                  dispatch(
+                                    getProductTemplatePrice({
+                                      product: singleProduct,
+                                      selectedOptions: variantSelectorValue,
+                                      dimension: formik.values.dimension,
+                                      quantity: formik.values.quantity,
+                                    })
+                                  )
+                                }
+                              >
+                                Hitung Harga{" "}
+                                {calculationLoading && (
+                                  <CircularProgress
+                                    size={18}
+                                    sx={{
+                                      marginLeft: "0.5rem",
+                                    }}
+                                    color="inherit"
+                                  />
+                                )}
+                              </Button>
+                              <br />
+                              {calculateTemplatePrice && (
+                                <>
                                   <br />
-                                  {calculateTemplatePrice && (
-                                    <>
-                                      <br />
-                                      <Divider />
-                                      <Box
-                                        sx={{
-                                          marginTop: "0.5rem",
-                                        }}
-                                      >
-                                        {Object.values(
-                                          calculateTemplatePrice.options
-                                        ).map((option: any, idx) => (
-                                          <Grid container>
-                                            <Grid item md={6}>
-                                              <Typography
-                                                variant="body1"
-                                                key={idx}
-                                              >
-                                                {option?.variant?.id}
-                                              </Typography>
-                                            </Grid>
-                                            <Grid item md={6}>
-                                              <Typography
-                                                variant="body1"
-                                                key={idx}
-                                              >
-                                                : {option?.selectedOption?.value}
-                                              </Typography>
-                                            </Grid>
-                                          </Grid>
-                                        ))}
-                                        <Divider />
-                                        <Grid container>
-                                          <Grid item md={8}>
-                                            <Typography variant="body1">
-                                              <b>Total Price</b>
-                                            </Typography>
-                                          </Grid>
-                                          <Grid
-                                            item
-                                            md={4}
-                                            sx={{ textAlign: "right" }}
-                                          >
-                                            <Typography variant="body1">
-                                              <b>
-                                                {rupiah(
-                                                  calculateTemplatePrice?.totalPrice
-                                                )}
-                                              </b>
-                                            </Typography>
-                                          </Grid>
+                                  <Divider />
+                                  <Box
+                                    sx={{
+                                      marginTop: "0.5rem",
+                                    }}
+                                  >
+                                    {Object.values(
+                                      calculateTemplatePrice.options
+                                    ).map((option: any, idx) => (
+                                      <Grid container sx={{
+                                        marginBottom: "0.5rem",
+                                      }}>
+                                        <Grid item md={6}>
+                                          <Typography variant="body1" key={idx}>
+                                            {option?.variant?.id}
+                                          </Typography>
                                         </Grid>
-                                      </Box>
-                                    </>
-                                  )}
-                                </Box>
-                              </Grid>
-                            </Grid>
+                                        <Grid item md={6}>
+                                          <Typography variant="body1" key={idx}>
+                                            : {option?.selectedOption?.value}
+                                          </Typography>
+                                        </Grid>
+                                      </Grid>
+                                    ))}
+                                    <Divider />
+                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body1">
+                                          <b>Total Price</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body1">
+                                          <b>
+                                            {rupiah(
+                                              calculateTemplatePrice?.totalPrice
+                                            )}
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                  </Box>
+                                </>
+                              )}
+                            </Box>
                             <br />
                           </>
                         )}
