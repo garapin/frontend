@@ -582,7 +582,7 @@ const ProductDetailPage = () => {
                                 onChange={(e) => {
                                   formik.setFieldValue(
                                     "dimension.width",
-                                    parseInt(e.target.value ?? 1)
+                                    parseFloat(e.target.value ?? 1)
                                   );
                                 }}
                               />
@@ -611,7 +611,7 @@ const ProductDetailPage = () => {
                                 onChange={(e) => {
                                   formik.setFieldValue(
                                     "dimension.length",
-                                    parseInt(e.target.value ?? 1)
+                                    parseFloat(e.target.value ?? 1)
                                   );
                                 }}
                               />
@@ -640,7 +640,7 @@ const ProductDetailPage = () => {
                                 onChange={(e) => {
                                   formik.setFieldValue(
                                     "dimension.height",
-                                    parseInt(e.target.value ?? 1)
+                                    parseFloat(e.target.value ?? 1)
                                   );
                                 }}
                               />
@@ -701,7 +701,7 @@ const ProductDetailPage = () => {
                           <>
                             <Box>
                               <Typography
-                                variant="subtitle2"
+                                variant="body1"
                                 sx={{ paddingBottom: "0.5rem" }}
                               >
                                 <b>
@@ -767,7 +767,43 @@ const ProductDetailPage = () => {
                                     <Divider />
                                     <Grid container sx={{marginTop: '.5rem'}}>
                                       <Grid item md={8}>
-                                        <Typography variant="body1">
+                                        <Typography variant="body2">
+                                          <b>Quantity</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                              {calculateTemplatePrice?.quantity}
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
+                                          <b>Price per unit</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                              {rupiah(calculateTemplatePrice?.totalPrice / calculateTemplatePrice?.quantity)}
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
                                           <b>Total Price</b>
                                         </Typography>
                                       </Grid>
@@ -776,7 +812,7 @@ const ProductDetailPage = () => {
                                         md={4}
                                         sx={{ textAlign: "right" }}
                                       >
-                                        <Typography variant="body1">
+                                        <Typography variant="body2">
                                           <b>
                                             {rupiah(
                                               calculateTemplatePrice?.totalPrice
