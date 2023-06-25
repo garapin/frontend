@@ -107,18 +107,7 @@ const TransactionListIndex = () => {
         <Grid container>
           {!isProductLoading &&
             products.map((product: any) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                key={product.id}
-                sx={{ py: 4 }}
-                direction="column"
-                display="flex"
-                alignItems="center"
-              >
+              <Grid item sm={4} md={3} key={product.id}>
                 <Link
                   href={`/product-detail/${encodeURIComponent(product.slug)}`}
                 >

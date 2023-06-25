@@ -8,6 +8,8 @@ import {
   DialogProps,
   DialogTitle,
   DialogContent,
+  Grid,
+  Chip,
 } from "@mui/material";
 import React from "react";
 import { rupiah } from "@/tools/rupiah";
@@ -57,7 +59,7 @@ export default function TransactionList({ currentTab }: any) {
 
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
-  const [isHistory, setHistory] = React.useState({
+  const [isHistory, setHistory] = React.useState<any>({
     product: {
       img: "",
       productName: "",
@@ -68,6 +70,7 @@ export default function TransactionList({ currentTab }: any) {
     orderDescription: "",
     quantity: 0,
     selectedOptions: [],
+    files: [],
   });
   const handleOpen = (data: any) => {
     setOpen(true);
@@ -110,7 +113,7 @@ export default function TransactionList({ currentTab }: any) {
     dataHistory = cpData;
   }
 
-  console.log(dataHistory, "testdf");
+  console.log("history", dataHistory);
 
   return (
     <Box style={{ border: "1px solid black" }} className="p-6 rounded-xl">
@@ -126,11 +129,16 @@ export default function TransactionList({ currentTab }: any) {
             status: string;
             quantity: number;
             orderDescription: string;
+            createdAt: { seconds: number; nanoseconds: number };
           },
-          i: React.Key | null | undefined
+          i: number
         ) => {
+          const milliseconds =
+            val.createdAt?.seconds * 1000 +
+            Math.floor(val.createdAt?.nanoseconds / 1000000);
+          const dateHistory = new Date(milliseconds);
           return (
-            <Box className="mt-5" key={i}>
+            <Box className={`${i < dataHistory.length - 1 && "mb-5"}`} key={i}>
               <Box
                 style={{ border: "1px solid gray" }}
                 className="w-full rounded-lg p-6 drop-shadow-2xl shadow-md"
@@ -139,17 +147,27 @@ export default function TransactionList({ currentTab }: any) {
                   <Typography fontWeight={600} marginRight="20px">
                     {title(val?.product?.category)}
                   </Typography>
-                  <Typography marginRight="20px"> 25 Maret 2023</Typography>
+                  <Typography marginRight="20px">
+                    {dateHistory.toLocaleDateString("id-ID", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </Typography>
 
-                  <Box className="bg-[#03AC0E] capitalize bg-opacity-30 p-3 pr-6 pl-6 text-[#03AC0E] rounded-full">
-                    {val?.status}
-                  </Box>
+                  {val?.status && (
+                    <Chip
+                      label={val?.status}
+                      color="success"
+                      className="capitalize"
+                    />
+                  )}
                 </Box>
                 <Box className="flex items-center justify-between">
                   <Box>
                     <Box className="flex items-center">
                       <img
-                        className="w-16 h-16 mr-4 object-contain"
+                        className="w-24 h-24 mr-4 object-contain"
                         src={val?.product?.img?.[0]}
                         alt="img_prod"
                       />
@@ -243,54 +261,77 @@ export default function TransactionList({ currentTab }: any) {
             location="Jakarta"
             slug={isHistory?.product?.slug}
           />
-          <Box>
-            <table
-              style={{
-                borderSpacing: "30px",
-                borderCollapse: "collapse",
-                width: "100%",
-                marginTop: "20px",
-              }}
-            >
-              <tr style={{ marginBottom: "20px" }}>
-                <td style={{ width: "300px" }}>Quantity</td>
-                <td>{isHistory?.quantity} items</td>
-              </tr>
-              <tr>
-                <td>Attached File</td>
-                <td>File.pdf</td>
-              </tr>
-              <tr>
-                <td>Order Description</td>
-                <td> {isHistory?.orderDescription}</td>
-              </tr>
-            </table>
+          <Box className="mt-4">
+            <Grid container className="mb-2">
+              <Grid item md={4}>
+                <Typography variant="body1" className="font-semibold">
+                  Quantity
+                </Typography>
+              </Grid>
+              <Grid item md={8}>
+                <Typography variant="body1">{isHistory?.quantity}</Typography>
+              </Grid>
+            </Grid>
+            <Grid container className="mb-2">
+              <Grid item md={4}>
+                <Typography variant="body1" className="font-semibold">
+                  Attached File
+                </Typography>
+              </Grid>
+              <Grid item md={8}>
+                <Typography variant="body1">
+                  {isHistory?.files.map((val: any, i: number) => (
+                    <a href={val.url} target="_blank" className="line-clamp-1">
+                      {i + 1}. <span className="text-blue-500">{val.url}</span>
+                    </a>
+                  ))}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid container className="mb-2">
+              <Grid item md={4}>
+                <Typography variant="body1" className="font-semibold">
+                  Order Description
+                </Typography>
+              </Grid>
+              <Grid item md={8}>
+                <Typography variant="body1">
+                  {isHistory?.orderDescription}
+                </Typography>
+              </Grid>
+            </Grid>
           </Box>
-          <Box sx={{ marginTop: "10px", display: "flex" }}>
-            <Typography sx={{ marginRight: "30px" }}>
+          <Box sx={{ marginTop: "10px" }}>
+            <Typography variant="body1" className="font-semibold mb-2">
               Product Customization
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+            <Grid
+              container
+              spacing={3}
+              sx={{ display: "flex", flexWrap: "wrap" }}
+            >
               {isHistory &&
-                Object?.keys(isHistory?.selectedOptions).map((key, i) => (
-                  <Box key={i} sx={{ marginRight: "30px" }}>
-                    <Typography fontWeight={600}>{key}</Typography>
-                    <Typography>Variant description here</Typography>
-                    <Box style={{ display: "flex", alignItems: "center" }}>
-                      <Box
-                        style={{
-                          marginRight: "10px",
-                          width: "50px",
-                          height: "50px",
-                          borderRadius: "2px",
-                          backgroundColor: "red",
-                        }}
-                      ></Box>
-                      <Typography>Handle Box</Typography>
-                    </Box>
-                  </Box>
-                ))}
-            </Box>
+                Object?.keys(isHistory?.selectedOptions).map((key: any, i) => {
+                  const selected: any =
+                    isHistory?.selectedOptions[`${key as number}`];
+                  return (
+                    <Grid item md={6} key={i}>
+                      <Typography className="font-semibold">{key}</Typography>
+                      <Typography>{selected.variant.description}</Typography>
+                      <Box style={{ display: "flex", alignItems: "center" }}>
+                        {selected.selectedOption.imgSrc && (
+                          <img
+                            src={selected.selectedOption.imgSrc}
+                            alt={key}
+                            className="w-14 h-14 rounded-sm mr-2"
+                          />
+                        )}
+                        <Typography>{selected.selectedOption.value}</Typography>
+                      </Box>
+                    </Grid>
+                  );
+                })}
+            </Grid>
           </Box>
         </DialogContent>
         {/* <Box sx={style}>
