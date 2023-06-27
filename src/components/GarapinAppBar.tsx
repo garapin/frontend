@@ -66,7 +66,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     width: "100%",
     height: "100%",
     [theme.breakpoints.up("sm")]: {
-      width: "70ch",
+      width: "100%",
       "&:focus": {
         width: "80ch",
       },
@@ -147,7 +147,7 @@ const GarapinAppBar = ({
       <AppBar position="fixed" style={{ zIndex: 1300 }}>
         <Toolbar>
           <Box className={`flex flex-row justify-between w-full`}>
-            <Box className="flex flex-row items-center">
+            <Box className="flex flex-row items-center w-full">
               <Box
                 className="mr-3"
                 sx={{
@@ -173,7 +173,7 @@ const GarapinAppBar = ({
                 </Link>
               </Box>
               {searchVariant && (
-                <Box className="hidden md:flex bg-white rounded-md h-10 items-center">
+                <Box className="hidden md:flex flex-1 mr-4 max-w-2xl bg-white rounded-md h-10 items-center">
                   <SearchIconWrapper>
                     <SearchIcon style={{ color: "#713F97" }} />
                   </SearchIconWrapper>
@@ -267,7 +267,7 @@ const GarapinAppBar = ({
                     <IconButton onClick={handleClick}>
                       <Avatar sx={{ ml: 2 }} />
                       <Typography
-                        className="hidden md:block"
+                        className="hidden md:block min-w-max max-w-max"
                         variant="body1"
                         sx={{ color: "#ffffff", pl: 2 }}
                       >
