@@ -99,8 +99,6 @@ const GarapinAppBar = ({
   const fieldRef = useRef<HTMLInputElement>(null);
   const classes = useStyles();
 
-  console.log('auth', auth)
-
   useEffect(() => {}, [auth]);
 
   const handleClick = (event: any) => {

@@ -25,12 +25,6 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
       sx={{ backgroundColor: "#713F97" }}
     >
       <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "row",
-          flexShrink: 1,
-        }}
         className="block md:hidden mb-4"
       >
         <Box className="w-32 bg-white rounded pl-2">
