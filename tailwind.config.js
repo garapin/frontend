@@ -2,6 +2,7 @@
 module.exports = {
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},
@@ -9,6 +10,8 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
-  important: '#__next',
-  plugins: [],
+  // important: '#__next',
+  plugins: [
+    require('@tailwindcss/line-clamp'),
+  ],
 }
