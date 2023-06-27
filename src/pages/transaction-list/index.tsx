@@ -114,12 +114,7 @@ const TransactionListIndex = () => {
         >
           {!isProductLoading &&
             products.map((product: any) => (
-              <Grid
-                item
-                sm={4}
-                md={3}
-                key={product.id}
-              >
+              <Grid item sm={4} md={3} key={product.id}>
                 <Link
                   href={`/product-detail/${encodeURIComponent(product.slug)}`}
                 >
