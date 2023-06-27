@@ -23,7 +23,12 @@ import GarapinAppBar from "@/components/GarapinAppBar";
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import FallbackSpinner from "@/components/spinner";
-import { getProductTemplate, getSingleProduct } from "@/store/modules/products";
+import {
+  getProductTemplate,
+  getProductTemplatePrice,
+  getSingleProduct,
+  setCalculateTemplatePrice,
+} from "@/store/modules/products";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import InputBase from "@mui/material/InputBase";
@@ -43,8 +48,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { storeRequestInquiryToDB, addToCart } from "@/db";
-import CardHorizontal from "@/components/CardHorizontal";
 import * as Yup from "yup";
+import API from "@/configs/api";
+import { uuid } from "uuidv4";
+import { rupiah } from "@/tools/rupiah";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -115,13 +122,12 @@ const ProductDetailPage = () => {
     isTemplateLoading,
     productTemplate,
     errors,
+    calculateTemplatePrice,
+    calculationLoading,
   } = useAppSelector((state) => state.product);
-
   const [open, setOpen] = React.useState(false);
   const [itemQty, setItemQty] = React.useState(0);
-
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [variantSelectorValue, setVariantSelectorValue] =
     useState<TemplateInput>({});
@@ -132,16 +138,23 @@ const ProductDetailPage = () => {
   });
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       orderDescription: "",
-      quantity: "",
+      quantity: 1,
       contactName: auth.authUser?.displayName ?? "",
       phoneNumber: auth.authUser?.phoneNumber ?? "",
+      addressNote: "",
       email: auth.authUser?.email ?? "",
+      dimension: {
+        width: 0,
+        height: 0,
+        length: 0,
+      },
     },
     validationSchema: Yup.object({
       orderDescription: Yup.string().required("Order Description is required"),
-      quantity: Yup.lazy((val: any) =>
+      quantity: Yup.lazy((_val: any) =>
         singleProduct !== undefined && singleProduct.moq !== undefined
           ? Yup.number()
               .required("Quantity is required")
@@ -150,7 +163,13 @@ const ProductDetailPage = () => {
       ),
       contactName: Yup.string().required("Contact Name is required"),
       phoneNumber: Yup.string().required("Phone Number is required"),
+      addressNote: Yup.string().optional(),
       email: Yup.string().required("Email is required"),
+      dimension: Yup.object({
+        width: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
+        height: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
+        length: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
+      }),
     }),
     onSubmit: async (values) => {
       try {
@@ -178,6 +197,8 @@ const ProductDetailPage = () => {
           unitPrice: singleProduct?.maxPrice,
           updatedAt: null,
           userId: auth?.authUser?.uid,
+          calculationId: calculateTemplatePrice?.calculationId,
+          totalPrice: calculateTemplatePrice?.totalPrice,
         };
 
         await addToCart(data);
@@ -193,13 +214,13 @@ const ProductDetailPage = () => {
       } catch (e: any) {
         console.error(e);
         toast.error(e.message);
+      } finally {
+        dispatch(setCalculateTemplatePrice(null));
       }
     },
   });
 
   React.useEffect(() => {
-    console.log("auth state changed. here's the data");
-    console.log(auth.authUser);
     if (auth.authUser !== null) {
       formik.setFieldValue("contactName", auth.authUser?.displayName);
       formik.setFieldValue("email", auth.authUser?.email);
@@ -361,7 +382,7 @@ const ProductDetailPage = () => {
     return (
       <Box className="items-center">
         <GarapinAppBar searchVariant={true} />
-        <Grid container className="pt-20 mx-auto max-w-6xl justify-between">
+        <Grid maxWidth="lg" container className="pt-20 mx-auto justify-between">
           <Grid
             item
             lg={4}
@@ -421,11 +442,6 @@ const ProductDetailPage = () => {
                 </Typography>
               </Box>
               <Divider className="pt-2" />
-              {/* <Box className="flex flex-row items-center justify-between pt-2">
-                            <Typography variant="body2">Dikirim dari</Typography>
-                            <Typography variant="body1"><b>{}</b></Typography>
-                        </Box> */}
-              {/*<Divider className="pt-2"/>*/}
 
               {renderButton()}
 
@@ -440,7 +456,9 @@ const ProductDetailPage = () => {
                 >
                   <DialogTitle>
                     {auth.authUser !== null
-                      ? "Minta Penawaran"
+                      ? singleProduct?.category == "02"
+                        ? "Customize Product"
+                        : "Minta Penawaran"
                       : "Login untuk minta penawaran"}
                   </DialogTitle>
                   <DialogContent dividers={scroll === "paper"}>
@@ -472,25 +490,24 @@ const ProductDetailPage = () => {
                         )}
                         {(productTemplate == undefined ||
                           isTemplateLoading) && <CircularProgress />}
-                        {productTemplate !== undefined &&
-                          !isTemplateLoading && (
-                            <GarapinProductCustomizer
-                              template={productTemplate}
-                              value={variantSelectorValue}
-                              handleChange={(variant, selected) => {
-                                if (selected !== undefined) {
-                                  setVariantSelectorValue({
-                                    ...variantSelectorValue,
-                                    [variant.id]: {
-                                      variant,
-                                      selectedOption: selected,
-                                    },
-                                  });
-                                }
-                              }}
-                              options={{ alignVariantOptions: "left" }}
-                            />
-                          )}
+                        {productTemplate && !isTemplateLoading && (
+                          <GarapinProductCustomizer
+                            template={productTemplate}
+                            value={variantSelectorValue}
+                            handleChange={(variant, selected) => {
+                              if (selected !== undefined) {
+                                setVariantSelectorValue({
+                                  ...variantSelectorValue,
+                                  [variant.id]: {
+                                    variant,
+                                    selectedOption: selected,
+                                  },
+                                });
+                              }
+                            }}
+                            options={{ alignVariantOptions: "left", showPriceCalculation: false }}
+                          />
+                        )}
                         <br />
                         <Divider />
                         <br />
@@ -524,11 +541,119 @@ const ProductDetailPage = () => {
                         />
                         <br />
                         <br />
+                        <Box
+                          sx={{
+                            mt: 3,
+                          }}
+                        >
+                          <Typography variant="body2">
+                            Dimension (cm):
+                          </Typography>
+                          <Grid
+                            container
+                            sx={{
+                              mt: 2,
+                            }}
+                            spacing={2}
+                            md={8}
+                          >
+                            <Grid item md={4}>
+                              <TextField
+                                fullWidth
+                                label="Width"
+                                value={formik.values.dimension?.width}
+                                name={"width"}
+                                required
+                                className="py-2"
+                                type="number"
+                                error={
+                                  formik.touched.dimension?.width &&
+                                  Boolean(formik.errors.dimension?.width)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) && formik.errors.dimension?.width
+                                }
+                                onBlur={formik.handleBlur}
+                                inputProps={{
+                                  style: {
+                                    padding: "10px 14px",
+                                  },
+                                }}
+                                onChange={(e) => {
+                                  formik.setFieldValue(
+                                    "dimension.width",
+                                    parseFloat(e.target.value ?? 1)
+                                  );
+                                }}
+                              />
+                            </Grid>
+                            <Grid item md={4}>
+                              <TextField
+                                fullWidth
+                                label="Length"
+                                value={formik.values.dimension?.length}
+                                name={"length"}
+                                type="number"
+                                required
+                                error={
+                                  formik.touched.dimension?.length &&
+                                  Boolean(formik.errors.dimension?.length)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) && formik.errors.dimension?.length
+                                }
+                                onBlur={formik.handleBlur}
+                                inputProps={{
+                                  style: {
+                                    padding: "10px 14px",
+                                  },
+                                }}
+                                onChange={(e) => {
+                                  formik.setFieldValue(
+                                    "dimension.length",
+                                    parseFloat(e.target.value ?? 1)
+                                  );
+                                }}
+                              />
+                            </Grid>
+                            <Grid item md={4}>
+                              <TextField
+                                fullWidth
+                                label="Height"
+                                value={formik.values.dimension?.height}
+                                name={"height"}
+                                required
+                                type="number"
+                                error={
+                                  formik.touched.dimension?.height &&
+                                  Boolean(formik.errors.dimension?.height)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) && formik.errors.dimension?.height
+                                }
+                                onBlur={formik.handleBlur}
+                                inputProps={{
+                                  style: {
+                                    padding: "10px 14px",
+                                  },
+                                }}
+                                onChange={(e) => {
+                                  formik.setFieldValue(
+                                    "dimension.height",
+                                    parseFloat(e.target.value ?? 1)
+                                  );
+                                }}
+                              />
+                            </Grid>
+                          </Grid>
+                        </Box>
+                        <br />
                         <TextField
                           fullWidth
                           label="Qty"
                           value={formik.values.quantity}
                           required
+                          type="number"
                           error={
                             formik.touched.quantity &&
                             Boolean(formik.errors.quantity)
@@ -572,6 +697,137 @@ const ProductDetailPage = () => {
                           ></TextField>
                         </Box>
                         <br />
+                        {singleProduct?.category == "02" && (
+                          <>
+                            <Box>
+                              <Typography
+                                variant="body1"
+                                sx={{ paddingBottom: "0.5rem" }}
+                              >
+                                <b>
+                                  Rincian Produk{" "}
+                                  {calculateTemplatePrice &&
+                                    `(W: ${calculateTemplatePrice?.dimension?.width}cm, L: ${calculateTemplatePrice.dimension?.length}cm, H: ${calculateTemplatePrice.dimension?.height}cm)`}
+                                </b>
+                              </Typography>
+                              <Button
+                                variant="contained"
+                                color="garapinColor"
+                                disabled={Boolean(calculationLoading)}
+                                onClick={() =>
+                                  dispatch(
+                                    getProductTemplatePrice({
+                                      product: singleProduct,
+                                      selectedOptions: variantSelectorValue,
+                                      dimension: formik.values.dimension,
+                                      quantity: formik.values.quantity,
+                                    })
+                                  )
+                                }
+                              >
+                                Hitung Harga{" "}
+                                {calculationLoading && (
+                                  <CircularProgress
+                                    size={18}
+                                    sx={{
+                                      marginLeft: "0.5rem",
+                                    }}
+                                    color="inherit"
+                                  />
+                                )}
+                              </Button>
+                              <br />
+                              {calculateTemplatePrice && (
+                                <>
+                                  <br />
+                                  <Divider />
+                                  <Box
+                                    sx={{
+                                      marginTop: "0.5rem",
+                                    }}
+                                  >
+                                    {Object.values(
+                                      calculateTemplatePrice.options
+                                    ).map((option: any, idx) => (
+                                      <Grid container sx={{
+                                        marginBottom: "0.5rem",
+                                      }}>
+                                        <Grid item md={6}>
+                                          <Typography variant="body1" key={idx}>
+                                            {option?.variant?.id}
+                                          </Typography>
+                                        </Grid>
+                                        <Grid item md={6}>
+                                          <Typography variant="body1" key={idx}>
+                                            : {option?.selectedOption?.value}
+                                          </Typography>
+                                        </Grid>
+                                      </Grid>
+                                    ))}
+                                    <Divider />
+                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
+                                          <b>Quantity</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                              {calculateTemplatePrice?.quantity}
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
+                                          <b>Price per unit</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                              {rupiah(parseFloat(calculateTemplatePrice?.unitPrice as string ?? '0'))}
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
+                                          <b>Total Price</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                            {rupiah(
+                                              parseFloat(calculateTemplatePrice?.totalPrice as string ?? '0')
+                                            )}
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                  </Box>
+                                </>
+                              )}
+                            </Box>
+                            <br />
+                          </>
+                        )}
                         <Divider />
                         <br />
                         <Typography variant="body1">
@@ -605,13 +861,11 @@ const ProductDetailPage = () => {
                         <br />
                         <AddressPicker
                           onLocationSelect={(place) => {
-                            console.log(place);
                             const postalCode = place.address_components?.find(
                               (component: any) => {
                                 return component.types.includes("postal_code");
                               }
                             )?.long_name;
-                            console.log(postalCode);
                             const completeAddress = place.formatted_address;
                             const geometry = place?.geometry?.location;
                             let latLong = {
@@ -634,6 +888,23 @@ const ProductDetailPage = () => {
                           }}
                           label=""
                         />
+                        <br />
+                        <TextField
+                          fullWidth
+                          label="Keterangan Alamat"
+                          value={formik.values.addressNote}
+                          error={
+                            formik.touched.addressNote &&
+                            Boolean(formik.errors.addressNote)
+                          }
+                          helperText={
+                            Boolean(formik.errors) && formik.errors.addressNote
+                          }
+                          name={"addressNote"}
+                          onBlur={formik.handleBlur}
+                          onChange={formik.handleChange}
+                        />
+                        <br />
                         <br />
                         <TextField
                           fullWidth

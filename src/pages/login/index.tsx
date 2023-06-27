@@ -21,14 +21,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   loginUi: {
     height: "calc(100vh - 64px)",
     minHeight: "calc(100vh - 64px)",
-    // height: '100vh',
-    // minHeight: '100vh',
   },
   carousel: {
     height: "calc(100vh - 85px)",
     maxHeight: "calc(100vh - 85px)",
-    // height: 'calc(100vh - 20px)',
-    // maxHeight: 'calc(100vh - 20px)',
   },
 }));
 
@@ -56,7 +52,7 @@ const LoginPage = () => {
     onSubmit: async (values) => {
       const redirect = localStorage.getItem("redirect");
       try {
-        const res = await auth.signInWithEmailAndPassword(
+        const res: any = await auth.signInWithEmailAndPassword(
           values.email,
           values.password
         );

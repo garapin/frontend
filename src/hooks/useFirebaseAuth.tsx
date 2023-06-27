@@ -35,13 +35,20 @@ const useFirebaseAuth = () => {
       setAuthUser(formattedUser)
       setLoading(false)
 
+      authState.getIdToken().then((token) => {
+        const storedToken = localStorage.getItem('token');
+        if (storedToken !== token) {
+          localStorage.setItem('token', JSON.stringify(token))
+        }
+      })
+
       unsubscribe = firestore.doc(`usersData/${formattedUser.uid}`).onSnapshot((doc) => {
         if (doc.exists) {
-          console.log("User data from update snapshot:", doc.data());
+          // console.log("User data from update snapshot:", doc.data());
           authState.getIdToken(true);
           setLoading(true);
           localStorage.setItem('token', JSON.stringify(authState.authTokenData?.token))
-          console.log('data authState: ',authState)
+          // console.log('data authState: ',authState)
           authState.getIdTokenResult().then((claimsData) => {
               authState['authTokenData'] = claimsData;
             setAuthUser(authState);

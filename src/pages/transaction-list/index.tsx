@@ -104,7 +104,14 @@ const TransactionListIndex = () => {
         </Typography>
         <Divider />
 
-        <Grid container>
+        <Grid
+          container
+          spacing={{
+            xs: 2,
+            sm: 4,
+          }}
+          paddingTop={4}
+        >
           {!isProductLoading &&
             products.map((product: any) => (
               <Grid item sm={4} md={3} key={product.id}>
@@ -130,6 +137,7 @@ const TransactionListIndex = () => {
             alignItems="center"
             display={"flex"}
             justifyContent={"center"}
+            paddingTop={4}
           >
             <Button
               variant="contained"

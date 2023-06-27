@@ -156,7 +156,7 @@ const ProductListPage = () => {
   return (
     <Box>
       <GarapinAppBar searchVariant={true} />
-      <Box className="max-w-xl px-10 pt-20 block md:hidden">
+      <Box className="max-w-6xl px-10 pt-20 mx-auto md:hidden">
         <TextField
           placeholder="Saya mau buat..."
           fullWidth
@@ -212,9 +212,7 @@ const ProductListPage = () => {
                   key={product.id}
                   item
                   xs={6}
-                  sm={6}
                   md={3}
-                  lg={2}
                   className="content-center"
                 >
                   <CardVertical

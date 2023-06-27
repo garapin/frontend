@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { HYDRATE } from 'next-redux-wrapper';
-import { AppState, AppThunk } from '@/store';
+import { createSlice } from "@reduxjs/toolkit";
+import { HYDRATE } from "next-redux-wrapper";
+import { AppState, AppThunk } from "@/store";
 import {
   getAllProductsFromDB,
   getAllProductsFromDBBasedOnCategories,
@@ -10,18 +10,20 @@ import {
   getAllCategoriesFromDB,
   getStoreInquiryToDB,
   pageSize,
-  getProductCartFromDB
+  getProductCartFromDB,
 } from "@/db";
-import axios from 'axios';
-import { Product, Template } from '@/types/product';
-import Firebase from '@/configs/firebase';
+import axios from "axios";
+import { Product, Template } from "@/types/product";
+import Firebase from "@/configs/firebase";
+import API from "@/configs/api";
+import { uuid } from "uuidv4";
 
 const defaultState: {
   products: Product[];
   productCategories: [];
   singleProduct?: any;
-  allProductsLoaded: boolean,
-  lastProductQuery?: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
+  allProductsLoaded: boolean;
+  lastProductQuery?: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>;
   isProductLoading: boolean;
   isTemplateLoading: boolean;
   isFetchingNext: boolean;
@@ -30,9 +32,11 @@ const defaultState: {
   scrollId?: Object;
   searchHit?: number;
   name: any;
-  productCart: any
-  category: any
-  history: any
+  productCart: any;
+  category: any;
+  history: any;
+  calculateTemplatePrice: any;
+  calculationLoading: boolean | null;
 } = {
   products: [],
   productCategories: [],
@@ -42,17 +46,19 @@ const defaultState: {
   isProductLoading: false,
   isTemplateLoading: false,
   isFetchingNext: false,
-  errors: '',
+  errors: "",
   productTemplate: null,
   scrollId: {},
   searchHit: 0,
   name: null,
   category: [],
   history: [],
-}
+  calculateTemplatePrice: null,
+  calculationLoading: null
+};
 
 export const ProductSlice = createSlice({
-  name: 'product',
+  name: "product",
 
   initialState: defaultState,
 
@@ -99,18 +105,23 @@ export const ProductSlice = createSlice({
       state.errors = undefined;
       state.isTemplateLoading = false;
     },
+    setCalculateTemplatePrice: (state, action) => {
+      state.calculateTemplatePrice = action.payload;
+      state.isTemplateLoading = false;
+    },
     setScrollId: (state, action) => {
-      state.scrollId = action.payload
+      state.scrollId = action.payload;
     },
     setSearchHits: (state, action) => {
-      state.searchHit = action.payload
+      state.searchHit = action.payload;
+    },
+    setCalculateLoading: (state, action) => {
+      state.calculationLoading = action.payload
     }
   },
 
   extraReducers: {
     [HYDRATE]: (state, action) => {
-      console.log('HYDRATE', action.payload);
-
       state.products = action.payload.product.products;
       state.singleProduct = action.payload.product.singleProduct;
       state.productCart = action.payload.product.productCart;
@@ -123,8 +134,8 @@ export const ProductSlice = createSlice({
       state.searchHit = action.payload.product.searchHit;
       state.category = action.payload.product.category;
       state.history = action.payload.product.history;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -142,58 +153,57 @@ export const {
   setSearchHits,
   setCategory,
   setHistory,
+  setCalculateTemplatePrice,
+  setCalculateLoading
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
 
-export const getAllCategories =
-  (): AppThunk =>
-    async dispatch => {
-      try {
-        const data = await getAllCategoriesFromDB();
-        dispatch(setCategory(data));
+export const getAllCategories = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getAllCategoriesFromDB();
+    dispatch(setCategory(data));
+  } catch (error) {
+    console.log(error);
+    dispatch(setError((error as any).message));
+  }
+};
 
-      } catch (error) {
-        console.log(error);
-        dispatch(setError((error as any).message));
-      }
-    };
+export const getAllHistory = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getStoreInquiryToDB();
+    dispatch(setHistory(data));
+  } catch (error) {
+    console.log(error);
+    dispatch(setError((error as any).message));
+  }
+};
 
-export const getAllHistory =
-  (): AppThunk =>
-    async dispatch => {
-      try {
-        const data = await getStoreInquiryToDB();
-        dispatch(setHistory(data));
-      } catch (error) {
-        console.log(error);
-        dispatch(setError((error as any).message));
-      }
-    };
+export const getAllProducts = (): AppThunk => async (dispatch) => {
+  try {
+    dispatch(setAllProductsLoaded(false));
+    dispatch(setProductLoading());
+    const data = await getAllProductsFromDB();
+    dispatch(setProducts(JSON.parse(JSON.stringify(data.data))));
 
-export const getAllProducts =
-  (): AppThunk =>
-    async dispatch => {
-      try {
-        dispatch(setAllProductsLoaded(false));
-        dispatch(setProductLoading());
-        const data = await getAllProductsFromDB();
-        dispatch(setProducts(JSON.parse(JSON.stringify(data.data))));
+    if (data.data.length < pageSize) {
+      console.log("All products loaded");
+      dispatch(setLastProductQuery(null));
+      dispatch(setAllProductsLoaded(true));
+    } else {
+      dispatch(
+        setLastProductQuery(JSON.parse(JSON.stringify(data.lastProductQuery)))
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    dispatch(setError((error as any).message));
+  }
+};
 
-        if (data.data.length < pageSize) {
-          console.log('All products loaded');
-          dispatch(setLastProductQuery(null));
-          dispatch(setAllProductsLoaded(true));
-        } else {
-          dispatch(setLastProductQuery(JSON.parse(JSON.stringify(data.lastProductQuery))));
-        }
-      } catch (error) {
-        console.log(error);
-        dispatch(setError((error as any).message));
-      }
-    };
-
-export const getAllProductsBasedOnCategories = (categoryId: string): AppThunk => {
+export const getAllProductsBasedOnCategories = (
+  categoryId: string
+): AppThunk => {
   return async (dispatch) => {
     try {
       dispatch(setAllProductsLoaded(false));
@@ -202,7 +212,7 @@ export const getAllProductsBasedOnCategories = (categoryId: string): AppThunk =>
       dispatch(setProducts(data.data));
 
       if (data.data.length < pageSize) {
-        console.log('All products loaded');
+        console.log("All products loaded");
         dispatch(setLastProductQuery(undefined));
         dispatch(setAllProductsLoaded(true));
       } else {
@@ -212,8 +222,8 @@ export const getAllProductsBasedOnCategories = (categoryId: string): AppThunk =>
       console.log(error);
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
 
 export const getSearchProduct = (productName: string): AppThunk => {
   return async (dispatch) => {
@@ -223,14 +233,15 @@ export const getSearchProduct = (productName: string): AppThunk => {
       };
       dispatch(setAllProductsLoaded(false));
       dispatch(setProductLoading());
-      const data = await axios.post('https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/search', requestBody);
-      dispatch(setProducts(data.data.result));
+      const data = await axios.post(
+        "https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/search",
+        requestBody
+      );
+      dispatch(setProducts(data.data.result.map((item: any) => item._source)));
       dispatch(setSearchHits(data.data.hits));
-      console.log("data.data");
-      console.log(data.data);
 
       if (data.data.result.length < 25) {
-        console.log('All products loaded');
+        console.log("All products loaded");
         dispatch(setScrollId(undefined));
         dispatch(setAllProductsLoaded(true));
       } else {
@@ -240,8 +251,8 @@ export const getSearchProduct = (productName: string): AppThunk => {
       console.log(error);
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
 
 export const getAllProductNext = (): AppThunk => {
   return async (dispatch, getState) => {
@@ -253,7 +264,7 @@ export const getAllProductNext = (): AppThunk => {
       dispatch(setIsFetchingNext(false));
       dispatch(setProducts([...products, ...data.data]));
       if (data.data.length < pageSize) {
-        console.log('All products loaded');
+        console.log("All products loaded");
         dispatch(setLastProductQuery(undefined));
         dispatch(setAllProductsLoaded(true));
       } else {
@@ -263,8 +274,8 @@ export const getAllProductNext = (): AppThunk => {
       console.log(error);
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
 
 export const getNextSearchProduct = (): AppThunk => {
   return async (dispatch, getState) => {
@@ -275,12 +286,19 @@ export const getNextSearchProduct = (): AppThunk => {
       };
       dispatch(setIsFetchingNext(true));
       dispatch(setAllProductsLoaded(false));
-      const data = await axios.post('https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/scroll', requestBody);
+      const data = await axios.post(
+        "https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/scroll",
+        requestBody
+      );
       dispatch(setIsFetchingNext(false));
-      dispatch(setProducts([...products, ...data.data.result]));
+      dispatch(
+        setProducts([
+          ...products,
+          ...data.data.result.map((item: any) => item._source),
+        ])
+      );
 
       if (data.data.result.length < 25) {
-        console.log('All products loaded');
         dispatch(setScrollId(undefined));
         dispatch(setAllProductsLoaded(true));
       } else {
@@ -290,14 +308,12 @@ export const getNextSearchProduct = (): AppThunk => {
       console.log(error);
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
 
 export const getSingleProduct = (slug: string): AppThunk => {
-
   return async (dispatch) => {
     try {
-      console.log('slug from dispatch:', slug);
       dispatch(setProductLoading());
       const data = await getSingleProductFromDB(slug);
       dispatch(setSingleProduct(data));
@@ -305,11 +321,10 @@ export const getSingleProduct = (slug: string): AppThunk => {
       console.log(error);
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
 
 export const getProductCart = (userId: any): AppThunk => {
-
   return async (dispatch) => {
     try {
       const data = await getProductCartFromDB(userId);
@@ -317,23 +332,75 @@ export const getProductCart = (userId: any): AppThunk => {
     } catch (error) {
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
 
 export const getProductTemplate = (templateId: string): AppThunk => {
   return async (dispatch) => {
     try {
       dispatch(setTemplateLoading());
-      const templateData = await getProductTemplateFromDB(templateId);
+      const templateData: any = await getProductTemplateFromDB(templateId);
       if (templateData !== undefined) {
         dispatch(setProductTemplate(templateData));
       } else {
-        dispatch(setError('Template not found'));
+        dispatch(setError("Template not found"));
       }
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
     }
-  }
-}
+  };
+};
+export const getProductTemplatePrice = (data: any): AppThunk => {
+  return async (dispatch) => {
+    const { product, selectedOptions, quantity, dimension } = data;
+    let payload: any = {
+      idempotencyKey: uuid(),
+      productId: product.id,
+      templateId: product.templateId,
+      dimension: dimension,
+      quantity: quantity,
+      selectedOptions: {},
+    };
+
+    Object.keys(selectedOptions).forEach((key) => {
+      payload.selectedOptions[key] = {
+        variant: {
+          id: selectedOptions[key].variant.id,
+        },
+        selectedOption: {
+          value: selectedOptions[key].selectedOption.value,
+        },
+      };
+      if (selectedOptions[key].variant.hasQtyFields) {
+        payload.selectedOptions[key].quantity =
+          selectedOptions[key].variant.qty;
+      }
+    });
+
+    try {
+      dispatch(setCalculateLoading(true));
+      const templatePrice = await axios.post(
+        `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/calculate/templatePricing`,
+        payload, {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": 'Bearer ' + JSON.parse(localStorage.getItem('token') as string) || '',
+          },
+        }
+      );
+      if (templatePrice !== undefined) {
+        dispatch(setCalculateTemplatePrice(templatePrice.data));
+      } else {
+        dispatch(setError("Template not found"));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(setError((error as any).message));
+    } finally {
+      dispatch(setCalculateLoading(false));
+    }
+  };
+};
+
 export default ProductSlice.reducer;

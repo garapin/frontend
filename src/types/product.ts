@@ -30,6 +30,8 @@ export type Template = {
 }
 
 export type Variant = {
+    qty?: number
+    hasQtyFields?: boolean
     name: string
     id: string
     description: string
