@@ -108,6 +108,7 @@ function CheckoutPage() {
       zipCode: "",
       country: "Indonesia",
       addressNote: "",
+      notes: "",
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("Contact Name is required"),
@@ -118,6 +119,7 @@ function CheckoutPage() {
       zipCode: Yup.string().required("Zip Code is required"),
       country: Yup.string().required("Country is required"),
       addressNote: Yup.string().optional(),
+      notes: Yup.string().optional(),
     }),
     onSubmit: async (values) => {
       try {
@@ -134,6 +136,7 @@ function CheckoutPage() {
             postalCode: values.zipCode,
             addressNote: values.addressNote,
             totalWeight: 2500,
+            notes: values.notes,
           },
           shippingMethod: {
             courierCode: ship?.courier_code,
@@ -315,6 +318,7 @@ function CheckoutPage() {
                 />
               </Grid>
             </Grid>
+
             <Grid
               container
               spacing={{
@@ -337,6 +341,35 @@ function CheckoutPage() {
                   value={formik.values.country}
                   name={"country"}
                   required
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                />
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              spacing={{
+                xs: 2,
+                md: 4,
+              }}
+              className="mb-4"
+            >
+              <Grid item md={12}>
+                <TextField
+                  fullWidth
+                  label="Keterangan Alamat"
+                  placeholder="A green fence house has a big tree in front of it"
+                  disabled
+                  error={
+                    formik.touched.addressNote &&
+                    Boolean(formik.errors.addressNote)
+                  }
+                  helperText={
+                    Boolean(formik.touched.addressNote) &&
+                    formik.errors.addressNote
+                  }
+                  value={formik.values.addressNote}
+                  name={"addressNote"}
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                 />
@@ -452,19 +485,15 @@ function CheckoutPage() {
                 <TextField
                   fullWidth
                   label="Catatan"
-                  name="addressNote"
+                  name="notes"
                   placeholder="Letakkan paket di depan pintu"
-                  error={
-                    formik.touched.addressNote &&
-                    Boolean(formik.errors.addressNote)
-                  }
+                  error={formik.touched.notes && Boolean(formik.errors.notes)}
                   helperText={
-                    Boolean(formik.touched.addressNote) &&
-                    formik.errors.addressNote
+                    Boolean(formik.touched.notes) && formik.errors.notes
                   }
-                  onBlur={formik.handleBlur}
                   multiline
                   rows={4}
+                  onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                 />
               </Grid>
@@ -484,9 +513,12 @@ function CheckoutPage() {
           <Grid container className="mt-4">
             <Grid item md={6}></Grid>
             <Grid item md={6}>
-              <Grid container spacing={{
+              <Grid
+                container
+                spacing={{
                   xs: 2,
-                }}>
+                }}
+              >
                 <Grid item md={6}>
                   <Button
                     onClick={() => router.push("/cart")}
