@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Container, Typography } from "@mui/material";
+import { Box, Button, Checkbox, Container, Grid, Typography } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -68,17 +68,13 @@ function Cart() {
   const selectAllProducts = () => {
     if (
       selectedProducts?.length ===
-      cartList?.filter(
-        (product: any) => product.qty > 0 && product.delete === false
-      ).length
+      cartList?.filter((product: any) => product.qty > 0).length
     ) {
       setSelectedProducts([]);
     } else {
       setSelectedProducts(
         cartList
-          ?.filter(
-            (product: any) => product.qty > 0 && product.delete === false
-          )
+          ?.filter((product: any) => product.qty > 0)
           .map((product: any) => product.id)
       );
     }
@@ -106,12 +102,10 @@ function Cart() {
   };
 
   const getTotalPrice = () => {
-    return selectedProducts.reduce((totalPrice, productId) => {
+    return selectedProducts.reduce((total, productId) => {
       const product = cartList?.find((p: any) => p.id === productId);
-      return product
-        ? totalPrice + parseInt(product.unitPrice) * product.qty
-        : totalPrice;
-    }, 0);
+      return total + product.totalPrice;
+    }, 0)
   };
 
   const adjustProductQuantity = (productId: number, newQuantity: number) => {
@@ -123,9 +117,7 @@ function Cart() {
     });
     setCartList(updatedProducts);
   };
-
-  console.log(cartList, "testasd");
-
+  
   return (
     <>
       <main>
@@ -150,7 +142,7 @@ function Cart() {
                   {val?.delete ? null : (
                     <>
                       <Box className="mt-5 flex justify-between">
-                        <Box className="flex items-center">
+                        <Box className="flex items-center flex-1">
                           <Checkbox
                             checked={selectedProducts.includes(val.id)}
                             onChange={() => toggleProductSelection(val.id)}
@@ -163,7 +155,7 @@ function Cart() {
                             src={val?.product?.img?.[0]}
                             alt="image"
                           />
-                          <Box>
+                          <Box className="flex-1">
                             {val?.productCategoryId === "02" ? (
                               <Typography
                                 style={{
@@ -171,7 +163,7 @@ function Cart() {
                                   borderRadius: "10px",
                                   textAlign: "center",
                                 }}
-                                className="font-bold"
+                                className="font-bold max-w-[12rem]"
                                 fontSize={17}
                                 fontWeight={400}
                                 color="text.primary"
@@ -185,7 +177,7 @@ function Cart() {
                                   borderRadius: "10px",
                                   textAlign: "center",
                                 }}
-                                className="font-bold"
+                                className="font-bold max-w-[12rem]"
                                 fontSize={17}
                                 fontWeight={400}
                                 color="text.primary"
@@ -205,7 +197,7 @@ function Cart() {
                               fontWeight={600}
                               color="text.primary"
                             >
-                              {rupiah(val.unitPrice)}
+                              {rupiah(val.totalPrice)}
                             </Typography>
                           </Box>
                         </Box>

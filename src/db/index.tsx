@@ -7,166 +7,217 @@ import { toast } from "react-toastify";
 
 /* Default Variables (used in all functions)
  * This is the default variables used in all functions
-*/
+ */
 const db = getFirestore();
 export const pageSize = 20;
 
-
 /* Return Type Definition
  * This is the return type of the function
-*/
+ */
 type ProductListDB = {
-    data: Product[];
-    lastProductQuery: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData> | undefined;
-}
+  data: Product[];
+  lastProductQuery:
+    | Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
+    | undefined;
+};
 
 /* Functions
  * This is all the functions to get data from database.
-*/
-export const getSingleProductFromDB = async (slug: string):Promise<Product|undefined> => {
-    console.log("slug from db", slug);
-    const data = await db.collection('products')
-        .where('slug', '==', slug)
-        .where('active', '==', true)
-        .where('deleted', '==', false)
-        .limit(1)
-        .get();
-    return (!data.empty) ? {...data.docs[0].data() as Product, id: data.docs[0].id} : undefined;
-}
+ */
+export const getSingleProductFromDB = async (
+  slug: string
+): Promise<Product | undefined> => {
+  console.log("slug from db", slug);
+  const data = await db
+    .collection("products")
+    .where("slug", "==", slug)
+    .where("active", "==", true)
+    .where("deleted", "==", false)
+    .limit(1)
+    .get();
+  return !data.empty
+    ? { ...(data.docs[0].data() as Product), id: data.docs[0].id }
+    : undefined;
+};
 
 export const getProductCartFromDB = async (userId: any): Promise<any> => {
-    const response = await db.collection('product_carts')
-    .where('status', '==', 'cart')
-    .where('userId', '==', userId)
-    .get()
+  const response = await db
+    .collection("product_carts")
+    .where("status", "==", "cart")
+    .where("userId", "==", userId)
+    .get();
 
-    const data = response.docs.map(doc => {
-        return {
-            ...doc.data(),
-            id: doc.id,
-        }
-    });
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
 
-    return data;
-}
+  return data;
+};
 
 export const getAllProductsFromDB = async (): Promise<ProductListDB> => {
-    const response = await db.collection('products')
-        .where('active', '==', true)
-        .where('deleted', '==', false)
-        .where('channel', '==', 'printing')
-        // .where('__name__', '>=', '')
-        // .orderBy('__name__')
-        .limit(pageSize).get();
-    const data: Product[] = response.docs.map(doc => {
-        return {
-            ...doc.data() as Product,
-            id: doc.id,
-        }
-    });
-    return {data, lastProductQuery: response.docs[response.docs.length - 1]};
-}
+  const response = await db
+    .collection("products")
+    .where("active", "==", true)
+    .where("deleted", "==", false)
+    .where("channel", "==", "printing")
+    // .where('__name__', '>=', '')
+    // .orderBy('__name__')
+    .limit(pageSize)
+    .get();
+  const data: Product[] = response.docs.map((doc) => {
+    return {
+      ...(doc.data() as Product),
+      id: doc.id,
+    };
+  });
+  return { data, lastProductQuery: response.docs[response.docs.length - 1] };
+};
 
 export const getAllCategoriesFromDB = async (): Promise<any> => {
-    const response = await db.collection('categories').get()
+  const response = await db.collection("categories").get();
 
-    const data: Category[] = response.docs.map(doc => {
-        return {
-            ...doc.data() as Category,
-            id: doc.id,
-        }
-    });
-    return data;
-}
+  const data: Category[] = response.docs.map((doc) => {
+    return {
+      ...(doc.data() as Category),
+      id: doc.id,
+    };
+  });
+  return data;
+};
 
-export const getAllProductsFromDBBasedOnCategories = async (categoryId: string): Promise<ProductListDB> => {
-    const response = await db.collection('products')
-        .where('active', '==', true)
-        .where('deleted', '==', false)
-        .where('channel', '==', 'printing')
-        .where('category', '==', categoryId)
-        // .where('__name__', '>=', '')
-        // .orderBy('__name__')
-        .limit(pageSize).get();
-    const data: Product[] = response.docs.map(doc => {
-        return {
-            ...doc.data() as Product,
-            id: doc.id,
-        }
-    });
-    return {data, lastProductQuery: response.docs[response.docs.length - 1]};
-}
+export const getAllProductsFromDBBasedOnCategories = async (
+  categoryId: string
+): Promise<ProductListDB> => {
+  const response = await db
+    .collection("products")
+    .where("active", "==", true)
+    .where("deleted", "==", false)
+    .where("channel", "==", "printing")
+    .where("category", "==", categoryId)
+    // .where('__name__', '>=', '')
+    // .orderBy('__name__')
+    .limit(pageSize)
+    .get();
+  const data: Product[] = response.docs.map((doc) => {
+    return {
+      ...(doc.data() as Product),
+      id: doc.id,
+    };
+  });
+  return { data, lastProductQuery: response.docs[response.docs.length - 1] };
+};
 
-export const getAllProductsNextFromDB = async (lastProductQuery: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData> | undefined): Promise<ProductListDB> => {
-    const response = await db.collection('products')
-        .where('active', '==', true)
-        .where('deleted', '==', false)
-        .where('channel', '==', 'printing')
-        // .where('__name__', '>=', '')
-        // .orderBy('__name__')
-        .startAfter(lastProductQuery)
-        .limit(pageSize).get();
-    const data: Product[] = response.docs.map(doc => {
-        return {
-            ...doc.data() as Product,
-            id: doc.id,
-        }
-    });
-    return {data, lastProductQuery: response.docs[response.docs.length - 1]};
-}
+export const getAllProductsNextFromDB = async (
+  lastProductQuery:
+    | Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
+    | undefined
+): Promise<ProductListDB> => {
+  const response = await db
+    .collection("products")
+    .where("active", "==", true)
+    .where("deleted", "==", false)
+    .where("channel", "==", "printing")
+    // .where('__name__', '>=', '')
+    // .orderBy('__name__')
+    .startAfter(lastProductQuery)
+    .limit(pageSize)
+    .get();
+  const data: Product[] = response.docs.map((doc) => {
+    return {
+      ...(doc.data() as Product),
+      id: doc.id,
+    };
+  });
+  return { data, lastProductQuery: response.docs[response.docs.length - 1] };
+};
 
-export const getProductTemplateFromDB = async (templateId: string): Promise<Template|undefined> => {
-    const templateRef = db.collection('templates').doc(templateId);
-    const template = await templateRef.get();
-    if(template.exists) {
-        return template.data() as Template;
-    }
-    return undefined;
-}
+export const getProductTemplateFromDB = async (
+  templateId: string
+): Promise<Template | undefined> => {
+  const templateRef = db.collection("templates").doc(templateId);
+  const template = await templateRef.get();
+  if (template.exists) {
+    return template.data() as Template;
+  }
+  return undefined;
+};
 
-export const storeRequestInquiryToDB = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {
-    return await db.collection('product_inquiries').add(data);
-}
+export const storeRequestInquiryToDB = async (
+  data: any
+): Promise<
+  Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>
+> => {
+  return await db.collection("product_inquiries").add(data);
+};
 
 export const getStoreInquiryToDB = async (): Promise<any> => {
-    const response = await db.collection('product_inquiries').get()
+  const response = await db.collection("product_inquiries").get();
 
-    const data = response.docs.map(doc => {
-        return {
-            ...doc.data(),
-            id: doc.id,
-        }
-    });
-    
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
 
-    return data;
-}
+  return data;
+};
 
-export const addToCart = async (data: any): Promise<Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>> => {
-    return await db.collection('product_carts').add(data);
-}
+export const getDetailQuotationFromDB = async (id: string): Promise<any> => {
+  const response = await db
+    .collection("quotations")
+    .where("inquiryFormId", "==", id)
+    .get();
+
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
+
+  return data;
+};
+
+export const addToCart = async (
+  data: any
+): Promise<
+  Firebase.firestore.DocumentReference<Firebase.firestore.DocumentData>
+> => {
+  return await db.collection("product_carts").add(data);
+};
 
 export const deleteItemCart = async (productId: any, uid: any) => {
-    const cartCollection = db.collection('product_carts');
-    const batch = db.batch();
-    const query = cartCollection.where('productId', '==', productId);
+  const cartCollection = db.collection("product_carts");
+  const batch = db.batch();
+  const query = cartCollection.where("productId", "==", productId);
 
-    // Remove the product from the cart in Firestore
-    const cartRef = db.collection("product_carts").doc(uid).collection("cart").doc(productId);
+  // Remove the product from the cart in Firestore
+  const cartRef = db
+    .collection("product_carts")
+    .doc(uid)
+    .collection("cart")
+    .doc(productId);
 
-    // Delete the product document from Firestore
-    await cartRef.delete();
+  // Delete the product document from Firestore
+  await cartRef.delete();
 
-    query.get().then((querySnapshot) => {
-        querySnapshot.docs.forEach((doc) => {
-            const docRef = cartCollection.doc(doc.id);
-            batch.update(docRef, { delete: true });
-        });
+  query.get().then((querySnapshot) => {
+    querySnapshot.docs.forEach((doc) => {
+      const docRef = cartCollection.doc(doc.id);
+      batch.update(docRef, { delete: true });
+    });
 
-        batch.commit().then(() => {
-            toast.success("Berhasil menghapus item");
-        }).catch((error) => {
-            toast.error("Gagal menghapus item: ", error)
-        })
-    })
-}
+    batch
+      .commit()
+      .then(() => {
+        toast.success("Berhasil menghapus item");
+      })
+      .catch((error) => {
+        toast.error("Gagal menghapus item: ", error);
+      });
+  });
+};
