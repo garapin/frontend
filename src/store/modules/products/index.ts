@@ -14,6 +14,7 @@ import {
   getDetailQuotationFromDB,
   getProductInvoicesFromDB,
   getQuotationFromDB,
+  getShippingCompanyFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
@@ -44,6 +45,7 @@ const defaultState: {
   detailQuotation: any;
   quotationStatus: string;
   productInvoices: string[];
+  shippingCompanies: string[];
 } = {
   products: [],
   productCategories: [],
@@ -65,6 +67,7 @@ const defaultState: {
   detailQuotation: null,
   quotationStatus: "",
   productInvoices: [],
+  shippingCompanies: [],
 };
 
 export const ProductSlice = createSlice({
@@ -137,6 +140,9 @@ export const ProductSlice = createSlice({
     setProductInvoices: (state, action) => {
       state.productInvoices = action.payload;
     },
+    setShippingCompany: (state, action) => {
+      state.shippingCompanies = action.payload;
+    },
   },
 
   extraReducers: {
@@ -176,7 +182,8 @@ export const {
   setCalculateLoading,
   setDetailQuotation,
   setQuotationStatus,
-  setProductInvoices
+  setProductInvoices,
+  setShippingCompany
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -206,7 +213,6 @@ export const getDetailQuotation =
   async (dispatch) => {
     try {
       const data = await getDetailQuotationFromDB(id);
-      console.log("data", data);
       dispatch(setDetailQuotation(data));
     } catch (error) {
       console.log(error);
@@ -556,6 +562,17 @@ export const getQuotations = (): AppThunk => async (dispatch) => {
     if(data) {
       console.log('quotations', data)
       // dispatch(setProductInvoices(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getShippingCompany = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getShippingCompanyFromDB();
+    if(data) {
+      dispatch(setShippingCompany(data));
     }
   } catch (error) {
     console.log(error);

@@ -33,6 +33,8 @@ import API from "@/configs/api";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import { getShippingCompany } from "@/store/modules/products";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 
 interface addressMap {
   postalCode?: string;
@@ -45,11 +47,13 @@ function CheckoutPage() {
   const router = useRouter();
   const myData: any = localStorage.getItem("checkout_data");
   const checkoutData = JSON.parse(myData);
+  const dispatch = useAppDispatch();
   const priceItem = checkoutData
     .map((val: { totalPrice: number }) => val.totalPrice)
     ?.reduce((acc: any, curr: any) => acc + curr);
   const [shipment, setShipment] = useState([]);
-
+  const { shippingCompanies } = useAppSelector((state) => state.product);
+  const [shippingLoading, setShippingLoading] = useState(false);
   const [addressMap, setAddressMap] = useState<any>({
     postalCode: "",
     completeAddress: "",
@@ -68,25 +72,8 @@ function CheckoutPage() {
   const [dataPaymnet, setDataPayment] = useState(0);
 
   useEffect(() => {
-    const data = {
-      weight: 1000,
-      width: 10,
-      height: 5,
-      length: 5,
-      destination_postal: "50241",
-      destination_lat: addressMap.latLong?.lat,
-      destination_long: addressMap.latLong?.lng,
-      totalPrice: priceItem,
-    };
-
-    API.getShipping(data)
-      .then((response) => {
-        setShipment(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [addressMap, priceItem]);
+    dispatch(getShippingCompany());
+  }, []);
 
   const courierShipment = ship?.courier_name + " " + ship?.courier_service_name;
 
@@ -109,6 +96,7 @@ function CheckoutPage() {
       country: "Indonesia",
       addressNote: "",
       notes: "",
+      shippingCompany: null,
     },
     validationSchema: Yup.object({
       firstName: Yup.string().required("Contact Name is required"),
@@ -120,6 +108,7 @@ function CheckoutPage() {
       country: Yup.string().required("Country is required"),
       addressNote: Yup.string().optional(),
       notes: Yup.string().optional(),
+      shippingCompany: Yup.object().required("Shipping Company is required"),
     }),
     onSubmit: async (values) => {
       try {
@@ -164,6 +153,29 @@ function CheckoutPage() {
       }
     },
   });
+
+  const handleGetShippingCompanyService = (courierCode: string | any) => {
+    const payload = {
+      weight: 2500,
+      destination_postal: formik.values.zipCode,
+      destination_lat: addressMap.latLong?.lat,
+      destination_long: addressMap.latLong?.lng,
+      totalPrice: priceItem,
+      courier_code: courierCode,
+    };
+
+    setShippingLoading(true);
+    API.getShipping(payload)
+      .then((response) => {
+        setShipment(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setShippingLoading(false);
+      });
+  };
 
   return (
     <Grid
@@ -359,7 +371,6 @@ function CheckoutPage() {
                   fullWidth
                   label="Keterangan Alamat"
                   placeholder="A green fence house has a big tree in front of it"
-                  disabled
                   error={
                     formik.touched.addressNote &&
                     Boolean(formik.errors.addressNote)
@@ -427,52 +438,83 @@ function CheckoutPage() {
                 />
               </Grid>
             </Grid>
-            {addressMap.completeAddress.length > 0 ? (
+            {addressMap.completeAddress.length > 0 && (
               <Grid
                 container
                 spacing={{
                   xs: 2,
-                  md: 4,
+                  md: 3,
                 }}
                 className="mb-4"
               >
                 <Grid item md={6}>
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
-                      Delivery
+                      Shipping Company
                     </InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
-                      value={ship}
-                      label="Delivery"
-                      onChange={handleChange}
+                      value={formik.values.shippingCompany}
+                      label="Shipping Company"
+                      onChange={(e) => {
+                        formik.setFieldValue("shippingCompany", e.target.value);
+                        handleGetShippingCompanyService(e.target.value);
+                      }}
                     >
-                      {shipment?.map((val: any, i: any) => (
-                        <MenuItem value={val} key={i}>
-                          <Box className="flex justify-between">
-                            <Box sx={{ fontWeight: 600 }}>
-                              {val?.courier_name +
-                                " " +
-                                val?.courier_service_name}
-                            </Box>
-                            <Box>
-                              {rupiah(val?.price) +
-                                " " +
-                                "(" +
-                                val?.shipment_duration_range +
-                                " " +
-                                val?.shipment_duration_unit +
-                                ")"}
-                            </Box>
+                      {shippingCompanies?.map((shipping: any, i: any) => (
+                        <MenuItem value={shipping.code} key={i}>
+                          <Box className="flex items-center">
+                            <img
+                              src={
+                                shipping.img ||
+                                "https://www.eggsnsoldiers.com/media/catalog/product/placeholder/default/EnS-product-coming-soon.jpg"
+                              }
+                              alt={shipping.code}
+                              className="w-10 mr-2 max-h-8"
+                            />
+                            <Box sx={{ fontWeight: 600 }}>{shipping.name}</Box>
                           </Box>
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
                 </Grid>
+                {formik.values.shippingCompany && (
+                  <Grid item md={12}>
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Delivery
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={ship}
+                        disabled={shippingLoading}
+                        label="Delivery"
+                        onChange={handleChange}
+                      >
+                        {shipment?.map((val: any, i: any) => (
+                          <MenuItem value={val} key={i}>
+                            <Box className="flex justify-between">
+                              <Box sx={{ fontWeight: 600, marginRight: 6 }}>
+                                  {`${val.courier_name} ${val.courier_service_name}`}
+                              </Box>
+                              <Box className="pl-2">
+                                  {
+                                    `${rupiah(val?.price)} (${val?.shipment_duration_range} ${val?.shipment_duration_unit})`
+                                  }
+                              </Box>
+                            </Box>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                )}
               </Grid>
-            ) : null}
+            )}
+
             <Grid
               container
               spacing={{

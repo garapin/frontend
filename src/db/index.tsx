@@ -222,7 +222,9 @@ export const deleteItemCart = async (productId: any, uid: any) => {
   });
 };
 
-export const getProductInvoicesFromDB = async (userId: string): Promise<any> => {
+export const getProductInvoicesFromDB = async (
+  userId: string
+): Promise<any> => {
   const response = await db
     .collection("product_invoices")
     .where("userId", "==", userId)
@@ -239,10 +241,23 @@ export const getProductInvoicesFromDB = async (userId: string): Promise<any> => 
 };
 
 export const getQuotationFromDB = async (): Promise<any> => {
-  const response = await db
-    .collection("quotations")
-    .get();
+  const response = await db.collection("quotations").get();
 
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
+
+  return data;
+};
+
+export const getShippingCompanyFromDB = async (): Promise<any> => {
+  const response = await db
+    .collection("master/courier/available_couriers")
+    .get();
+    
   const data = response.docs.map((doc) => {
     return {
       ...doc.data(),
