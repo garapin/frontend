@@ -58,7 +58,8 @@ const ModalInquiry = ({ modal, setModal }: any) => {
   });
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(getDetailQuotation("9CqqsEHHBT6aNw7q8XDE"));
+    dispatch(getDetailQuotation(data.id));
+    // dispatch(getDetailQuotation("9CqqsEHHBT6aNw7q8XDE"));
   }, [dispatch]);
 
   const handleShowConfirm = (id: string) => {
