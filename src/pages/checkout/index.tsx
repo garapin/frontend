@@ -109,7 +109,7 @@ function CheckoutPage() {
       country: Yup.string().required("Country is required"),
       addressNote: Yup.string().optional(),
       notes: Yup.string().optional(),
-      shippingCompany: Yup.object().required("Shipping Company is required"),
+      shippingCompany: Yup.string().required("Shipping Company is required"),
     }),
     onSubmit: async (values) => {
       try {
@@ -154,6 +154,8 @@ function CheckoutPage() {
       }
     },
   });
+
+  console.log('formik', formik)
 
   const handleGetShippingCompanyService = (courierCode: string | any) => {
     const payload = {
