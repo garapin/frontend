@@ -12,6 +12,8 @@ import {
   pageSize,
   getProductCartFromDB,
   getDetailQuotationFromDB,
+  getProductInvoicesFromDB,
+  getQuotationFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
@@ -41,6 +43,7 @@ const defaultState: {
   calculationLoading: boolean | null;
   detailQuotation: any;
   quotationStatus: string;
+  productInvoices: string[];
 } = {
   products: [],
   productCategories: [],
@@ -61,6 +64,7 @@ const defaultState: {
   calculationLoading: null,
   detailQuotation: null,
   quotationStatus: "",
+  productInvoices: [],
 };
 
 export const ProductSlice = createSlice({
@@ -130,6 +134,9 @@ export const ProductSlice = createSlice({
     setCalculateLoading: (state, action) => {
       state.calculationLoading = action.payload;
     },
+    setProductInvoices: (state, action) => {
+      state.productInvoices = action.payload;
+    },
   },
 
   extraReducers: {
@@ -169,6 +176,7 @@ export const {
   setCalculateLoading,
   setDetailQuotation,
   setQuotationStatus,
+  setProductInvoices
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -197,7 +205,6 @@ export const getDetailQuotation =
   (id: string): AppThunk =>
   async (dispatch) => {
     try {
-      console.log("id", id);
       const data = await getDetailQuotationFromDB(id);
       console.log("data", data);
       dispatch(setDetailQuotation(data));
@@ -529,6 +536,30 @@ export const handleOpenQuotation = (quotationId: string): AppThunk => {
       dispatch(getAllHistory());
     }
   };
+};
+
+export const getProductInvoices = (userId: string): AppThunk => async (dispatch) => {
+  try {
+    const data = await getProductInvoicesFromDB(userId);
+    if(data) {
+      console.log('invoices', data)
+      dispatch(setProductInvoices(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getQuotations = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getQuotationFromDB();
+    if(data) {
+      console.log('quotations', data)
+      // dispatch(setProductInvoices(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default ProductSlice.reducer;

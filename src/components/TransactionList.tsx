@@ -5,9 +5,10 @@ import {
 import React from "react";
 import { rupiah } from "@/tools/rupiah";
 import { Box } from "@mui/system";
-import { getAllHistory } from "@/store/modules/products";
+import { getAllHistory, getProductInvoices, getQuotations } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import ModalInquiry from "./ModalInquiry";
+import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 
 export default function TransactionList({ currentTab }: any) {
   const title = (category: any) => {
@@ -24,6 +25,7 @@ export default function TransactionList({ currentTab }: any) {
     open: false,
     data: {},
   });
+  const { authUser }: any = useFirebaseAuth();
   const handleOpen = (data: any) => {
     setModalInquiry({
       open: true,
@@ -35,7 +37,7 @@ export default function TransactionList({ currentTab }: any) {
 
   React.useEffect(() => {
     dispatch(getAllHistory());
-  }, [dispatch]);
+  }, [authUser, dispatch]);
 
   let dataHistory = [];
 

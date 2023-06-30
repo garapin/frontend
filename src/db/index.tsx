@@ -221,3 +221,34 @@ export const deleteItemCart = async (productId: any, uid: any) => {
       });
   });
 };
+
+export const getProductInvoicesFromDB = async (userId: string): Promise<any> => {
+  const response = await db
+    .collection("product_invoices")
+    .where("userId", "==", userId)
+    .get();
+
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
+
+  return data;
+};
+
+export const getQuotationFromDB = async (): Promise<any> => {
+  const response = await db
+    .collection("quotations")
+    .get();
+
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
+
+  return data;
+};

@@ -1,7 +1,11 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Backdrop,
   Box,
   Button,
+  Chip,
   CircularProgress,
   Dialog,
   DialogActions,
@@ -9,6 +13,13 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -23,46 +34,98 @@ import {
 } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { rupiah } from "@/tools/rupiah";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const ModalInquiry = ({ modal, setModal }: any) => {
   const { open, data } = modal;
-  const { calculationLoading, quotationStatus } = useAppSelector(
-    (state) => state.product
-  );
+  const [expanded, setExpanded] = React.useState<string | false>(false);
+
+  const handleChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
+    };
+
+  const { calculationLoading, quotationStatus, detailQuotation } =
+    useAppSelector((state) => state.product);
+
   const handleClose = () => {
     setModal({ open: false, data: null });
   };
   const [confirmReject, setConfirmReject] = React.useState({
     open: false,
+    id: "",
     reason: "",
   });
   const dispatch = useAppDispatch();
-  //   useEffect(() => {
-  //     dispatch(getDetailQuotation(data?.id));
-  //   }, [dispatch]);
+  useEffect(() => {
+    dispatch(getDetailQuotation("9CqqsEHHBT6aNw7q8XDE"));
+  }, [dispatch]);
 
-  const handleShowConfirm = () => {
+  const handleShowConfirm = (id: string) => {
     setConfirmReject({
       ...confirmReject,
+      id: id,
       open: true,
     });
   };
 
   const handleConfirmReject = async () => {
     await dispatch(
-      handleRejectAcceptQuotation("reject", data?.id, confirmReject.reason)
+      handleRejectAcceptQuotation(
+        "reject",
+        confirmReject.id,
+        confirmReject.reason
+      )
     );
     setConfirmReject({
       open: false,
       reason: "",
+      id: "",
     });
     setModal({ open: false, data: null });
   };
 
-  const handleAccept = async () => {
-    await dispatch(handleRejectAcceptQuotation("accept", data?.id));
-    // await dispatch(handleRejectAcceptQuotation("accept", 'Z8jIxb60yaeyUagzYcRO'));
+  const handleAccept = async (id: string) => {
+    await dispatch(handleRejectAcceptQuotation("accept", id));
     setModal({ open: false, data: null });
+  };
+
+  const BadgeStatus = ({ status }: any) => {
+    switch (status) {
+      case "REJECTED":
+        return (
+          <Chip
+            label="REJECTED"
+            sx={{
+              backgroundColor: "#FF0000",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "ACCEPTED":
+        return (
+          <Chip
+            label="ACCEPTED"
+            sx={{
+              backgroundColor: "#00C853",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      default:
+        return (
+          <Chip
+            label="OPEN"
+            sx={{
+              backgroundColor: "#FFD600",
+              color: "#000",
+              fontWeight: 600,
+            }}
+          />
+        );
+    }
   };
 
   return (
@@ -182,164 +245,290 @@ const ModalInquiry = ({ modal, setModal }: any) => {
             </Grid>
           </Box>
 
-          <Divider />
-          <Typography
-            id="transition-modal-description"
-            fontWeight={600}
-            marginBottom="10px"
-            sx={{ mt: 2 }}
-            className="text-xl uppercase"
-          >
-            Checkout Details
-          </Typography>
-          <Box className="mb-6">
-            <Grid
-              container
-              spacing={{
-                xs: 2,
-                md: 4,
-              }}
-              className="mb-4"
-            >
-              <Grid item md={6}>
-                <TextField
-                  fullWidth
-                  label="Nama"
-                  disabled
-                  value={data.contactName}
-                  name={"firstName"}
-                />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={{
-                xs: 2,
-                md: 4,
-              }}
-              className="mb-4"
-            >
-              <Grid item md={12}>
-                <TextField
-                  fullWidth
-                  label="Alamat"
-                  disabled
-                  value={data.address?.completeAddress}
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  fullWidth
-                  label="Kode POS"
-                  disabled
-                  value={data.address?.postalCode}
-                />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={{
-                xs: 2,
-                md: 4,
-              }}
-              className="mb-4"
-            >
-              <Grid item md={6}>
-                <TextField
-                  fullWidth
-                  label="No. HP/WA"
-                  disabled
-                  value={data.phoneNumber}
-                />
-              </Grid>
-              <Grid item md={6}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  disabled
-                  value={data.email}
-                />
-              </Grid>
-            </Grid>
-            <Grid
-              container
-              spacing={{
-                xs: 2,
-                md: 4,
-              }}
-              className="mb-4"
-            >
-              <Grid item md={12}>
-                <TextField
-                  fullWidth
-                  label="Catatan"
-                  disabled
-                  multiline
-                  rows={4}
-                  value={data.orderDescription}
-                />
-              </Grid>
-            </Grid>
-          </Box>
+          {detailQuotation?.length > 0 && (
+            <>
+              <Divider />
+              <Typography
+                id="transition-modal-description"
+                fontWeight={600}
+                marginBottom="10px"
+                sx={{ mt: 3 }}
+                className="text-xl uppercase"
+              >
+                QUOTATIONS
+              </Typography>
+              <Box>
+                {detailQuotation.map((quotation: any, i: number) => (
+                  <Accordion
+                    expanded={expanded === "panel1"}
+                    onChange={handleChange("panel1")}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls="panel1bh-content"
+                      id="panel1bh-header"
+                    >
+                      <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                        Quotation #{i + 1}{" "}
+                        <BadgeStatus status={quotation.status} />
+                      </Typography>
+                      <Typography sx={{ color: "text.secondary" }}>
+                        {quotation.noQuotation}
+                      </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <TableContainer component={Paper}>
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell className="font-bold uppercase text-gray-500">
+                                SKU
+                              </TableCell>
+                              <TableCell className="font-bold uppercase text-gray-500">
+                                Item Name
+                              </TableCell>
+                              <TableCell className="font-bold uppercase text-gray-500">
+                                Specification
+                              </TableCell>
+                              <TableCell
+                                className="font-bold uppercase text-gray-500"
+                                align="right"
+                              >
+                                Qty
+                              </TableCell>
+                              <TableCell className="font-bold uppercase text-gray-500">
+                                UOM
+                              </TableCell>
+                              <TableCell
+                                className="font-bold uppercase text-gray-500"
+                                align="right"
+                              >
+                                Price/Unit
+                              </TableCell>
+                              <TableCell
+                                className="font-bold uppercase text-gray-500"
+                                align="right"
+                              >
+                                Total
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {quotation.items?.map(
+                              (
+                                val: {
+                                  sku: string;
+                                  productName: string;
+                                  quantity: number;
+                                  unitPrice: number;
+                                  subtotal: number;
+                                  uom: string;
+                                  productDescription: string;
+                                },
+                                i: number
+                              ) => (
+                                <TableRow
+                                  key={i}
+                                  className="border-none bg-slate-50"
+                                >
+                                  <TableCell
+                                    className="border-none"
+                                    component="th"
+                                    scope="row"
+                                  >
+                                    <Typography>{val.sku}</Typography>
+                                  </TableCell>
+                                  <TableCell className="border-none">
+                                    {val.productName}
+                                  </TableCell>
+                                  <TableCell className="border-none">
+                                    {val.productDescription}
+                                  </TableCell>
+                                  <TableCell
+                                    className="border-none"
+                                    align="right"
+                                  >
+                                    {val.quantity}
+                                  </TableCell>
+                                  <TableCell className="border-none">
+                                    {val.uom}
+                                  </TableCell>
+                                  <TableCell
+                                    className="border-none"
+                                    align="right"
+                                  >
+                                    {rupiah(val.unitPrice)}
+                                  </TableCell>
+                                  <TableCell
+                                    className="border-none"
+                                    align="right"
+                                  >
+                                    {rupiah(val.subtotal)}
+                                  </TableCell>
+                                </TableRow>
+                              )
+                            )}
+                            <TableRow>
+                              <TableCell
+                                className="border-none "
+                                scope="row"
+                                colSpan={7}
+                              >
+                                <Grid container>
+                                  <Grid item md={6}>
+                                    <Typography>
+                                      Subtotal ({quotation.items?.length} Items)
+                                    </Typography>
+                                  </Grid>
+                                  <Grid item md={6}>
+                                    <Typography className="float-right">
+                                      {rupiah(
+                                        quotation.items.reduce(
+                                          (a: any, b: any) => a + b.subtotal,
+                                          0
+                                        )
+                                      )}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                                <Grid container>
+                                  <Grid item md={6}>
+                                    <Typography>Shipping Cost</Typography>
+                                  </Grid>
+                                  <Grid item md={6}>
+                                    <Typography className="float-right">
+                                      {rupiah(quotation.shipping.cost)}
+                                    </Typography>
+                                  </Grid>
+                                  <Grid item md={12}>
+                                    <Typography className="float-right">
+                                      {quotation.shipping.service}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                                {quotation.vat.enabled && (
+                                  <Grid container>
+                                    <Grid item md={6}>
+                                      <Typography>PPN (11%)</Typography>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                      <Typography className="float-right">
+                                        {rupiah(quotation.vat.cost)}
+                                      </Typography>
+                                    </Grid>
+                                  </Grid>
+                                )}
+                                <Grid container>
+                                  <Grid item md={6}>
+                                    <Typography className="font-bold">
+                                      Total
+                                    </Typography>
+                                  </Grid>
+                                  <Grid item md={6}>
+                                    <Typography className="float-right font-bold">
+                                      {rupiah(
+                                        quotation.items.reduce(
+                                          (a: any, b: any) => a + b.subtotal,
+                                          0
+                                        ) +
+                                          quotation.shipping.cost +
+                                          quotation.vat.cost
+                                      )}
+                                    </Typography>
+                                  </Grid>
+                                </Grid>
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                      <Box className="mt-4">
+                        <Box className="mb-4">
+                          <Typography variant="body1">Remarks</Typography>
+                          <Typography
+                            variant="body1"
+                            className="max-w-xl text-slate-500"
+                          >
+                            {quotation.remarks}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="body1">Notes</Typography>
+                          <Typography
+                            variant="body1"
+                            className="max-w-xl text-slate-500"
+                          >
+                            {quotation.notes}
+                          </Typography>
+                        </Box>
+                      </Box>
+                      {quotation.status === "OPEN" && (
+                        <DialogActions className="p-4">
+                          <Grid container>
+                            <Grid item md={6}></Grid>
+                            <Grid item md={6}>
+                              <Grid
+                                container
+                                spacing={{
+                                  xs: 2,
+                                }}
+                              >
+                                <Grid item md={6}>
+                                  <Button
+                                    onClick={() =>
+                                      handleShowConfirm(quotation.id)
+                                    }
+                                    variant="contained"
+                                    className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer`}
+                                    type="submit"
+                                    color="error"
+                                    disabled={Boolean(calculationLoading)}
+                                  >
+                                    Reject{" "}
+                                    {calculationLoading && (
+                                      <CircularProgress
+                                        size={18}
+                                        sx={{
+                                          marginLeft: "0.5rem",
+                                        }}
+                                        color="inherit"
+                                      />
+                                    )}
+                                  </Button>
+                                </Grid>
+                                <Grid item md={6}>
+                                  <Button
+                                    onClick={() => handleAccept(quotation.id)}
+                                    className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline border-none w-full cursor-pointer`}
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={Boolean(calculationLoading)}
+                                  >
+                                    Accept{" "}
+                                    {calculationLoading && (
+                                      <CircularProgress
+                                        size={18}
+                                        sx={{
+                                          marginLeft: "0.5rem",
+                                        }}
+                                        color="inherit"
+                                      />
+                                    )}
+                                  </Button>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        </DialogActions>
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </Box>
+            </>
+          )}
         </DialogContent>
-        {data.status === "open" && (
-          <DialogActions className="p-4">
-            <Grid container>
-              <Grid item md={6}></Grid>
-              <Grid item md={6}>
-                <Grid
-                  container
-                  spacing={{
-                    xs: 2,
-                  }}
-                >
-                  <Grid item md={6}>
-                    <Button
-                      onClick={handleShowConfirm}
-                      variant="contained"
-                      className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer`}
-                      type="submit"
-                      color="error"
-                      disabled={Boolean(calculationLoading)}
-                    >
-                      Reject{" "}
-                      {calculationLoading && (
-                        <CircularProgress
-                          size={18}
-                          sx={{
-                            marginLeft: "0.5rem",
-                          }}
-                          color="inherit"
-                        />
-                      )}
-                    </Button>
-                  </Grid>
-                  <Grid item md={6}>
-                    <Button
-                      onClick={handleAccept}
-                      className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline border-none w-full cursor-pointer`}
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      disabled={Boolean(calculationLoading)}
-                    >
-                      Accept{" "}
-                      {calculationLoading && (
-                        <CircularProgress
-                          size={18}
-                          sx={{
-                            marginLeft: "0.5rem",
-                          }}
-                          color="inherit"
-                        />
-                      )}
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </DialogActions>
-        )}
       </Dialog>
       <Dialog
         aria-labelledby="scroll-dialog-title"
@@ -349,6 +538,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
           setConfirmReject({
             open: false,
             reason: "",
+            id: "",
           })
         }
         closeAfterTransition
@@ -380,6 +570,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                 setConfirmReject({
                   open: false,
                   reason: "",
+                  id: "",
                 })
               }
             >
