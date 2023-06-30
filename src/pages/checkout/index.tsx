@@ -65,6 +65,7 @@ function CheckoutPage() {
     courier_code: "",
     courier_service_code: "",
     type: "",
+    price: 0,
     duration: "",
     insurance_fee: 0,
   });
@@ -175,6 +176,13 @@ function CheckoutPage() {
       .finally(() => {
         setShippingLoading(false);
       });
+  };
+
+  const getCourierByCode = (courierCode: string | any) => {
+    const courier: any = shippingCompanies.find(
+      (val: any) => val.code === courierCode
+    );
+    return courier;
   };
 
   return (
@@ -498,12 +506,12 @@ function CheckoutPage() {
                           <MenuItem value={val} key={i}>
                             <Box className="flex justify-between">
                               <Box sx={{ fontWeight: 600, marginRight: 6 }}>
-                                  {`${val.courier_name} ${val.courier_service_name}`}
+                                {`${val.courier_name} ${val.courier_service_name}`}
                               </Box>
                               <Box className="pl-2">
-                                  {
-                                    `${rupiah(val?.price)} (${val?.shipment_duration_range} ${val?.shipment_duration_unit})`
-                                  }
+                                {`${rupiah(val?.price)} (${
+                                  val?.shipment_duration_range
+                                } ${val?.shipment_duration_unit})`}
                               </Box>
                             </Box>
                           </MenuItem>
@@ -656,7 +664,7 @@ function CheckoutPage() {
                             <Typography>
                               Channel: {val.product?.channel}
                             </Typography>
-                            <Typography>SKU: {val.product?.sku}x</Typography>
+                            <Typography>SKU: {val.product?.sku}</Typography>
                           </Box>
                         </Box>
                       </TableCell>
@@ -680,51 +688,70 @@ function CheckoutPage() {
                   )
                 )}
                 <TableRow>
-                  <TableCell
-                    className="border-none font-bold"
-                    component="th"
-                    scope="row"
-                    colSpan={2}
-                  >
-                    <Typography className="font-bold">
-                      Subtotal ({checkoutData?.length} Items)
-                    </Typography>
-                  </TableCell>
-                  <TableCell className="border-none font-bold" align="right">
-                    {rupiah(priceItem)}
-                  </TableCell>
-                </TableRow>
-                {ship ? (
-                  <TableRow>
-                    <TableCell component="th" scope="row" colSpan={2}>
-                      <Box className="flex justify-between mb-2">
-                        <Typography className="font-bold">
-                          Delivery With
+                  <TableCell className="border-none " scope="row" colSpan={7}>
+                    <Grid container>
+                      <Grid item md={6}>
+                        <Typography>
+                          Subtotal ({checkoutData.items?.length} Items)
                         </Typography>
-                      </Box>
-                      <Box className="flex justify-between items-center">
-                        <Typography className="font-bold flex items-center">
-                          <LocalShippingOutlinedIcon className="mr-3" />
-                          {courierShipment}
+                      </Grid>
+                      <Grid item md={6}>
+                        <Typography className="float-right">
+                          {rupiah(priceItem)}
                         </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell align="right" className="font-bold">
-                      {rupiah(shipPrice)}
-                    </TableCell>
-                  </TableRow>
-                ) : null}
-                <TableRow>
-                  <TableCell
-                    className="border-none font-bold"
-                    component="th"
-                    scope="row"
-                    colSpan={2}
-                  >
-                    <Typography className="font-bold">TOTAL</Typography>
-                  </TableCell>
-                  <TableCell className="border-none font-bold" align="right">
-                    {rupiah(priceItem + shipPrice)}
+                      </Grid>
+                    </Grid>
+                    {ship && (
+                      <>
+                        <Grid container>
+                          <Grid item md={6}>
+                            <Typography>Shipping Cost</Typography>
+                            <Typography className="flex items-center">
+                              {getCourierByCode(ship.courier_code)?.img && (
+                                <img src={getCourierByCode(ship.courier_code)?.img} alt="kurir" className="w-10 max-h-7 mr-1" />
+                              )}
+                              {courierShipment}
+                            </Typography>
+                          </Grid>
+                          <Grid item md={6}>
+                            <Typography className="float-right">
+                              {rupiah(ship.price)}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Grid container>
+                          <Grid item md={6}>
+                            <Typography>Insurance</Typography>
+                          </Grid>
+                          <Grid item md={6}>
+                            <Typography className="float-right">
+                              {rupiah(ship.insurance_fee)}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                      </>
+                    )}
+                    <Grid container>
+                      <Grid item md={6}>
+                        <Typography>VAT (11%)</Typography>
+                      </Grid>
+                      <Grid item md={6}>
+                        <Typography className="float-right">
+                          {rupiah(priceItem * 0.11)}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                    <Divider className="my-3" />
+                    <Grid container>
+                      <Grid item md={6}>
+                        <Typography className="font-bold">Total</Typography>
+                      </Grid>
+                      <Grid item md={6}>
+                        <Typography className="float-right font-bold">
+                          {rupiah(priceItem + shipPrice + priceItem * 0.11)}
+                        </Typography>
+                      </Grid>
+                    </Grid>
                   </TableCell>
                 </TableRow>
               </TableBody>
