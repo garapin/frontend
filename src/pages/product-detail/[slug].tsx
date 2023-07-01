@@ -400,7 +400,7 @@ const ProductDetailPage = () => {
               }
             />
           </Grid>
-          <Grid item lg={8} className="flex-col px-5 w-full" style={{
+          <Grid item lg={8} className="block px-5 w-full" style={{
             display: 'block'
           }}>
             <Typography className="pt-10" variant="h4">
