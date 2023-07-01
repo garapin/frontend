@@ -11,12 +11,17 @@ import {
   getStoreInquiryToDB,
   pageSize,
   getProductCartFromDB,
+  getDetailQuotationFromDB,
+  getProductInvoicesFromDB,
+  getQuotationFromDB,
+  getShippingCompanyFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
 import API from "@/configs/api";
 import { uuid } from "uuidv4";
+import { toast } from "react-toastify";
 
 const defaultState: {
   products: Product[];
@@ -37,6 +42,10 @@ const defaultState: {
   history: any;
   calculateTemplatePrice: any;
   calculationLoading: boolean | null;
+  detailQuotation: any;
+  quotationStatus: string;
+  productInvoices: string[];
+  shippingCompanies: string[];
 } = {
   products: [],
   productCategories: [],
@@ -54,7 +63,11 @@ const defaultState: {
   category: [],
   history: [],
   calculateTemplatePrice: null,
-  calculationLoading: null
+  calculationLoading: null,
+  detailQuotation: null,
+  quotationStatus: "",
+  productInvoices: [],
+  shippingCompanies: [],
 };
 
 export const ProductSlice = createSlice({
@@ -68,6 +81,9 @@ export const ProductSlice = createSlice({
     },
     setHistory: (state, action) => {
       state.history = action.payload;
+    },
+    setDetailQuotation: (state, action) => {
+      state.detailQuotation = action.payload;
     },
     setProducts: (state, action) => {
       state.products = action.payload;
@@ -109,6 +125,9 @@ export const ProductSlice = createSlice({
       state.calculateTemplatePrice = action.payload;
       state.isTemplateLoading = false;
     },
+    setQuotationStatus: (state, action) => {
+      state.quotationStatus = action.payload;
+    },
     setScrollId: (state, action) => {
       state.scrollId = action.payload;
     },
@@ -116,8 +135,14 @@ export const ProductSlice = createSlice({
       state.searchHit = action.payload;
     },
     setCalculateLoading: (state, action) => {
-      state.calculationLoading = action.payload
-    }
+      state.calculationLoading = action.payload;
+    },
+    setProductInvoices: (state, action) => {
+      state.productInvoices = action.payload;
+    },
+    setShippingCompany: (state, action) => {
+      state.shippingCompanies = action.payload;
+    },
   },
 
   extraReducers: {
@@ -154,7 +179,11 @@ export const {
   setCategory,
   setHistory,
   setCalculateTemplatePrice,
-  setCalculateLoading
+  setCalculateLoading,
+  setDetailQuotation,
+  setQuotationStatus,
+  setProductInvoices,
+  setShippingCompany
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -178,6 +207,18 @@ export const getAllHistory = (): AppThunk => async (dispatch) => {
     dispatch(setError((error as any).message));
   }
 };
+
+export const getDetailQuotation =
+  (id: string): AppThunk =>
+  async (dispatch) => {
+    try {
+      const data = await getDetailQuotationFromDB(id);
+      dispatch(setDetailQuotation(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(setError((error as any).message));
+    }
+  };
 
 export const getAllProducts = (): AppThunk => async (dispatch) => {
   try {
@@ -328,7 +369,15 @@ export const getProductCart = (userId: any): AppThunk => {
   return async (dispatch) => {
     try {
       const data = await getProductCartFromDB(userId);
-      dispatch(setProductCart(data));
+      // filter data, when delete is true, and calculationId is unique to prevent data duplicate
+      const filteredData = data.filter(
+        (item: any, index: number, self: any) =>
+          index ===
+          self.findIndex(
+            (t: any) => t.calculationId === item.calculationId && !item.delete
+          )
+      );
+      dispatch(setProductCart(filteredData));
     } catch (error) {
       dispatch(setError((error as any).message));
     }
@@ -382,10 +431,13 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
       dispatch(setCalculateLoading(true));
       const templatePrice = await axios.post(
         `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/calculate/templatePricing`,
-        payload, {
+        payload,
+        {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": 'Bearer ' + JSON.parse(localStorage.getItem('token') as string) || '',
+            Authorization:
+              "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+              "",
           },
         }
       );
@@ -401,6 +453,130 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
       dispatch(setCalculateLoading(false));
     }
   };
+};
+
+export const handleRejectAcceptQuotation = (
+  status: "reject" | "accept",
+  quotationId: string,
+  reason?: string
+): AppThunk => {
+  return async (dispatch) => {
+    let url = `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/products/quotation/accept`;
+    let payload: any = {
+      quotationId,
+    };
+
+    if (status === "reject") {
+      payload.reason = reason;
+      url = `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/products/quotation/reject`;
+    }
+
+    try {
+      dispatch(setCalculateLoading(true));
+      dispatch(setQuotationStatus("loading"));
+      const quotationStatus = await axios.post(url, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+            "",
+        },
+      });
+      if (quotationStatus.data.success) {
+        dispatch(
+          setQuotationStatus(
+            quotationStatus.data.success ? "success" : "failed"
+          )
+        );
+        toast.success(`Quotation successfully ${status}ed`);
+      } else {
+        toast.error(quotationStatus.data.message);
+      }
+    } catch (error: any) {
+      const {
+        data: { message },
+      } = error.response;
+      toast.error(message);
+    } finally {
+      dispatch(setCalculateLoading(false));
+      dispatch(getAllHistory());
+    }
+  };
+};
+
+export const handleOpenQuotation = (quotationId: string): AppThunk => {
+  return async (dispatch) => {
+    let url = `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/products/quotation/setToOpen`;
+    let payload: any = {
+      quotationId,
+    };
+
+    try {
+      dispatch(setCalculateLoading(true));
+      dispatch(setQuotationStatus("loading"));
+      const quotationStatus = await axios.post(url, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+            "",
+        },
+      });
+      if (quotationStatus.data.success) {
+        dispatch(
+          setQuotationStatus(
+            quotationStatus.data.success ? "success" : "failed"
+          )
+        );
+        toast.success('Quotation status has been set to "Open"');
+      } else {
+        toast.error(quotationStatus.data.message);
+      }
+    } catch (error: any) {
+      const {
+        data: { message },
+      } = error.response;
+      toast.error(message);
+    } finally {
+      dispatch(setCalculateLoading(false));
+      dispatch(getAllHistory());
+    }
+  };
+};
+
+export const getProductInvoices = (userId: string): AppThunk => async (dispatch) => {
+  try {
+    const data = await getProductInvoicesFromDB(userId);
+    if(data) {
+      console.log('invoices', data)
+      dispatch(setProductInvoices(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getQuotations = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getQuotationFromDB();
+    if(data) {
+      console.log('quotations', data)
+      // dispatch(setProductInvoices(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getShippingCompany = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getShippingCompanyFromDB();
+    if(data) {
+      dispatch(setShippingCompany(data));
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default ProductSlice.reducer;
