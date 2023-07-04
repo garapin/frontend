@@ -15,6 +15,7 @@ import {
   getProductInvoicesFromDB,
   getQuotationFromDB,
   getShippingCompanyFromDB,
+  getPaymentStatusFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
@@ -574,6 +575,18 @@ export const getShippingCompany = (): AppThunk => async (dispatch) => {
     if(data) {
       dispatch(setShippingCompany(data));
     }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPaymentStatus = (): AppThunk => async (dispatch) => {
+  try {
+    const data = await getPaymentStatusFromDB();
+    console.log('data', data)
+    // if(data) {
+    //   dispatch(setShippingCompany(data));
+    // }
   } catch (error) {
     console.log(error);
   }

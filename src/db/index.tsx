@@ -267,3 +267,20 @@ export const getShippingCompanyFromDB = async (): Promise<any> => {
 
   return data;
 };
+
+export const getPaymentStatusFromDB = async (): Promise<any> => {
+  const response = await db
+    .collection("payment-status")
+    .get();
+
+    console.log('response', response)
+    
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+    };
+  });
+
+  return data;
+};

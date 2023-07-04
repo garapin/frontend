@@ -1,11 +1,21 @@
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { i18n } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useAppDispatch } from '@/hooks/useAppRedux';
+import { getPaymentStatus } from '@/store/modules/products';
 
 function PaymentComplete() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  // http://localhost:3000/payment-status/005b203793884eccb94ca2c9620e8ae0 : pending
+  // http://localhost:3000/payment-status/275a93ebc6a04a45878d53c796c56326 : paid
+
+  useEffect(() => {
+    dispatch(getPaymentStatus())
+  }, [])
 
   return (
     <Container>

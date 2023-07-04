@@ -400,9 +400,7 @@ const ProductDetailPage = () => {
               }
             />
           </Grid>
-          <Grid item lg={8} className="block px-5 w-full" style={{
-            display: 'block'
-          }}>
+          <Grid item lg={8} className="block flex-col px-5 w-full">
             <Typography className="pt-10" variant="h4">
               {singleProduct?.productName}
             </Typography>
@@ -670,7 +668,7 @@ const ProductDetailPage = () => {
                         />
                         <br />
                         <br />
-                        <Box className="max-w-xl mt-24 mb-20">
+                        <Box className="max-w-full">
                           <TextField
                             placeholder={"Upload Files"}
                             fullWidth
