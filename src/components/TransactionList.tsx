@@ -5,7 +5,7 @@ import {
 import React from "react";
 import { rupiah } from "@/tools/rupiah";
 import { Box } from "@mui/system";
-import { getAllHistory, getProductInvoices, getQuotations } from "@/store/modules/products";
+import { getAllHistory, getProductInvoices } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import ModalInquiry from "./ModalInquiry";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";

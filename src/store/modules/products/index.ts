@@ -47,6 +47,7 @@ const defaultState: {
   quotationStatus: string;
   productInvoices: string[];
   shippingCompanies: string[];
+  paymentStatus: any;
 } = {
   products: [],
   productCategories: [],
@@ -69,6 +70,7 @@ const defaultState: {
   quotationStatus: "",
   productInvoices: [],
   shippingCompanies: [],
+  paymentStatus: null
 };
 
 export const ProductSlice = createSlice({
@@ -144,6 +146,9 @@ export const ProductSlice = createSlice({
     setShippingCompany: (state, action) => {
       state.shippingCompanies = action.payload;
     },
+    setPaymentStatus: (state, action) => {
+      state.paymentStatus = action.payload;
+    },
   },
 
   extraReducers: {
@@ -184,7 +189,8 @@ export const {
   setDetailQuotation,
   setQuotationStatus,
   setProductInvoices,
-  setShippingCompany
+  setShippingCompany,
+  setPaymentStatus
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -557,18 +563,6 @@ export const getProductInvoices = (userId: string): AppThunk => async (dispatch)
   }
 };
 
-export const getQuotations = (): AppThunk => async (dispatch) => {
-  try {
-    const data = await getQuotationFromDB();
-    if(data) {
-      console.log('quotations', data)
-      // dispatch(setProductInvoices(data));
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export const getShippingCompany = (): AppThunk => async (dispatch) => {
   try {
     const data = await getShippingCompanyFromDB();
@@ -580,13 +574,12 @@ export const getShippingCompany = (): AppThunk => async (dispatch) => {
   }
 };
 
-export const getPaymentStatus = (): AppThunk => async (dispatch) => {
+export const getPaymentStatus = (paymentId: string): AppThunk => async (dispatch) => {
   try {
-    const data = await getPaymentStatusFromDB();
-    console.log('data', data)
-    // if(data) {
-    //   dispatch(setShippingCompany(data));
-    // }
+    const data = await getPaymentStatusFromDB(paymentId);
+    if(data) {
+      dispatch(setPaymentStatus(data));
+    }
   } catch (error) {
     console.log(error);
   }
