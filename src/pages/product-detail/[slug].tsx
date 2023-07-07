@@ -52,6 +52,7 @@ import * as Yup from "yup";
 import API from "@/configs/api";
 import { uuid } from "uuidv4";
 import { rupiah } from "@/tools/rupiah";
+import { NumericFormat } from "react-number-format";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -166,9 +167,15 @@ const ProductDetailPage = () => {
       addressNote: Yup.string().optional(),
       email: Yup.string().required("Email is required"),
       dimension: Yup.object({
-        width: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
-        height: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
-        length: Yup.number().typeError('Invalid number').min(1, 'Minimum 1').required(),
+        width: Yup.string()
+          .min(1, "Minimum 1")
+          .required(),
+        height: Yup.string()
+          .min(1, "Minimum 1")
+          .required(),
+        length: Yup.string()
+          .min(1, "Minimum 1")
+          .required(),
       }),
     }),
     onSubmit: async (values) => {
@@ -505,7 +512,10 @@ const ProductDetailPage = () => {
                                 });
                               }
                             }}
-                            options={{ alignVariantOptions: "left", showPriceCalculation: false }}
+                            options={{
+                              alignVariantOptions: "left",
+                              showPriceCalculation: false,
+                            }}
                           />
                         )}
                         <br />
@@ -558,89 +568,118 @@ const ProductDetailPage = () => {
                             md={8}
                           >
                             <Grid item md={4}>
-                              <TextField
-                                fullWidth
-                                label="Width"
+                              <NumericFormat
                                 value={formik.values.dimension?.width}
+                                allowLeadingZeros
+                                fullWidth
+                                allowedDecimalSeparators={[",", "."]}
+                                decimalSeparator="."
+                                customInput={TextField}
+                                variant="outlined"
+                                label="Width"
                                 name={"width"}
                                 required
-                                className="py-2"
-                                type="number"
+                                inputProps={{
+                                  style: {
+                                    padding: "10px 14px",
+                                  },
+                                }}
+                                InputLabelProps={{
+                                  style: {
+                                    fontSize: "14px",
+                                  },
+                                }}
                                 error={
                                   formik.touched.dimension?.width &&
                                   Boolean(formik.errors.dimension?.width)
                                 }
                                 helperText={
-                                  Boolean(formik.errors) && formik.errors.dimension?.width
+                                  Boolean(formik.errors) &&
+                                  formik.errors.dimension?.width
                                 }
                                 onBlur={formik.handleBlur}
-                                inputProps={{
-                                  style: {
-                                    padding: "10px 14px",
-                                  },
-                                }}
                                 onChange={(e) => {
                                   formik.setFieldValue(
                                     "dimension.width",
-                                    parseFloat(e.target.value ?? 1)
+                                    e.target.value
                                   );
                                 }}
                               />
                             </Grid>
                             <Grid item md={4}>
-                              <TextField
-                                fullWidth
-                                label="Length"
+                              <NumericFormat
                                 value={formik.values.dimension?.length}
+                                allowLeadingZeros
+                                fullWidth
+                                allowedDecimalSeparators={[",", "."]}
+                                decimalSeparator="."
+                                customInput={TextField}
+                                variant="outlined"
+                                label="Length"
                                 name={"length"}
-                                type="number"
                                 required
+                                inputProps={{
+                                  style: {
+                                    padding: "10px 14px",
+                                  },
+                                }}
+                                InputLabelProps={{
+                                  style: {
+                                    fontSize: "14px",
+                                  },
+                                }}
                                 error={
                                   formik.touched.dimension?.length &&
                                   Boolean(formik.errors.dimension?.length)
                                 }
                                 helperText={
-                                  Boolean(formik.errors) && formik.errors.dimension?.length
+                                  Boolean(formik.errors) &&
+                                  formik.errors.dimension?.length
                                 }
                                 onBlur={formik.handleBlur}
-                                inputProps={{
-                                  style: {
-                                    padding: "10px 14px",
-                                  },
-                                }}
                                 onChange={(e) => {
                                   formik.setFieldValue(
                                     "dimension.length",
-                                    parseFloat(e.target.value ?? 1)
+                                    e.target.value
                                   );
                                 }}
                               />
                             </Grid>
                             <Grid item md={4}>
-                              <TextField
-                                fullWidth
-                                label="Height"
+                              <NumericFormat
                                 value={formik.values.dimension?.height}
+                                allowLeadingZeros
+                                fullWidth
+                                allowedDecimalSeparators={[",", "."]}
+                                decimalSeparator="."
+                                customInput={TextField}
+                                variant="outlined"
+                                label="Height"
                                 name={"height"}
                                 required
-                                type="number"
-                                error={
-                                  formik.touched.dimension?.height &&
-                                  Boolean(formik.errors.dimension?.height)
-                                }
-                                helperText={
-                                  Boolean(formik.errors) && formik.errors.dimension?.height
-                                }
-                                onBlur={formik.handleBlur}
                                 inputProps={{
                                   style: {
                                     padding: "10px 14px",
                                   },
                                 }}
+                                InputLabelProps={{
+                                  style: {
+                                    fontSize: "14px",
+                                  },
+                                }}
+                                error={
+                                  formik.touched.dimension?.height &&
+                                  Boolean(formik.errors.dimension?.height)
+                                }
+                                helperText={
+                                  Boolean(formik.errors) &&
+                                  formik.errors.dimension?.height
+                                }
+                                onBlur={formik.handleBlur}
                                 onChange={(e) => {
                                   formik.setFieldValue(
                                     "dimension.height",
-                                    parseFloat(e.target.value ?? 1)
+                                    e.target.value
                                   );
                                 }}
                               />
@@ -749,9 +788,12 @@ const ProductDetailPage = () => {
                                     {Object.values(
                                       calculateTemplatePrice.options
                                     ).map((option: any, idx) => (
-                                      <Grid container sx={{
-                                        marginBottom: "0.5rem",
-                                      }}>
+                                      <Grid
+                                        container
+                                        sx={{
+                                          marginBottom: "0.5rem",
+                                        }}
+                                      >
                                         <Grid item md={6}>
                                           <Typography variant="body1" key={idx}>
                                             {option?.variant?.id}
@@ -765,7 +807,7 @@ const ProductDetailPage = () => {
                                       </Grid>
                                     ))}
                                     <Divider />
-                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                    <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
                                           <b>Quantity</b>
@@ -778,12 +820,12 @@ const ProductDetailPage = () => {
                                       >
                                         <Typography variant="body2">
                                           <b>
-                                              {calculateTemplatePrice?.quantity}
+                                            {calculateTemplatePrice?.quantity}
                                           </b>
                                         </Typography>
                                       </Grid>
                                     </Grid>
-                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                    <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
                                           <b>Price per unit</b>
@@ -796,12 +838,17 @@ const ProductDetailPage = () => {
                                       >
                                         <Typography variant="body2">
                                           <b>
-                                              {rupiah(parseFloat(calculateTemplatePrice?.unitPrice as string ?? '0'))}
+                                            {rupiah(
+                                              parseFloat(
+                                                (calculateTemplatePrice?.unitPrice as string) ??
+                                                  "0"
+                                              )
+                                            )}
                                           </b>
                                         </Typography>
                                       </Grid>
                                     </Grid>
-                                    <Grid container sx={{marginTop: '.5rem'}}>
+                                    <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
                                           <b>Total Price</b>
@@ -815,7 +862,10 @@ const ProductDetailPage = () => {
                                         <Typography variant="body2">
                                           <b>
                                             {rupiah(
-                                              parseFloat(calculateTemplatePrice?.totalPrice as string ?? '0')
+                                              parseFloat(
+                                                (calculateTemplatePrice?.totalPrice as string) ??
+                                                  "0"
+                                              )
                                             )}
                                           </b>
                                         </Typography>
