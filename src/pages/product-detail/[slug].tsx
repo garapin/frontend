@@ -169,13 +169,13 @@ const ProductDetailPage = () => {
       dimension: Yup.object({
         width: Yup.string()
           .min(1, "Minimum 1")
-          .required(),
+          .required('Width is required'),
         height: Yup.string()
           .min(1, "Minimum 1")
-          .required(),
+          .required('Height is required'),
         length: Yup.string()
           .min(1, "Minimum 1")
-          .required(),
+          .required('Length is required'),
       }),
     }),
     onSubmit: async (values) => {
@@ -207,6 +207,11 @@ const ProductDetailPage = () => {
           calculationId: calculateTemplatePrice?.calculationId,
           totalPrice: calculateTemplatePrice?.totalPrice,
         };
+
+        if(singleProduct?.category === "02" && !data.calculationId) {
+          toast.error("Mohon hitung harga terlebih dahulu");
+          return;
+        }
 
         await addToCart(data);
 
@@ -590,7 +595,6 @@ const ProductDetailPage = () => {
                                   },
                                 }}
                                 error={
-                                  formik.touched.dimension?.width &&
                                   Boolean(formik.errors.dimension?.width)
                                 }
                                 helperText={
@@ -629,7 +633,6 @@ const ProductDetailPage = () => {
                                   },
                                 }}
                                 error={
-                                  formik.touched.dimension?.length &&
                                   Boolean(formik.errors.dimension?.length)
                                 }
                                 helperText={
@@ -668,7 +671,6 @@ const ProductDetailPage = () => {
                                   },
                                 }}
                                 error={
-                                  formik.touched.dimension?.height &&
                                   Boolean(formik.errors.dimension?.height)
                                 }
                                 helperText={
@@ -694,11 +696,9 @@ const ProductDetailPage = () => {
                           required
                           type="number"
                           error={
-                            formik.touched.quantity &&
                             Boolean(formik.errors.quantity)
                           }
                           helperText={
-                            Boolean(formik.touched.quantity) &&
                             formik.errors.quantity
                           }
                           name={"quantity"}

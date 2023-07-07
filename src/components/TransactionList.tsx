@@ -1,6 +1,13 @@
 import {
   Typography,
   Chip,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
+  Grid,
+  CardActions,
+  Button,
 } from "@mui/material";
 import React from "react";
 import { rupiah } from "@/tools/rupiah";
@@ -63,7 +70,13 @@ export default function TransactionList({ currentTab }: any) {
   }
 
   return (
-    <Box style={{ border: "1px solid black" }} className="p-6 rounded-xl">
+    <Grid
+      container
+      spacing={{
+        xs: 2,
+        md: 3,
+      }}
+    >
       {dataHistory?.map(
         (
           val: {
@@ -85,73 +98,71 @@ export default function TransactionList({ currentTab }: any) {
             Math.floor(val.createdAt?.nanoseconds / 1000000);
           const dateHistory = new Date(milliseconds);
           return (
-            <Box className={`${i < dataHistory.length - 1 && "mb-5"}`} key={i}>
-              <Box
-                style={{ border: "1px solid gray" }}
-                className="w-full rounded-lg p-6 drop-shadow-2xl shadow-md"
-              >
-                <Box id="header" className="flex items-center">
-                  <Typography fontWeight={600} marginRight="20px">
-                    {title(val?.product?.category)}
-                  </Typography>
-                  <Typography marginRight="20px">
-                    {dateHistory.toLocaleDateString("id-ID", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </Typography>
-
-                  {val?.status && (
-                    <Chip
-                      label={val?.status}
-                      color="success"
-                      className="capitalize"
-                    />
-                  )}
-                </Box>
-                <Box className="flex items-center justify-between">
-                  <Box>
-                    <Box className="flex items-center">
-                      <img
-                        className="w-24 h-24 mr-4 object-contain"
-                        src={val?.product?.img?.[0]}
-                        alt="img_prod"
-                      />
-                      <Typography variant="h6" fontWeight={600}>
-                        {val?.product?.productName}
+            <Grid item md={6}>
+              <Card>
+                <CardActionArea>
+                  <CardMedia
+                    component="img"
+                    height="250"
+                    image={val?.product?.img?.[0]}
+                    alt="img_prod"
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {val?.product?.productName}
+                    </Typography>
+                    <Box id="header" className="flex items-center">
+                      <Typography fontWeight={600} marginRight="20px">
+                        {title(val?.product?.category)}
                       </Typography>
+                      <Typography marginRight="20px">
+                        {dateHistory.toLocaleDateString("id-ID", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </Typography>
+
+                      {val?.status && (
+                        <Chip
+                          label={val?.status}
+                          color="success"
+                          className="capitalize"
+                        />
+                      )}
                     </Box>
                     {currentTab === "cp" ? (
                       <>
                         <Typography>{val.quantity} items</Typography>
-                        <Typography marginTop="10px" width="60%">
+                        <Typography variant="body2" color="text.secondary">
                           {val?.orderDescription}
                         </Typography>
                       </>
                     ) : null}
-                  </Box>
-                  {currentTab !== "cp" ? (
-                    <>
-                      <Box>
-                        <Typography>Total Harga</Typography>
-                        <Typography>
-                          {rupiah(val.quantity * val?.product?.maxPrice)}
-                        </Typography>
-                      </Box>
-                    </>
-                  ) : null}
-                </Box>
-                <Box className="flex justify-end mt-5 mb-3">
-                  <button
+                    {currentTab !== "cp" ? (
+                      <>
+                        <Box>
+                          <Typography>Total Harga</Typography>
+                          <Typography>
+                            {rupiah(val.quantity * val?.product?.maxPrice)}
+                          </Typography>
+                        </Box>
+                      </>
+                    ) : null}
+                  </CardContent>
+                </CardActionArea>
+                <CardActions>
+                  <Button
+                    size="medium"
+                    color="primary"
+                    className="py-2"
                     onClick={() => handleOpen(val)}
-                    className="border-none outline-none bg-transparent text-[#bb86fc] cursor-pointer"
                   >
                     See Transaction Detail
-                  </button>
-                </Box>
-              </Box>
-            </Box>
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
           );
         }
       )}
@@ -159,6 +170,6 @@ export default function TransactionList({ currentTab }: any) {
       {modalInquiry.open && (
         <ModalInquiry modal={modalInquiry} setModal={setModalInquiry} />
       )}
-    </Box>
+    </Grid>
   );
 }
