@@ -257,7 +257,7 @@ export const getShippingCompanyFromDB = async (): Promise<any> => {
   const response = await db
     .collection("master/courier/available_couriers")
     .get();
-    
+
   const data = response.docs.map((doc) => {
     return {
       ...doc.data(),
@@ -266,4 +266,9 @@ export const getShippingCompanyFromDB = async (): Promise<any> => {
   });
 
   return data;
+};
+
+export const getPaymentStatusFromDB = async (id: string): Promise<any> => {
+  const response = await db.collection("product_invoices").doc(id).get();
+  return response.data();
 };

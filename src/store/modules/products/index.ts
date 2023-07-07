@@ -15,6 +15,7 @@ import {
   getProductInvoicesFromDB,
   getQuotationFromDB,
   getShippingCompanyFromDB,
+  getPaymentStatusFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
@@ -46,6 +47,7 @@ const defaultState: {
   quotationStatus: string;
   productInvoices: string[];
   shippingCompanies: string[];
+  paymentStatus: any;
 } = {
   products: [],
   productCategories: [],
@@ -68,6 +70,7 @@ const defaultState: {
   quotationStatus: "",
   productInvoices: [],
   shippingCompanies: [],
+  paymentStatus: null
 };
 
 export const ProductSlice = createSlice({
@@ -143,6 +146,9 @@ export const ProductSlice = createSlice({
     setShippingCompany: (state, action) => {
       state.shippingCompanies = action.payload;
     },
+    setPaymentStatus: (state, action) => {
+      state.paymentStatus = action.payload;
+    },
   },
 
   extraReducers: {
@@ -183,7 +189,8 @@ export const {
   setDetailQuotation,
   setQuotationStatus,
   setProductInvoices,
-  setShippingCompany
+  setShippingCompany,
+  setPaymentStatus
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -556,23 +563,22 @@ export const getProductInvoices = (userId: string): AppThunk => async (dispatch)
   }
 };
 
-export const getQuotations = (): AppThunk => async (dispatch) => {
+export const getShippingCompany = (): AppThunk => async (dispatch) => {
   try {
-    const data = await getQuotationFromDB();
+    const data = await getShippingCompanyFromDB();
     if(data) {
-      console.log('quotations', data)
-      // dispatch(setProductInvoices(data));
+      dispatch(setShippingCompany(data));
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-export const getShippingCompany = (): AppThunk => async (dispatch) => {
+export const getPaymentStatus = (paymentId: string): AppThunk => async (dispatch) => {
   try {
-    const data = await getShippingCompanyFromDB();
+    const data = await getPaymentStatusFromDB(paymentId);
     if(data) {
-      dispatch(setShippingCompany(data));
+      dispatch(setPaymentStatus(data));
     }
   } catch (error) {
     console.log(error);

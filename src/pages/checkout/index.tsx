@@ -91,7 +91,6 @@ function CheckoutPage() {
       firstName: auth.authUser?.displayName?.split(" ")[0] ?? "",
       lastName: auth.authUser?.displayName?.split(" ")[1] ?? "",
       phoneNumber: auth.authUser?.phoneNumber ?? "",
-      email: auth.authUser?.email ?? "",
       city: "",
       zipCode: "",
       country: "Indonesia",
@@ -103,7 +102,6 @@ function CheckoutPage() {
       firstName: Yup.string().required("Contact Name is required"),
       lastName: Yup.string().required("Contact Name is required"),
       phoneNumber: Yup.string().required("Phone Number is required"),
-      email: Yup.string().required("Email is required"),
       city: Yup.string().required("City is required"),
       zipCode: Yup.string().required("Zip Code is required"),
       country: Yup.string().required("Country is required"),
@@ -154,8 +152,6 @@ function CheckoutPage() {
       }
     },
   });
-
-  console.log('formik', formik)
 
   const handleGetShippingCompanyService = (courierCode: string | any) => {
     const payload = {
@@ -436,13 +432,11 @@ function CheckoutPage() {
                   fullWidth
                   label="Email"
                   name="email"
+                  value={auth.authUser?.email}
+                  disabled
+                  InputLabelProps={{ shrink: Boolean(auth.authUser?.email) }}
                   placeholder="emailanda@nama-perusahaan.co.id"
                   required
-                  error={formik.touched.email && Boolean(formik.errors.email)}
-                  helperText={
-                    Boolean(formik.touched.email) && formik.errors.email
-                  }
-                  // valhandleBuyue={formik.values.email} name={'email'}
                   onBlur={formik.handleBlur}
                   onChange={formik.handleChange}
                 />
@@ -550,17 +544,6 @@ function CheckoutPage() {
                 />
               </Grid>
             </Grid>
-            <Box>
-              <Typography className="text-2xl font-bold">
-                Billing Address
-              </Typography>
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox defaultChecked disabled />}
-                  label="Alamat pengiriman sama dengan alamat penagihan"
-                />
-              </FormGroup>
-            </Box>
           </form>
           <Grid container className="mt-4">
             <Grid item md={6}></Grid>

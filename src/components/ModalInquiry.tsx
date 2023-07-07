@@ -88,6 +88,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
 
   const handleAccept = async (id: string) => {
     await dispatch(handleRejectAcceptQuotation("accept", id));
+    // await dispatch(handleOpenQuotation(id));
     setModal({ open: false, data: null });
   };
 
