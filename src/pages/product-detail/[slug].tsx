@@ -195,7 +195,7 @@ const ProductDetailPage = () => {
           productId: singleProduct?.id,
           qty: values.quantity,
           status: "cart",
-          unitPrice: singleProduct?.maxPrice,
+          unitPrice: calculateTemplatePrice?.unitPrice,
           updatedAt: null,
           userId: auth?.authUser?.uid,
           calculationId: calculateTemplatePrice?.calculationId,
