@@ -1,4 +1,11 @@
-import { Box, Button, Checkbox, Container, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  Grid,
+  Typography,
+} from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -105,7 +112,7 @@ function Cart() {
     return selectedProducts.reduce((total, productId) => {
       const product = cartList?.find((p: any) => p.id === productId);
       return total + product.totalPrice;
-    }, 0)
+    }, 0);
   };
 
   const adjustProductQuantity = (productId: number, newQuantity: number) => {
@@ -117,7 +124,7 @@ function Cart() {
     });
     setCartList(updatedProducts);
   };
-  
+
   return (
     <>
       <main>
@@ -212,9 +219,11 @@ function Cart() {
                           <Box className="flex items-center">
                             <button
                               disabled={val.qty === 1}
-                              onClick={() =>
-                                adjustProductQuantity(val.id, val.qty - 1)
-                              }
+                              onClick={() => {
+                                if (val.qty > val.product?.moq) {
+                                  adjustProductQuantity(val.id, val.qty - 1);
+                                }
+                              }}
                               className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
                             >
                               -
