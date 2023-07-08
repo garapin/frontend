@@ -98,20 +98,11 @@ export default function TransactionList({ currentTab }: any) {
             Math.floor(val.createdAt?.nanoseconds / 1000000);
           const dateHistory = new Date(milliseconds);
           return (
-            <Grid item md={6}>
+            <Grid item md={12}>
               <Card>
                 <CardActionArea>
-                  <CardMedia
-                    component="img"
-                    height="250"
-                    image={val?.product?.img?.[0]}
-                    alt="img_prod"
-                  />
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {val?.product?.productName}
-                    </Typography>
-                    <Box id="header" className="flex items-center">
+                    <Box id="header" className="flex items-center mb-2">
                       <Typography fontWeight={600} marginRight="20px">
                         {title(val?.product?.category)}
                       </Typography>
@@ -131,36 +122,60 @@ export default function TransactionList({ currentTab }: any) {
                         />
                       )}
                     </Box>
-                    {currentTab === "cp" ? (
-                      <>
-                        <Typography>{val.quantity} items</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {val?.orderDescription}
-                        </Typography>
-                      </>
-                    ) : null}
-                    {currentTab !== "cp" ? (
-                      <>
+                    <Box className="flex justify-between items-center">
+                      <Box className="flex items-center gap-2">
+                        <img
+                          src={val?.product?.img?.[0]}
+                          alt="img_prod"
+                          className="w-40 rounded-md"
+                        />
                         <Box>
-                          <Typography>Total Harga</Typography>
-                          <Typography>
-                            {rupiah(val.quantity * val?.product?.maxPrice)}
+                          <Typography gutterBottom variant="h5" component="div">
+                            {val?.product?.productName}
                           </Typography>
+                          {currentTab === "cp" ? (
+                            <>
+                              <Typography>{val.quantity} items</Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                              >
+                                {val?.orderDescription}
+                              </Typography>
+                            </>
+                          ) : null}
                         </Box>
-                      </>
-                    ) : null}
+                      </Box>
+                      <Box
+                        sx={{
+                          borderLeft: "1px solid #e0e0e0",
+                          paddingLeft: "20px",
+                        }}
+                      >
+                        {currentTab !== "cp" ? (
+                          <>
+                            <Box>
+                              <Typography>Total Harga</Typography>
+                              <Typography variant="h5" className="font-bold">
+                                {rupiah(val.quantity * val?.product?.maxPrice)}
+                              </Typography>
+                            </Box>
+                          </>
+                        ) : null}
+                      </Box>
+                    </Box>
+                    <div className="flex w-full justify-end">
+                      <Button
+                        size="medium"
+                        color="primary"
+                        className="py-2"
+                        onClick={() => handleOpen(val)}
+                      >
+                        See Transaction Detail
+                      </Button>
+                    </div>
                   </CardContent>
                 </CardActionArea>
-                <CardActions>
-                  <Button
-                    size="medium"
-                    color="primary"
-                    className="py-2"
-                    onClick={() => handleOpen(val)}
-                  >
-                    See Transaction Detail
-                  </Button>
-                </CardActions>
               </Card>
             </Grid>
           );
