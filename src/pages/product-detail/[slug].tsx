@@ -181,7 +181,7 @@ const ProductDetailPage = () => {
           product: singleProduct,
           template: productTemplate,
           selectedOptions: variantSelectorValue,
-          files: [fileData],
+          files: fileData ? [fileData] : null,
           createdAt: new Date(),
         };
 
