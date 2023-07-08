@@ -162,20 +162,14 @@ const ProductDetailPage = () => {
               .min(singleProduct.moq, `Minimum order is ${singleProduct.moq}`)
           : Yup.number().required("Quantity is required")
       ),
-      contactName: Yup.string().required("Contact Name is required"),
-      phoneNumber: Yup.string().required("Phone Number is required"),
+      contactName: Yup.lazy((_val: any) => singleProduct?.category !== "02" ? Yup.string().required("Contact Name is required") : Yup.string().optional()),
+      phoneNumber: Yup.lazy((_val: any) => singleProduct?.category !== "02" ? Yup.string().required("Phone Number is required") : Yup.string().optional()),
       addressNote: Yup.string().optional(),
       email: Yup.string().required("Email is required"),
       dimension: Yup.object({
-        width: Yup.string()
-          .min(1, "Minimum 1")
-          .required('Width is required'),
-        height: Yup.string()
-          .min(1, "Minimum 1")
-          .required('Height is required'),
-        length: Yup.string()
-          .min(1, "Minimum 1")
-          .required('Length is required'),
+        width: Yup.string().min(1, "Minimum 1").required("Width is required"),
+        height: Yup.string().min(1, "Minimum 1").required("Height is required"),
+        length: Yup.string().min(1, "Minimum 1").required("Length is required"),
       }),
     }),
     onSubmit: async (values) => {
@@ -183,7 +177,7 @@ const ProductDetailPage = () => {
         const fileData = await handleFileUpload();
         const dataBody = {
           ...values,
-          address: addressMap,
+          // address: addressMap,
           product: singleProduct,
           template: productTemplate,
           selectedOptions: variantSelectorValue,
@@ -208,14 +202,12 @@ const ProductDetailPage = () => {
           totalPrice: calculateTemplatePrice?.totalPrice,
         };
 
-        if(singleProduct?.category === "02" && !data.calculationId) {
+        if (singleProduct?.category === "02" && !data.calculationId) {
           toast.error("Mohon hitung harga terlebih dahulu");
           return;
         }
 
-        await addToCart(data);
-
-        singleProduct?.category === "02"
+        singleProduct.category === "02"
           ? await addToCart(data)
           : await storeRequestInquiryToDB(dataBody);
 
@@ -594,9 +586,7 @@ const ProductDetailPage = () => {
                                     fontSize: "14px",
                                   },
                                 }}
-                                error={
-                                  Boolean(formik.errors.dimension?.width)
-                                }
+                                error={Boolean(formik.errors.dimension?.width)}
                                 helperText={
                                   Boolean(formik.errors) &&
                                   formik.errors.dimension?.width
@@ -632,9 +622,7 @@ const ProductDetailPage = () => {
                                     fontSize: "14px",
                                   },
                                 }}
-                                error={
-                                  Boolean(formik.errors.dimension?.length)
-                                }
+                                error={Boolean(formik.errors.dimension?.length)}
                                 helperText={
                                   Boolean(formik.errors) &&
                                   formik.errors.dimension?.length
@@ -670,9 +658,7 @@ const ProductDetailPage = () => {
                                     fontSize: "14px",
                                   },
                                 }}
-                                error={
-                                  Boolean(formik.errors.dimension?.height)
-                                }
+                                error={Boolean(formik.errors.dimension?.height)}
                                 helperText={
                                   Boolean(formik.errors) &&
                                   formik.errors.dimension?.height
@@ -695,12 +681,8 @@ const ProductDetailPage = () => {
                           value={formik.values.quantity}
                           required
                           type="number"
-                          error={
-                            Boolean(formik.errors.quantity)
-                          }
-                          helperText={
-                            formik.errors.quantity
-                          }
+                          error={Boolean(formik.errors.quantity)}
+                          helperText={formik.errors.quantity}
                           name={"quantity"}
                           onBlur={formik.handleBlur}
                           onChange={formik.handleChange}
@@ -806,7 +788,6 @@ const ProductDetailPage = () => {
                                         </Grid>
                                       </Grid>
                                     ))}
-                                    <Divider />
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
@@ -878,119 +859,130 @@ const ProductDetailPage = () => {
                             <br />
                           </>
                         )}
-                        <Divider />
-                        <br />
-                        <Typography variant="body1">
-                          <b>Data Kontak</b>
-                        </Typography>
-                        <br />
-                        <Typography variant="body2">
-                          Mohon berikan kontak yang dapat dihubungi. Kami akan
-                          menindaklanjuti permintaan Anda melalui kontak
-                          berikut.
-                        </Typography>
-                        <br />
-                        <TextField
-                          fullWidth
-                          label="Nama Contact Person"
-                          error={
-                            formik.touched.contactName &&
-                            Boolean(formik.errors.contactName)
-                          }
-                          helperText={
-                            Boolean(formik.touched.contactName) &&
-                            formik.errors.contactName
-                          }
-                          value={formik.values.contactName}
-                          name={"contactName"}
-                          required
-                          onBlur={formik.handleBlur}
-                          onChange={formik.handleChange}
-                        />
-                        <br />
-                        <br />
-                        <AddressPicker
-                          onLocationSelect={(place) => {
-                            const postalCode = place.address_components?.find(
-                              (component: any) => {
-                                return component.types.includes("postal_code");
+                        {singleProduct?.category !== "02" && (
+                          <>
+                            <Divider />
+                            <br />
+                            <Typography variant="body1">
+                              <b>Data Kontak</b>
+                            </Typography>
+                            <br />
+                            <Typography variant="body2">
+                              Mohon berikan kontak yang dapat dihubungi. Kami
+                              akan menindaklanjuti permintaan Anda melalui
+                              kontak berikut.
+                            </Typography>
+                            <br />
+                            <TextField
+                              fullWidth
+                              label="Nama Contact Person"
+                              error={
+                                formik.touched.contactName &&
+                                Boolean(formik.errors.contactName)
                               }
-                            )?.long_name;
-                            const completeAddress = place.formatted_address;
-                            const geometry = place?.geometry?.location;
-                            let latLong = {
-                              lat: "",
-                              lng: "",
-                            };
-                            if (geometry != undefined) {
-                              latLong = {
-                                lat: geometry.lat().toString(),
-                                lng: geometry.lng().toString(),
-                              };
-                            }
-                            const objAddress: any = {
-                              completeAddress,
-                              postalCode,
-                              latLong,
-                            };
+                              helperText={
+                                Boolean(formik.touched.contactName) &&
+                                formik.errors.contactName
+                              }
+                              value={formik.values.contactName}
+                              name={"contactName"}
+                              required
+                              onBlur={formik.handleBlur}
+                              onChange={formik.handleChange}
+                            />
+                            <br />
+                            <br />
+                            <AddressPicker
+                              onLocationSelect={(place) => {
+                                const postalCode =
+                                  place.address_components?.find(
+                                    (component: any) => {
+                                      return component.types.includes(
+                                        "postal_code"
+                                      );
+                                    }
+                                  )?.long_name;
+                                const completeAddress = place.formatted_address;
+                                const geometry = place?.geometry?.location;
+                                let latLong = {
+                                  lat: "",
+                                  lng: "",
+                                };
+                                if (geometry != undefined) {
+                                  latLong = {
+                                    lat: geometry.lat().toString(),
+                                    lng: geometry.lng().toString(),
+                                  };
+                                }
+                                const objAddress: any = {
+                                  completeAddress,
+                                  postalCode,
+                                  latLong,
+                                };
 
-                            setAddressMap(objAddress);
-                          }}
-                          label=""
-                        />
-                        <br />
-                        <TextField
-                          fullWidth
-                          label="Keterangan Alamat"
-                          value={formik.values.addressNote}
-                          error={
-                            formik.touched.addressNote &&
-                            Boolean(formik.errors.addressNote)
-                          }
-                          helperText={
-                            Boolean(formik.errors) && formik.errors.addressNote
-                          }
-                          name={"addressNote"}
-                          onBlur={formik.handleBlur}
-                          onChange={formik.handleChange}
-                        />
-                        <br />
-                        <br />
-                        <TextField
-                          fullWidth
-                          label="Nomor HP/WA"
-                          placeholder="081234567890"
-                          value={formik.values.phoneNumber}
-                          error={
-                            formik.touched.phoneNumber &&
-                            Boolean(formik.errors.phoneNumber)
-                          }
-                          helperText={
-                            Boolean(formik.errors) && formik.errors.phoneNumber
-                          }
-                          name={"phoneNumber"}
-                          onBlur={formik.handleBlur}
-                          onChange={formik.handleChange}
-                        />
-                        <br />
-                        <br />
-                        <TextField
-                          fullWidth
-                          label="Email"
-                          placeholder="emailanda@nama-perusahaan.co.id"
-                          required
-                          error={
-                            formik.touched.email && Boolean(formik.errors.email)
-                          }
-                          helperText={
-                            Boolean(formik.touched.email) && formik.errors.email
-                          }
-                          value={formik.values.email}
-                          name={"email"}
-                          onBlur={formik.handleBlur}
-                          disabled
-                          onChange={formik.handleChange}
-                        />
+                                setAddressMap(objAddress);
+                              }}
+                              label=""
+                            />
+                            <br />
+                            <TextField
+                              fullWidth
+                              label="Keterangan Alamat"
+                              value={formik.values.addressNote}
+                              error={
+                                formik.touched.addressNote &&
+                                Boolean(formik.errors.addressNote)
+                              }
+                              helperText={
+                                Boolean(formik.errors) &&
+                                formik.errors.addressNote
+                              }
+                              name={"addressNote"}
+                              onBlur={formik.handleBlur}
+                              onChange={formik.handleChange}
+                            />
+                            <br />
+                            <br />
+                            <TextField
+                              fullWidth
+                              label="Nomor HP/WA"
+                              placeholder="081234567890"
+                              value={formik.values.phoneNumber}
+                              error={
+                                formik.touched.phoneNumber &&
+                                Boolean(formik.errors.phoneNumber)
+                              }
+                              helperText={
+                                Boolean(formik.errors) &&
+                                formik.errors.phoneNumber
+                              }
+                              name={"phoneNumber"}
+                              onBlur={formik.handleBlur}
+                              onChange={formik.handleChange}
+                            />
+                            <br />
+                            <br />
+                            <TextField
+                              fullWidth
+                              label="Email"
+                              placeholder="emailanda@nama-perusahaan.co.id"
+                              required
+                              error={
+                                formik.touched.email &&
+                                Boolean(formik.errors.email)
+                              }
+                              helperText={
+                                Boolean(formik.touched.email) &&
+                                formik.errors.email
+                              }
+                              value={formik.values.email}
+                              name={"email"}
+                              onBlur={formik.handleBlur}
+                              disabled
+                              onChange={formik.handleChange}
+                            />
+                          </>
+                        )}
                       </>
                     ) : (
                       <>
