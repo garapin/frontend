@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  CircularProgress,
   Container,
   Divider,
   FormControl,
@@ -54,6 +55,7 @@ function CheckoutPage() {
   const [shipment, setShipment] = useState([]);
   const { shippingCompanies } = useAppSelector((state) => state.product);
   const [shippingLoading, setShippingLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [addressMap, setAddressMap] = useState<any>({
     postalCode: "",
     completeAddress: "",
@@ -111,6 +113,7 @@ function CheckoutPage() {
     }),
     onSubmit: async (values) => {
       try {
+        setBusy(true);
         const dataPay = {
           cartIds: refundedId,
           shippingDetails: {
@@ -141,14 +144,22 @@ function CheckoutPage() {
         API.paymentApi(dataPay)
           .then((response) => {
             setDataPayment(response.data);
-            window.open(`${response?.data?.paymentLink}`, "_self");
+            toast.success(
+              "Pesanan berhasil dibuat, mengarahkan ke halaman pembayaran..."
+            );
+            setTimeout(() => {
+              window.open(`${response?.data?.paymentLink}`, "_self");
+            }, 1000);
+            setBusy(false);
           })
           .catch((error) => {
             console.error(error);
-          });
+            setBusy(false);
+          })
       } catch (e: any) {
         console.error(e);
         toast.error(e.message);
+        setBusy(false);
       }
     },
   });
@@ -486,14 +497,14 @@ function CheckoutPage() {
                 </Grid>
                 {formik.values.shippingCompany && (
                   <Grid item md={12}>
-                    <FormControl fullWidth>
+                    <FormControl fullWidth className="relative">
                       <InputLabel id="demo-simple-select-label">
                         Delivery
                       </InputLabel>
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={ship}
+                        value={shippingLoading ? "" : ship}
                         disabled={shippingLoading}
                         label="Delivery"
                         onChange={handleChange}
@@ -513,6 +524,13 @@ function CheckoutPage() {
                           </MenuItem>
                         ))}
                       </Select>
+                      {shippingLoading && (
+                        <CircularProgress
+                          color="inherit"
+                          size="24px"
+                          className="absolute top-4 right-8"
+                        />
+                      )}
                     </FormControl>
                   </Grid>
                 )}
@@ -558,7 +576,7 @@ function CheckoutPage() {
                   <Button
                     onClick={() => router.push("/cart")}
                     variant="outlined"
-                    disabled={formik.isSubmitting || !formik.isValid}
+                    disabled={busy || !formik.isValid}
                     className={`text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer`}
                     type="submit"
                   >
@@ -567,12 +585,20 @@ function CheckoutPage() {
                 </Grid>
                 <Grid item md={6}>
                   <Button
+                    variant="contained"
                     onClick={formik.submitForm}
-                    disabled={formik.isSubmitting || !formik.isValid}
-                    className={`hover:bg-[#bb86fc] bg-[#713F97] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline border-none w-full cursor-pointer`}
                     type="submit"
+                    className="py-2"
+                    disabled={busy || !formik.isValid}
                   >
-                    Lanjutkan Pembayaran
+                    {busy ? (
+                      <span className="flex items-center gap-1">
+                        <CircularProgress color="inherit" size={20} />
+                        Memproses pesanan
+                      </span>
+                    ) : (
+                      "Lanjutkan Pembayaran"
+                    )}
                   </Button>
                 </Grid>
               </Grid>
@@ -693,7 +719,11 @@ function CheckoutPage() {
                             <Typography>Shipping Cost</Typography>
                             <Typography className="flex items-center">
                               {getCourierByCode(ship.courier_code)?.img && (
-                                <img src={getCourierByCode(ship.courier_code)?.img} alt="kurir" className="w-10 max-h-7 mr-1" />
+                                <img
+                                  src={getCourierByCode(ship.courier_code)?.img}
+                                  alt="kurir"
+                                  className="w-10 max-h-7 mr-1"
+                                />
                               )}
                               {courierShipment}
                             </Typography>
