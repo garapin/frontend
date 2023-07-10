@@ -57,7 +57,9 @@ const LoginPage = () => {
           values.password
         );
         if (res) {
-          router.push(redirect || "/");
+          setTimeout(() => {
+            router.push(redirect ?? "/");
+          }, 200);
         }
       } catch (error: any) {
         console.log("there's an error: ", error);

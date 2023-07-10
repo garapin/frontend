@@ -62,7 +62,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(getDetailQuotation(data.id));
-    // dispatch(getDetailQuotation("9CqqsEHHBT6aNw7q8XDE"));
+    // dispatch(getDetailQuotation("jDOvSmRgmBCZAhyl9R6Y"));
   }, [dispatch]);
 
   const handleShowConfirm = (id: string) => {
@@ -239,15 +239,23 @@ const ModalInquiry = ({ modal, setModal }: any) => {
             <Typography variant="body1" className="font-semibold mb-2">
               Product Customization:
             </Typography>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} alignItems="stretch">
               {data &&
                 Object?.keys(data?.selectedOptions).map((key: any, i) => {
                   const selected: any =
                     data?.selectedOptions[`${key as number}`];
+                  const keyName = key
+                    .split("-")
+                    .map(
+                      (val: any) => val.charAt(0).toUpperCase() + val.slice(1)
+                    )
+                    .join(" ");
                   return (
-                    <Grid item md={6} key={i}>
-                      <Box className="shadow-md p-4 rounded-md">
-                        <Typography className="font-semibold">{key}</Typography>
+                    <Grid item md={6} key={i} className="w-full">
+                      <Box className="p-4 h-full shadow-md rounded-md">
+                        <Typography className="font-semibold">
+                          {keyName}
+                        </Typography>
                         <Typography>{selected.variant.description}</Typography>
                         <Box style={{ display: "flex", alignItems: "center" }}>
                           {selected.selectedOption.imgSrc && (
@@ -258,7 +266,14 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                             />
                           )}
                           <Typography>
-                            {selected.selectedOption.value}
+                            Selected:{" "}
+                            <span
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              {selected.selectedOption.name}
+                            </span>
                           </Typography>
                         </Box>
                       </Box>
