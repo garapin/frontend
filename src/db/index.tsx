@@ -2,7 +2,6 @@ import { getFirestore } from "@/configs/firebase";
 import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
 import { Category } from "@/types/category";
-import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
 
 /* Default Variables (used in all functions)

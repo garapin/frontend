@@ -35,10 +35,13 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { rupiah } from "@/tools/rupiah";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import useFirebaseAuth from "@/hooks/useFirebaseAuth";
+import { numberFormat } from "@/tools/utils";
 
 const ModalInquiry = ({ modal, setModal }: any) => {
   const { open, data } = modal;
   const [expanded, setExpanded] = React.useState<string | false>(false);
+  const { authUser }: any = useFirebaseAuth();
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -75,6 +78,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
       handleRejectAcceptQuotation(
         "reject",
         confirmReject.id,
+        authUser?.email,
         confirmReject.reason
       )
     );
@@ -87,8 +91,8 @@ const ModalInquiry = ({ modal, setModal }: any) => {
   };
 
   const handleAccept = async (id: string) => {
-    await dispatch(handleRejectAcceptQuotation("accept", id));
-    // await dispatch(handleOpenQuotation(id));
+    await dispatch(handleRejectAcceptQuotation("accept", id, authUser?.email));
+    // await dispatch(handleOpenQuotation(id, authUser?.email));
     setModal({ open: false, data: null });
   };
 
@@ -128,6 +132,10 @@ const ModalInquiry = ({ modal, setModal }: any) => {
           />
         );
     }
+  };
+
+  const formattedNotes = (notes: string) => {
+    return notes.replace(/(?:\r\n|\r|\n)/g, "<br />");
   };
 
   return (
@@ -194,7 +202,9 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                 </Typography>
               </Grid>
               <Grid item md={8}>
-                <Typography variant="body1">{data?.quantity}</Typography>
+                <Typography variant="body1">
+                  {numberFormat(data?.quantity)}
+                </Typography>
               </Grid>
             </Grid>
             <Grid container className="mb-2">
@@ -205,7 +215,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
               </Grid>
               <Grid item md={8}>
                 <Typography variant="body1">
-                  {data?.files.map((val: any, i: number) => (
+                  {data?.files?.map((val: any, i: number) => (
                     <a href={val.url} target="_blank" className="line-clamp-1">
                       {i + 1}. <span className="text-blue-500">{val.url}</span>
                     </a>
@@ -262,8 +272,8 @@ const ModalInquiry = ({ modal, setModal }: any) => {
               <Box>
                 {detailQuotation.map((quotation: any, i: number) => (
                   <Accordion
-                    expanded={expanded === "panel1"}
-                    onChange={handleChange("panel1")}
+                    expanded={expanded === quotation.id}
+                    onChange={handleChange(quotation.id)}
                   >
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
@@ -271,12 +281,23 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                       id="panel1bh-header"
                     >
                       <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                        Quotation #{i + 1}{" "}
+                        Quotation #{detailQuotation.length - i}{" "}
                         <BadgeStatus status={quotation.status} />
                       </Typography>
-                      <Typography sx={{ color: "text.secondary" }}>
-                        {quotation.noQuotation}
-                      </Typography>
+                      <div className="flex flex-1 justify-between items-center">
+                        <Typography sx={{ color: "text.secondary" }}>
+                          {quotation.noQuotation}
+                        </Typography>
+                        {quotation.quotationLink && (
+                          <Button
+                            variant="outlined"
+                            href={quotation.quotationLink}
+                            target="_blank"
+                          >
+                            DOWNLOAD PDF
+                          </Button>
+                        )}
+                      </div>
                     </AccordionSummary>
                     <AccordionDetails>
                       <TableContainer component={Paper}>
@@ -460,7 +481,11 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                             variant="body1"
                             className="max-w-xl text-slate-500"
                           >
-                            {quotation.notes}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: formattedNotes(quotation.notes),
+                              }}
+                            />
                           </Typography>
                         </Box>
                       </Box>

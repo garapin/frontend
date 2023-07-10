@@ -26,12 +26,10 @@ import Link from "next/link";
 const TransactionListIndex = () => {
   const auth = useFirebaseAuth();
   const { categories } = useAppSelector((state) => state.appDefaults);
-  const { products, isProductLoading, allProductsLoaded, isFetchingNext } =
+  const { products, isProductLoading, allProductsLoaded, isFetchingNext, history } =
     useAppSelector((state) => state.product);
   const dispatch = useDispatch();
   const [isTab, setTab] = React.useState("cp");
-
-  const firestore = getFirestore();
 
   useEffect(() => {
     dispatch<any>(getAllProducts());
@@ -81,12 +79,12 @@ const TransactionListIndex = () => {
           <TransactionList currentTab={isTab} />
         </Box>
 
-        {auth?.authUser?.authTokenData?.claims?.["printing"]?.["customer"] && (
+        {/* {auth?.authUser?.authTokenData?.claims?.["printing"]?.["customer"] && (
           <Typography>Showing Customer DB</Typography>
         )}
         {auth?.authUser?.authTokenData?.claims?.["printing"]?.["partner"] && (
           <Typography>Showing Partner DB</Typography>
-        )}
+        )} */}
 
         <Typography variant="h5" style={{ paddingTop: "40px" }}>
           Categories:

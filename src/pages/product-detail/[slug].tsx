@@ -177,7 +177,7 @@ const ProductDetailPage = () => {
         const fileData = await handleFileUpload();
         const dataBody = {
           ...values,
-          // address: addressMap,
+          address: addressMap,
           product: singleProduct,
           template: productTemplate,
           selectedOptions: variantSelectorValue,

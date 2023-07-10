@@ -205,9 +205,10 @@ export const getAllCategories = (): AppThunk => async (dispatch) => {
   }
 };
 
-export const getAllHistory = (): AppThunk => async (dispatch) => {
+export const getAllHistory = (email: string): AppThunk => async (dispatch) => {
   try {
-    const data = await getStoreInquiryToDB();
+    let data = await getStoreInquiryToDB();
+    data = data.filter((item: any) => item.email === email);
     dispatch(setHistory(data));
   } catch (error) {
     console.log(error);
@@ -465,6 +466,7 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
 export const handleRejectAcceptQuotation = (
   status: "reject" | "accept",
   quotationId: string,
+  email: string,
   reason?: string
 ): AppThunk => {
   return async (dispatch) => {
@@ -506,12 +508,12 @@ export const handleRejectAcceptQuotation = (
       toast.error(message);
     } finally {
       dispatch(setCalculateLoading(false));
-      dispatch(getAllHistory());
+      dispatch(getAllHistory(email));
     }
   };
 };
 
-export const handleOpenQuotation = (quotationId: string): AppThunk => {
+export const handleOpenQuotation = (quotationId: string, email: string): AppThunk => {
   return async (dispatch) => {
     let url = `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/products/quotation/setToOpen`;
     let payload: any = {
@@ -546,7 +548,7 @@ export const handleOpenQuotation = (quotationId: string): AppThunk => {
       toast.error(message);
     } finally {
       dispatch(setCalculateLoading(false));
-      dispatch(getAllHistory());
+      dispatch(getAllHistory(email));
     }
   };
 };
