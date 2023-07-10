@@ -162,6 +162,21 @@ export const getStoreInquiryToDB = async (): Promise<any> => {
     };
   });
 
+  data.sort((a: any, b: any) => {
+    const createdAtA = a.createdAt;
+    const createdAtB = b.createdAt;
+
+    // Bandingkan nilai 'seconds' terlebih dahulu
+    if (createdAtA.seconds !== createdAtB.seconds) {
+      return createdAtB.seconds - createdAtA.seconds;
+    }
+
+    // Jika nilai 'seconds' sama, bandingkan nilai 'nanoseconds'
+    return createdAtB.nanoseconds - createdAtA.nanoseconds;
+  });
+
+
+
   return data;
 };
 

@@ -120,12 +120,23 @@ const ModalInquiry = ({ modal, setModal }: any) => {
             }}
           />
         );
-      default:
+      case "OPEN":
         return (
           <Chip
             label="OPEN"
             sx={{
-              backgroundColor: "#FFD600",
+              backgroundColor: "#00C853",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      default:
+        return (
+          <Chip
+            label={status}
+            sx={{
+              backgroundColor: "#cecdc1",
               color: "#000",
               fontWeight: 600,
             }}
