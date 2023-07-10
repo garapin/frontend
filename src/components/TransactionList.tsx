@@ -16,6 +16,7 @@ import { getAllHistory, getProductInvoices } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import ModalInquiry from "./ModalInquiry";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
+import { numberFormat } from "@/tools/utils";
 
 export default function TransactionList({ currentTab }: any) {
   const title = (category: any) => {
@@ -145,7 +146,7 @@ export default function TransactionList({ currentTab }: any) {
                               </Typography>
                               {currentTab === "cp" ? (
                                 <>
-                                  <Typography>{val.quantity} items</Typography>
+                                  <Typography>{numberFormat(val.quantity)} items</Typography>
                                   <Typography
                                     variant="body2"
                                     color="text.secondary"

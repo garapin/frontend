@@ -111,6 +111,7 @@ const GarapinAppBar = ({
 
   const handleLogOut = async () => {
     setAnchorEl(null);
+    localStorage.setItem("redirect", router.asPath);
     await auth.signOut();
   };
 
