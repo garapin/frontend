@@ -103,7 +103,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
           <Chip
             label="REJECTED"
             sx={{
-              backgroundColor: "#FF0000",
+              backgroundColor: "#E70011",
               color: "#fff",
               fontWeight: 600,
             }}
@@ -114,7 +114,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
           <Chip
             label="ACCEPTED"
             sx={{
-              backgroundColor: "#00C853",
+              backgroundColor: "#316F00",
               color: "#fff",
               fontWeight: 600,
             }}
@@ -123,9 +123,97 @@ const ModalInquiry = ({ modal, setModal }: any) => {
       case "OPEN":
         return (
           <Chip
-            label="OPEN"
+            label="NEW QUOTATION"
             sx={{
-              backgroundColor: "#00C853",
+              backgroundColor: "#0056BA",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "INVOICE_SAMPLE_ISSUED":
+        return (
+          <Chip
+            label="SAMPLE INVOICE ISSUED"
+            sx={{
+              backgroundColor: "#DFA40A",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "INVOICE_DP_ISSUED":
+        return (
+          <Chip
+            label="DP INVOICE ISSUED"
+            sx={{
+              backgroundColor: "#DFA40A",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "INVOICE_FP_ISSUED":
+        return (
+          <Chip
+            label="FULL PAYMENT INVOICE ISSUED"
+            sx={{
+              backgroundColor: "#DFA40A",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "PAID_DP":
+        return (
+          <Chip
+            label="DP PAID"
+            sx={{
+              backgroundColor: "#316F00",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "PROCESSED":
+        return (
+          <Chip
+            label="PROCESSED"
+            sx={{
+              backgroundColor: "#316F00",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "PAID_FP":
+        return (
+          <Chip
+            label="FULLY PAID"
+            sx={{
+              backgroundColor: "#316F00",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "SHIPPED":
+        return (
+          <Chip
+            label="SHIPPING"
+            sx={{
+              backgroundColor: "#316F00",
+              color: "#fff",
+              fontWeight: 600,
+            }}
+          />
+        );
+      case "DELIVERED":
+        return (
+          <Chip
+            label="DELIVERED"
+            sx={{
+              backgroundColor: "#316F00",
               color: "#fff",
               fontWeight: 600,
             }}
@@ -306,7 +394,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                       aria-controls="panel1bh-content"
                       id="panel1bh-header"
                     >
-                      <Typography sx={{ width: "33%", flexShrink: 0 }}>
+                      <Typography sx={{ width: "50%", flexShrink: 0 }}>
                         Quotation #{detailQuotation.length - i}{" "}
                         <BadgeStatus status={quotation.status} />
                       </Typography>
@@ -515,8 +603,25 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                           </Typography>
                         </Box>
                       </Box>
+                      {quotation?.statusREJECTEDReason && (
+                        <Box className="mt-4 border border-solid border-slate-400 rounded-md p-4">
+                          <Typography
+                            variant="body1"
+                            className="max-w-xl text-slate-500"
+                          >
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: formattedNotes(
+                                  quotation.statusREJECTEDReason
+                                ),
+                              }}
+                            />
+                          </Typography>
+                        </Box>
+                      )}
+                      <Box></Box>
                       {quotation.status === "OPEN" && (
-                        <DialogActions className="p-4">
+                        <DialogActions className="p-4 mt-4 border border-solid border-slate-300 rounded-md">
                           <Grid container>
                             <Grid item md={6}></Grid>
                             <Grid item md={6}>
@@ -531,13 +636,13 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                     onClick={() =>
                                       handleShowConfirm(quotation.id)
                                     }
-                                    variant="contained"
-                                    className={`text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer`}
+                                    variant="outlined"
+                                    className={`text-dark font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer`}
                                     type="submit"
-                                    color="error"
+                                    color="primary"
                                     disabled={Boolean(calculationLoading)}
                                   >
-                                    Reject{" "}
+                                    DECLINE QUOTATION{" "}
                                     {calculationLoading && (
                                       <CircularProgress
                                         size={18}
@@ -558,7 +663,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                     color="primary"
                                     disabled={Boolean(calculationLoading)}
                                   >
-                                    Accept{" "}
+                                    ACCEPT QUOTATION{" "}
                                     {calculationLoading && (
                                       <CircularProgress
                                         size={18}
