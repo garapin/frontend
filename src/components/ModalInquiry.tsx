@@ -29,6 +29,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   getAllHistory,
   getDetailQuotation,
+  getShippingCompany,
   handleOpenQuotation,
   handleRejectAcceptQuotation,
 } from "@/store/modules/products";
@@ -36,7 +37,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { rupiah } from "@/tools/rupiah";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
-import { numberFormat } from "@/tools/utils";
+import { capitalizeString, numberFormat } from "@/tools/utils";
 
 const ModalInquiry = ({ modal, setModal }: any) => {
   const { open, data } = modal;
@@ -48,8 +49,12 @@ const ModalInquiry = ({ modal, setModal }: any) => {
       setExpanded(isExpanded ? panel : false);
     };
 
-  const { calculationLoading, quotationStatus, detailQuotation } =
-    useAppSelector((state) => state.product);
+  const {
+    calculationLoading,
+    quotationStatus,
+    detailQuotation,
+    shippingCompanies,
+  } = useAppSelector((state) => state.product);
 
   const handleClose = () => {
     setModal({ open: false, data: null });
@@ -63,6 +68,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
   useEffect(() => {
     dispatch(getDetailQuotation(data.id));
     // dispatch(getDetailQuotation("jDOvSmRgmBCZAhyl9R6Y"));
+    dispatch(getShippingCompany());
   }, [dispatch]);
 
   const handleShowConfirm = (id: string) => {
@@ -235,6 +241,13 @@ const ModalInquiry = ({ modal, setModal }: any) => {
 
   const formattedNotes = (notes: string) => {
     return notes.replace(/(?:\r\n|\r|\n)/g, "<br />");
+  };
+
+  const getCourierByCode = (courierCode: string | any) => {
+    const courier: any = shippingCompanies.find(
+      (val: any) => val.code === courierCode
+    );
+    return courier;
   };
 
   return (
@@ -537,9 +550,22 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                       {rupiah(quotation.shipping.cost)}
                                     </Typography>
                                   </Grid>
-                                  <Grid item md={12}>
-                                    <Typography className="float-right">
-                                      {quotation.shipping.service}
+                                  <Grid item md={12} className="flex items-center">
+                                    {getCourierByCode(
+                                      quotation.shipping.courier
+                                    )?.img && (
+                                      <img
+                                        src={
+                                          getCourierByCode(
+                                            quotation.shipping.courier
+                                          )?.img
+                                        }
+                                        alt="kurir"
+                                        className="w-10 max-h-7 mr-1"
+                                      />
+                                    )}
+                                    <Typography>
+                                      {`${capitalizeString(quotation.shipping.courier)}-${capitalizeString(quotation.shipping.service)}`}
                                     </Typography>
                                   </Grid>
                                 </Grid>
