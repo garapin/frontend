@@ -220,7 +220,8 @@ export const getDetailQuotation =
   (id: string): AppThunk =>
   async (dispatch) => {
     try {
-      const data = await getDetailQuotationFromDB(id);
+      let data = await getDetailQuotationFromDB(id);
+      data = data.filter((item: any) => item.status !== "DRAFT");
       dispatch(setDetailQuotation(data));
     } catch (error) {
       console.log(error);
