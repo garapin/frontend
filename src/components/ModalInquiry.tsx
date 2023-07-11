@@ -634,14 +634,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                           <Typography
                             variant="body1"
                             className="max-w-xl text-slate-500"
-                          >
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: formattedNotes(
-                                  quotation.statusREJECTEDReason
-                                ),
-                              }}
-                            />
+                          > Decline Reason: {quotation.statusREJECTEDReason}
                           </Typography>
                         </Box>
                       )}
