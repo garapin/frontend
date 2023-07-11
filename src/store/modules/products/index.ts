@@ -558,7 +558,6 @@ export const getProductInvoices = (userId: string): AppThunk => async (dispatch)
   try {
     const data = await getProductInvoicesFromDB(userId);
     if(data) {
-      console.log('invoices', data)
       dispatch(setProductInvoices(data));
     }
   } catch (error) {
