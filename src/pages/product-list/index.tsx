@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { getAllProductNext, getAllProducts } from "@/store/modules/products";
 import { rupiah } from "@/tools/rupiah";
 import { useRef } from "react";
+import { imagePlaceholder } from "@/components/ProductList/ProductList";
 
 const ProductListPage = () => {
   const router = useRouter();
@@ -120,7 +121,7 @@ const ProductListPage = () => {
                   >
                     <CardVertical
                       key={product.id}
-                      imageUrl={product.img[0]}
+                      imageUrl={product.img[0] ?? imagePlaceholder}
                       productName={product.productName}
                       price={`${rupiah(product.minPrice)} - ${rupiah(
                         product.maxPrice
