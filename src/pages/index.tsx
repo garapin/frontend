@@ -347,7 +347,7 @@ function LandingPage(props: any) {
               >
                 {t("sectionJelajah.header")}
               </Typography>
-              <Button variant="text" className="max-w-fit ml-10">
+              <Button variant="text" className="max-w-fit ml-10" onClick={() => router.push('/product-list')}>
                 {t("sectionJelajah.viewAllButton")}
               </Button>
             </Box>
