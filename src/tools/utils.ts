@@ -1,5 +1,6 @@
 export const numberFormat = (num: number) => {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  // ubah angka ke format ribuan, separator menggunakan titik dan desimal menggunakan koma
+  return num.toLocaleString("id-ID");
 };
 
 export const capitalizeString = (str: string) => {
