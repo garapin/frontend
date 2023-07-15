@@ -67,6 +67,7 @@ export default function GarapinVariantSelector({
     value ?? variant.canSelectMultiple
       ? [
           {
+            id: 0,
             label: null,
             name: null,
             value: null,
@@ -75,13 +76,6 @@ export default function GarapinVariantSelector({
         ]
       : null
   );
-
-  const notSure = {
-    label: "Not Sure",
-    name: "Not Sure",
-    value: "not-sure",
-    price: 0,
-  };
 
   return (
     <>
@@ -126,12 +120,12 @@ export default function GarapinVariantSelector({
                         if (tempValue.length === 1) return;
                         setTempValue(
                           tempValue.filter(
-                            (dat: any, i: number) => dat.value !== item.value
+                            (dat: any, i: number) => dat.id !== item.id
                           )
                         );
                         handleChange(
                           tempValue.filter(
-                            (dat: any, i: number) => dat.value !== item.value
+                            (dat: any, i: number) => dat.id !== item.id
                           )
                         );
                       }}
@@ -149,6 +143,7 @@ export default function GarapinVariantSelector({
                         setTempValue([
                           ...tempValue,
                           {
+                            id: tempValue.length,
                             label: null,
                             name: null,
                             value: null,
@@ -235,12 +230,12 @@ export default function GarapinVariantSelector({
                       if (tempValue.length === 1) return;
                       setTempValue(
                         tempValue.filter(
-                          (dat: any, i: number) => dat.value !== item.value
+                          (dat: any, i: number) => dat.id !== item.id
                         )
                       );
                       handleChange(
                         tempValue.filter(
-                          (dat: any, i: number) => dat.value !== item.value
+                          (dat: any, i: number) => dat.id !== item.id
                         )
                       );
                     }}
@@ -261,6 +256,7 @@ export default function GarapinVariantSelector({
                       setTempValue([
                         ...tempValue,
                         {
+                          id: tempValue.length,
                           label: null,
                           name: null,
                           value: null,

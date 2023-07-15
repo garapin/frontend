@@ -204,36 +204,16 @@ export const addToCart = async (
   return await db.collection("product_carts").add(data);
 };
 
-export const deleteItemCart = async (productId: any, uid: any) => {
-  const cartCollection = db.collection("product_carts");
-  const batch = db.batch();
-  const query = cartCollection.where("productId", "==", productId);
-
-  // Remove the product from the cart in Firestore
-  const cartRef = db
-    .collection("product_carts")
-    .doc(uid)
-    .collection("cart")
-    .doc(productId);
-
-  // Delete the product document from Firestore
-  await cartRef.delete();
-
-  query.get().then((querySnapshot) => {
-    querySnapshot.docs.forEach((doc) => {
-      const docRef = cartCollection.doc(doc.id);
-      batch.update(docRef, { delete: true });
-    });
-
-    batch
-      .commit()
-      .then(() => {
-        toast.success("Berhasil menghapus item");
-      })
-      .catch((error) => {
-        toast.error("Gagal menghapus item: ", error);
-      });
-  });
+export const deleteItemCart = async (id: any, uid: any) => {
+  const cartCollection = db.collection("product_carts").doc(id);
+  const cart = await cartCollection.get();
+  if (cart.exists) {
+    const cartData = cart.data();
+    if (cartData?.userId === uid) {
+      await cartCollection.delete();
+      toast.success("Item has been deleted");
+    }
+  }
 };
 
 export const getProductInvoicesFromDB = async (

@@ -5,6 +5,7 @@ import {
   Container,
   Grid,
   Typography,
+  debounce,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { i18n, useTranslation } from "next-i18next";
@@ -12,12 +13,16 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Image from "next/image";
 import { rupiah } from "@/tools/rupiah";
 import { useRouter } from "next/router";
-import { getProductCart } from "@/store/modules/products";
+import {
+  getCalculateProductPricing,
+  getProductCart,
+} from "@/store/modules/products";
 import { deleteItemCart } from "@/db";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
+import { NumericFormat } from "react-number-format";
 
 interface Product {
   id: number;
@@ -38,11 +43,9 @@ function Cart() {
   const dispatch = useAppDispatch();
 
   const handleDelete = async (product: any) => {
-    deleteItemCart(product?.productId, auth?.authUser?.uid);
+    deleteItemCart(product?.id, auth?.authUser?.uid);
 
-    const updatedCart = cartList?.filter(
-      (val: any) => val.productId !== product.productId
-    );
+    const updatedCart = cartList?.filter((val: any) => val.id !== product.id);
     setCartList(updatedCart);
   };
 
@@ -116,9 +119,21 @@ function Cart() {
     }, 0);
   };
 
-  const adjustProductQuantity = (productId: number, newQuantity: number) => {
+  const debounceGetPriceByQty = React.useRef(
+    debounce(async (qty: number, productId: string) => {
+      const dataa = await dispatch(getCalculateProductPricing(qty, productId));
+      return dataa;
+    }, 500)
+  ).current;
+
+  const adjustProductQuantity = async (
+    itemId: number,
+    newQuantity: any,
+    productId: string
+  ) => {
+    const newCalculation = await debounceGetPriceByQty(newQuantity, productId);
     const updatedProducts = cartList?.map((product: any) => {
-      if (product.id === productId) {
+      if (product.id === itemId) {
         return { ...product, qty: newQuantity };
       }
       return product;
@@ -211,37 +226,56 @@ function Cart() {
                         </Box>
 
                         <Box>
-                          <Button
-                            onClick={() => handleDelete(val)}
-                            className="ml-7 text-red-500"
-                          >
-                            hapus
-                          </Button>
-                          <Box className="flex items-center">
+                          <div className="flex justify-center">
+                            <Button
+                              onClick={() => handleDelete(val)}
+                              className="text-red-500"
+                            >
+                              hapus
+                            </Button>
+                          </div>
+                          <Box className="flex items-center gap-2">
                             <button
                               disabled={val.qty === 1}
                               onClick={() => {
                                 if (val.qty > val.product?.moq) {
-                                  adjustProductQuantity(val.id, val.qty - 1);
+                                  adjustProductQuantity(
+                                    val.id,
+                                    val.qty - 1,
+                                    val.productId
+                                  );
                                 }
                               }}
                               className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
                             >
                               -
                             </button>
-                            <Typography
-                              fontSize={17}
-                              marginLeft="15px"
-                              marginRight="15px"
-                              fontWeight={600}
-                              color="text.primary"
-                            >
-                              {val.qty}
-                            </Typography>
+                            <NumericFormat
+                              value={val.qty}
+                              allowLeadingZeros
+                              className="w-20 h-7 text-center font-bold text-base"
+                              thousandSeparator=","
+                              onChange={(e) => {
+                                adjustProductQuantity(
+                                  val.id,
+                                  parseInt(
+                                    e.target.value.replace(/[^0-9]/g, "")
+                                  ),
+                                  val.productId
+                                );
+                              }}
+                            />
                             <button
                               disabled={val.qty === val.product?.stock}
                               onClick={() =>
-                                adjustProductQuantity(val.id, val.qty + 1)
+                                adjustProductQuantity(
+                                  val.id,
+                                  typeof val.qty === "string"
+                                    ? parseInt(val.qty.replace(/[^0-9]/g, "")) +
+                                        1
+                                    : val.qty + 1,
+                                  val.productId
+                                )
                               }
                               className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
                             >
