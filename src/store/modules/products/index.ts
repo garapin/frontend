@@ -418,23 +418,8 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
       templateId: product.templateId,
       dimension: dimension,
       quantity: quantity,
-      selectedOptions: {},
+      selectedOptions: selectedOptions
     };
-
-    Object.keys(selectedOptions).forEach((key) => {
-      payload.selectedOptions[key] = {
-        variant: {
-          id: selectedOptions[key].variant.id,
-        },
-        selectedOption: {
-          value: selectedOptions[key].selectedOption.value,
-        },
-      };
-      if (selectedOptions[key].variant.hasQtyFields) {
-        payload.selectedOptions[key].quantity =
-          selectedOptions[key].variant.qty;
-      }
-    });
 
     try {
       dispatch(setCalculateLoading(true));

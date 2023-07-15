@@ -5,3 +5,11 @@ export const numberFormat = (num: number) => {
 export const capitalizeString = (str: string) => {
     return str.toUpperCase().replace(/_/g, ' ');
 }
+
+export const uppercaseString = (str: string) => {
+    // model-cetak to Model Cetak
+    return str.split('-').map((word) => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }
+    ).join(' ');
+}
