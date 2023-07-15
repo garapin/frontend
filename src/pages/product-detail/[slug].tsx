@@ -7,6 +7,7 @@ import {
   Alert,
   Box,
   Button,
+  debounce,
   Dialog,
   DialogActions,
   DialogContent,
@@ -24,6 +25,7 @@ import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import FallbackSpinner from "@/components/spinner";
 import {
+  getCalculateProductPricing,
   getProductTemplate,
   getProductTemplatePrice,
   getSingleProduct,
@@ -49,8 +51,6 @@ import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { storeRequestInquiryToDB, addToCart } from "@/db";
 import * as Yup from "yup";
-import API from "@/configs/api";
-import { uuid } from "uuidv4";
 import { rupiah } from "@/tools/rupiah";
 import { NumericFormat } from "react-number-format";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
@@ -129,7 +129,7 @@ const ProductDetailPage = () => {
     calculationLoading,
   } = useAppSelector((state) => state.product);
   const [open, setOpen] = React.useState(false);
-  const [itemQty, setItemQty] = React.useState(0);
+  const [itemQty, setItemQty] = React.useState<any>(0);
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [variantSelectorValue, setVariantSelectorValue] =
@@ -267,6 +267,7 @@ const ProductDetailPage = () => {
   React.useEffect(() => {
     if (singleProduct !== null && singleProduct !== undefined) {
       dispatch(getProductTemplate(singleProduct.templateId!));
+      setItemQty(singleProduct?.moq?.toString());
     }
   }, [singleProduct]);
 
@@ -308,14 +309,22 @@ const ProductDetailPage = () => {
   };
 
   const addButton = (val: any) => {
-    setItemQty(val + 1);
+    if (typeof val === "number") val = val.toString();
+    setItemQty((parseInt(val.replace(/[^0-9]/g, "")) + 1).toString());
   };
 
   const descButton = (val: any) => {
-    setItemQty(val - 1);
+    if (val == 0) return;
+    setItemQty((parseInt(val.replace(/[^0-9]/g, "")) - 1).toString());
   };
 
   const handleAddToCart = async () => {
+    const productPrice = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id))
+    if(itemQty < singleProduct?.moq) {
+      toast.error(`Jumlah pesanan tidak boleh kurang dari ${singleProduct?.moq}`);
+      return;
+    }
+    if(!productPrice) return
     const data = {
       channel: "printing",
       createAt: new Date(),
@@ -325,9 +334,12 @@ const ProductDetailPage = () => {
       productId: singleProduct?.id,
       qty: itemQty,
       status: "cart",
-      unitPrice: singleProduct?.maxPrice,
+      unitPrice: productPrice?.unitPrice,
       updatedAt: null,
       userId: auth?.authUser?.uid,
+      totalPrice: productPrice?.totalPrice,
+      calculationId: productPrice?.calculationId,
+      weight: singleProduct?.weightCalculation,
     };
 
     await addToCart(data);
@@ -342,23 +354,23 @@ const ProductDetailPage = () => {
   const renderButton = () => {
     if (singleProduct?.category === "01") {
       return (
-        <Box className="flex items-center my-10">
+        <Box className="flex items-center my-10 gap-2">
           <button
-            disabled={itemQty === 0}
+            disabled={itemQty == 0}
             onClick={() => descButton(itemQty)}
             className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
           >
             -
           </button>
-          <Typography
-            fontSize={17}
-            marginLeft="15px"
-            marginRight="15px"
-            fontWeight={600}
-            color="text.primary"
-          >
-            {itemQty}
-          </Typography>
+          <NumericFormat
+            value={itemQty}
+            allowLeadingZeros
+            className="w-20 h-7 text-center"
+            thousandSeparator=","
+            onChange={(e) => {
+              setItemQty(e.target.value);
+            }}
+          />
           <button
             disabled={itemQty === singleProduct?.stock}
             onClick={() => addButton(itemQty)}
@@ -789,12 +801,17 @@ const ProductDetailPage = () => {
                                       >
                                         <Grid item md={6}>
                                           <Typography variant="body1" key={idx}>
-                                            {uppercaseString(option?.variant?.id)}
+                                            {uppercaseString(
+                                              option?.variant?.id
+                                            )}
                                           </Typography>
                                         </Grid>
                                         <Grid item md={6}>
-                                          {(typeof option?.selectedOption ===
-                                            "object" && !Array.isArray(option?.selectedOption)) ? (
+                                          {typeof option?.selectedOption ===
+                                            "object" &&
+                                          !Array.isArray(
+                                            option?.selectedOption
+                                          ) ? (
                                             <Typography
                                               variant="body1"
                                               key={idx + 1}
@@ -804,37 +821,23 @@ const ProductDetailPage = () => {
                                           ) : Array.isArray(
                                               option?.selectedOption
                                             ) ? (
-                                              <Typography
-                                                variant="body1"
-                                                key={idx + 1}
-                                              >
-                                                :{" "}
-                                                {option?.selectedOption
-                                                  ?.map((item: any) => item.name)
-                                                  .join(", ")}
-                                              </Typography>
-                                            ) : (
-                                              <Typography
-                                                variant="body1"
-                                                key={idx + 1}
-                                              >
-                                                : {option?.selectedOption?.name}
-                                              </Typography>
-                                            )}
-{/* 
-                                          {Array.isArray(
-                                            option?.selectedOption
-                                          ) && (
                                             <Typography
                                               variant="body1"
                                               key={idx + 1}
                                             >
                                               :{" "}
                                               {option?.selectedOption
-                                                ?.map((item: any) => item.value)
+                                                ?.map((item: any) => item.name)
                                                 .join(", ")}
                                             </Typography>
-                                          )} */}
+                                          ) : (
+                                            <Typography
+                                              variant="body1"
+                                              key={idx + 1}
+                                            >
+                                              : {option?.selectedOption?.name}
+                                            </Typography>
+                                          )}
                                         </Grid>
                                       </Grid>
                                     ))}

@@ -48,6 +48,7 @@ const defaultState: {
   productInvoices: string[];
   shippingCompanies: string[];
   paymentStatus: any;
+  calculateProductPricing: any;
 } = {
   products: [],
   productCategories: [],
@@ -70,7 +71,8 @@ const defaultState: {
   quotationStatus: "",
   productInvoices: [],
   shippingCompanies: [],
-  paymentStatus: null
+  paymentStatus: null,
+  calculateProductPricing: null,
 };
 
 export const ProductSlice = createSlice({
@@ -126,6 +128,10 @@ export const ProductSlice = createSlice({
     },
     setCalculateTemplatePrice: (state, action) => {
       state.calculateTemplatePrice = action.payload;
+      state.isTemplateLoading = false;
+    },
+    setCalculateProductPricing: (state, action) => {
+      state.calculateProductPricing = action.payload;
       state.isTemplateLoading = false;
     },
     setQuotationStatus: (state, action) => {
@@ -190,7 +196,8 @@ export const {
   setQuotationStatus,
   setProductInvoices,
   setShippingCompany,
-  setPaymentStatus
+  setPaymentStatus,
+  setCalculateProductPricing,
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -205,16 +212,18 @@ export const getAllCategories = (): AppThunk => async (dispatch) => {
   }
 };
 
-export const getAllHistory = (email: string): AppThunk => async (dispatch) => {
-  try {
-    let data = await getStoreInquiryToDB();
-    data = data.filter((item: any) => item.email === email);
-    dispatch(setHistory(data));
-  } catch (error) {
-    console.log(error);
-    dispatch(setError((error as any).message));
-  }
-};
+export const getAllHistory =
+  (email: string): AppThunk =>
+  async (dispatch) => {
+    try {
+      let data = await getStoreInquiryToDB();
+      data = data.filter((item: any) => item.email === email);
+      dispatch(setHistory(data));
+    } catch (error) {
+      console.log(error);
+      dispatch(setError((error as any).message));
+    }
+  };
 
 export const getDetailQuotation =
   (id: string): AppThunk =>
@@ -418,7 +427,7 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
       templateId: product.templateId,
       dimension: dimension,
       quantity: quantity,
-      selectedOptions: selectedOptions
+      selectedOptions: selectedOptions,
     };
 
     try {
@@ -499,7 +508,10 @@ export const handleRejectAcceptQuotation = (
   };
 };
 
-export const handleOpenQuotation = (quotationId: string, email: string): AppThunk => {
+export const handleOpenQuotation = (
+  quotationId: string,
+  email: string
+): AppThunk => {
   return async (dispatch) => {
     let url = `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/products/quotation/setToOpen`;
     let payload: any = {
@@ -539,21 +551,23 @@ export const handleOpenQuotation = (quotationId: string, email: string): AppThun
   };
 };
 
-export const getProductInvoices = (userId: string): AppThunk => async (dispatch) => {
-  try {
-    const data = await getProductInvoicesFromDB(userId);
-    if(data) {
-      dispatch(setProductInvoices(data));
+export const getProductInvoices =
+  (userId: string): AppThunk =>
+  async (dispatch) => {
+    try {
+      const data = await getProductInvoicesFromDB(userId);
+      if (data) {
+        dispatch(setProductInvoices(data));
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
+  };
 
 export const getShippingCompany = (): AppThunk => async (dispatch) => {
   try {
     const data = await getShippingCompanyFromDB();
-    if(data) {
+    if (data) {
       dispatch(setShippingCompany(data));
     }
   } catch (error) {
@@ -561,15 +575,58 @@ export const getShippingCompany = (): AppThunk => async (dispatch) => {
   }
 };
 
-export const getPaymentStatus = (paymentId: string): AppThunk => async (dispatch) => {
-  try {
-    const data = await getPaymentStatusFromDB(paymentId);
-    if(data) {
-      dispatch(setPaymentStatus(data));
+export const getPaymentStatus =
+  (paymentId: string): AppThunk =>
+  async (dispatch) => {
+    try {
+      const data = await getPaymentStatusFromDB(paymentId);
+      if (data) {
+        dispatch(setPaymentStatus(data));
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
+  };
+
+export const getCalculateProductPricing = (quantity: any, productId: string): AppThunk => {
+  return async (dispatch) => {
+    if(typeof quantity !== "number") {
+      quantity = parseInt(quantity.replace(/[^0-9]/g, ""))
+    }
+    let payload: any = {
+      idempotencyKey: uuid(),
+      productId: productId,
+      quantity: quantity,
+    };
+
+    try {
+      dispatch(setCalculateLoading(true));
+      const productPricing = await axios.post(
+        `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/calculate/productPricing`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+              "",
+          },
+        }
+      );
+      if (productPricing !== undefined) {
+        return productPricing.data
+      } else {
+        toast.error("Failed to calculate product price");
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error.response.data.message || "Failed to calculate product price"
+      );
+    } finally {
+      dispatch(setCalculateLoading(false));
+    }
+  };
 };
 
 export default ProductSlice.reducer;
