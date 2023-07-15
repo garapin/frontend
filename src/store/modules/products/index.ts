@@ -421,14 +421,56 @@ export const getProductTemplate = (templateId: string): AppThunk => {
 export const getProductTemplatePrice = (data: any): AppThunk => {
   return async (dispatch) => {
     const { product, selectedOptions, quantity, dimension } = data;
+
     let payload: any = {
       idempotencyKey: uuid(),
       productId: product.id,
       templateId: product.templateId,
       dimension: dimension,
       quantity: quantity,
-      selectedOptions: selectedOptions,
+      selectedOptions: {},
     };
+
+    Object.keys(selectedOptions).forEach((key) => {
+      payload.selectedOptions[key] = {
+        variant: {
+          id: selectedOptions[key].variant.id,
+        },
+        selectedOption: Array.isArray(selectedOptions[key].selectedOption)
+          ? selectedOptions[key].selectedOption
+          : [selectedOptions[key].selectedOption],
+      };
+      if (selectedOptions[key].variant.hasQtyFields) {
+        payload.selectedOptions[key].quantity =
+          selectedOptions[key].variant.qty;
+      }
+
+      let dimensions = [
+        "hasOwnDimensionW",
+        "hasOwnDimensionH",
+        "hasOwnDimensionL",
+      ];
+      if (
+        dimensions.some((dimension) => selectedOptions[key].variant[dimension])
+      ) {
+        payload.selectedOptions[key].ownDimension = {};
+
+        if (selectedOptions[key].variant.hasOwnDimensionW) {
+          payload.selectedOptions[key].ownDimension.width =
+            selectedOptions[key].variant.ownWidth;
+        }
+
+        if (selectedOptions[key].variant.hasOwnDimensionH) {
+          payload.selectedOptions[key].ownDimension.height =
+            selectedOptions[key].variant.ownHeight;
+        }
+
+        if (selectedOptions[key].variant.hasOwnDimensionL) {
+          payload.selectedOptions[key].ownDimension.length =
+            selectedOptions[key].variant.ownLength;
+        }
+      }
+    });
 
     try {
       dispatch(setCalculateLoading(true));
@@ -588,10 +630,13 @@ export const getPaymentStatus =
     }
   };
 
-export const getCalculateProductPricing = (quantity: any, productId: string): AppThunk => {
+export const getCalculateProductPricing = (
+  quantity: any,
+  productId: string
+): AppThunk => {
   return async (dispatch) => {
-    if(typeof quantity !== "number") {
-      quantity = parseInt(quantity.replace(/[^0-9]/g, ""))
+    if (typeof quantity !== "number") {
+      quantity = parseInt(quantity.replace(/[^0-9]/g, ""));
     }
     let payload: any = {
       idempotencyKey: uuid(),
@@ -614,7 +659,7 @@ export const getCalculateProductPricing = (quantity: any, productId: string): Ap
         }
       );
       if (productPricing !== undefined) {
-        return productPricing.data
+        return productPricing.data;
       } else {
         toast.error("Failed to calculate product price");
       }

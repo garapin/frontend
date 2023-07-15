@@ -210,6 +210,7 @@ const ProductDetailPage = () => {
           userId: auth?.authUser?.uid,
           calculationId: calculateTemplatePrice?.calculationId,
           totalPrice: calculateTemplatePrice?.totalPrice,
+          weight: calculateTemplatePrice?.weight,
         };
 
         if (singleProduct?.category === "02" && !data.calculationId) {
@@ -807,20 +808,6 @@ const ProductDetailPage = () => {
                                           </Typography>
                                         </Grid>
                                         <Grid item md={6}>
-                                          {typeof option?.selectedOption ===
-                                            "object" &&
-                                          !Array.isArray(
-                                            option?.selectedOption
-                                          ) ? (
-                                            <Typography
-                                              variant="body1"
-                                              key={idx + 1}
-                                            >
-                                              : {option?.selectedOption?.name}
-                                            </Typography>
-                                          ) : Array.isArray(
-                                              option?.selectedOption
-                                            ) ? (
                                             <Typography
                                               variant="body1"
                                               key={idx + 1}
@@ -830,14 +817,6 @@ const ProductDetailPage = () => {
                                                 ?.map((item: any) => item.name)
                                                 .join(", ")}
                                             </Typography>
-                                          ) : (
-                                            <Typography
-                                              variant="body1"
-                                              key={idx + 1}
-                                            >
-                                              : {option?.selectedOption?.name}
-                                            </Typography>
-                                          )}
                                         </Grid>
                                       </Grid>
                                     ))}
