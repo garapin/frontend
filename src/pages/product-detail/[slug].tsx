@@ -54,7 +54,7 @@ import * as Yup from "yup";
 import { rupiah } from "@/tools/rupiah";
 import { NumericFormat } from "react-number-format";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
-import { capitalizeString, uppercaseString } from "@/tools/utils";
+import { capitalizeString, numberFormat, uppercaseString } from "@/tools/utils";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -823,7 +823,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Quantity</b>
+                                          <b>Kuantitas</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -841,7 +841,43 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Price per unit</b>
+                                          <b>Berat Satuan</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.unitWeight.toFixed(2)))} Gram
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                    <Grid container sx={{ marginTop: ".5rem" }}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
+                                          <b>Berat Total</b>
+                                        </Typography>
+                                      </Grid>
+                                      <Grid
+                                        item
+                                        md={4}
+                                        sx={{ textAlign: "right" }}
+                                      >
+                                        <Typography variant="body2">
+                                          <b>
+                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.totalWeight.toFixed(2)))} Gram
+                                          </b>
+                                        </Typography>
+                                      </Grid>
+                                    </Grid>
+                                    <Grid container sx={{ marginTop: ".5rem" }}>
+                                      <Grid item md={8}>
+                                        <Typography variant="body2">
+                                          <b>Harga Satuan</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -864,7 +900,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Total Price</b>
+                                          <b>Harga Total</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
