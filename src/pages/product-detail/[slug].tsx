@@ -53,6 +53,8 @@ import API from "@/configs/api";
 import { uuid } from "uuidv4";
 import { rupiah } from "@/tools/rupiah";
 import { NumericFormat } from "react-number-format";
+import { imagePlaceholder } from "@/components/ProductList/ProductList";
+import { capitalizeString, uppercaseString } from "@/tools/utils";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -162,8 +164,16 @@ const ProductDetailPage = () => {
               .min(singleProduct.moq, `Minimum order is ${singleProduct.moq}`)
           : Yup.number().required("Quantity is required")
       ),
-      contactName: Yup.lazy((_val: any) => singleProduct?.category !== "02" ? Yup.string().required("Contact Name is required") : Yup.string().optional()),
-      phoneNumber: Yup.lazy((_val: any) => singleProduct?.category !== "02" ? Yup.string().required("Phone Number is required") : Yup.string().optional()),
+      contactName: Yup.lazy((_val: any) =>
+        singleProduct?.category !== "02"
+          ? Yup.string().required("Contact Name is required")
+          : Yup.string().optional()
+      ),
+      phoneNumber: Yup.lazy((_val: any) =>
+        singleProduct?.category !== "02"
+          ? Yup.string().required("Phone Number is required")
+          : Yup.string().optional()
+      ),
       addressNote: Yup.string().optional(),
       email: Yup.string().required("Email is required"),
       dimension: Yup.object({
@@ -456,7 +466,8 @@ const ProductDetailPage = () => {
                   open={open}
                   slots={{ backdrop: Backdrop }}
                   scroll={scroll}
-                  maxWidth={"lg"}
+                  maxWidth={"md"}
+                  fullWidth
                 >
                   <DialogTitle>
                     {auth.authUser !== null
@@ -473,7 +484,7 @@ const ProductDetailPage = () => {
                         </Typography>
                         <br />
                         <CardVertical
-                          imageUrl={singleProduct?.img?.[0]!}
+                          imageUrl={singleProduct?.img?.[0] ?? imagePlaceholder}
                           productName={singleProduct?.productName ?? ""}
                           price={`Rp ${singleProduct?.minPrice?.toLocaleString(
                             "id-ID"
@@ -484,7 +495,7 @@ const ProductDetailPage = () => {
                           location="Jakarta"
                           slug={singleProduct?.slug ?? ""}
                           clickable={false}
-                          maxWidth="250px"
+                          maxWidth="300px"
                         />
                         <br />
                         <Divider />
@@ -778,13 +789,52 @@ const ProductDetailPage = () => {
                                       >
                                         <Grid item md={6}>
                                           <Typography variant="body1" key={idx}>
-                                            {option?.variant?.id}
+                                            {uppercaseString(option?.variant?.id)}
                                           </Typography>
                                         </Grid>
                                         <Grid item md={6}>
-                                          <Typography variant="body1" key={idx}>
-                                            : {option?.selectedOption?.value}
-                                          </Typography>
+                                          {(typeof option?.selectedOption ===
+                                            "object" && !Array.isArray(option?.selectedOption)) ? (
+                                            <Typography
+                                              variant="body1"
+                                              key={idx + 1}
+                                            >
+                                              : {option?.selectedOption?.name}
+                                            </Typography>
+                                          ) : Array.isArray(
+                                              option?.selectedOption
+                                            ) ? (
+                                              <Typography
+                                                variant="body1"
+                                                key={idx + 1}
+                                              >
+                                                :{" "}
+                                                {option?.selectedOption
+                                                  ?.map((item: any) => item.name)
+                                                  .join(", ")}
+                                              </Typography>
+                                            ) : (
+                                              <Typography
+                                                variant="body1"
+                                                key={idx + 1}
+                                              >
+                                                : {option?.selectedOption?.name}
+                                              </Typography>
+                                            )}
+{/* 
+                                          {Array.isArray(
+                                            option?.selectedOption
+                                          ) && (
+                                            <Typography
+                                              variant="body1"
+                                              key={idx + 1}
+                                            >
+                                              :{" "}
+                                              {option?.selectedOption
+                                                ?.map((item: any) => item.value)
+                                                .join(", ")}
+                                            </Typography>
+                                          )} */}
                                         </Grid>
                                       </Grid>
                                     ))}

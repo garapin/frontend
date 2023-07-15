@@ -17,6 +17,7 @@ import { deleteItemCart } from "@/db";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
+import { imagePlaceholder } from "@/components/ProductList/ProductList";
 
 interface Product {
   id: number;
@@ -159,7 +160,7 @@ function Cart() {
                             style={{ borderRadius: "20%" }}
                             className="rounded-lg object-contain mr-3"
                             height={120}
-                            src={val?.product?.img?.[0]}
+                            src={val?.product?.img?.[0] || imagePlaceholder}
                             alt="image"
                           />
                           <Box className="flex-1">

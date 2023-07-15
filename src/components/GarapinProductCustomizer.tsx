@@ -30,12 +30,23 @@ export default function GarapinProductCustomizer({
 }) {
   const [selectedVariant, setSelectedVariant] = React.useState(
     template.variants.map((variant: any) => {
+      const updatedVariant = { ...variant };
+      if (updatedVariant.hasOwnDimensionW) {
+        updatedVariant.ownWidth = 0;
+      }
+      if (updatedVariant.hasOwnDimensionL) {
+        updatedVariant.ownLength = 0;
+      }
+      if (updatedVariant.hasOwnDimensionH) {
+        updatedVariant.ownHeight = 0;
+      }
       return {
-        ...variant,
-        hasQtyFields: variant.hasQtyFields ?? false,
-        calculatePriceToDimension: variant.calculatePriceToDimension ?? false,
+        ...updatedVariant,
+        hasQtyFields: updatedVariant.hasQtyFields ?? false,
+        calculatePriceToDimension:
+          updatedVariant.calculatePriceToDimension ?? false,
         qty: 1,
-        selectedOption: null,
+        selectedOption: updatedVariant.canSelectMultiple ? [] : null,
         totalPrice: 0,
       };
     })
@@ -55,7 +66,7 @@ export default function GarapinProductCustomizer({
           <Grid container sx={{ pt: 4 }}>
             <Grid item xs={options?.showPriceCalculation !== false ? 8 : 12}>
               <Grid container className="items-center" spacing={2}>
-                <Grid item md={8}>
+                <Grid item md={12}>
                   <Typography variant="h6" sx={{ lineHeight: 1 }}>
                     {variant.name}
                   </Typography>
@@ -66,46 +77,278 @@ export default function GarapinProductCustomizer({
                 {variant.hasQtyFields && (
                   <Grid
                     item
-                    md={4}
+                    md={12}
                     sx={{
                       display: "flex",
                       alignItems: "center",
                     }}
                   >
-                    <TextField
-                      fullWidth
-                      label="Quantity"
-                      defaultValue={1}
-                      value={variant.qty}
-                      required
-                      error={parseInt(variant.qty as unknown as string) < 1}
-                      name={"Qty"}
-                      type="number"
-                      onChange={(e) => {
-                        const opt = variant.options.find(
-                          (optSingle: any) =>
-                            optSingle.value ===
-                            (value[variant.id]?.selectedOption?.value ??
-                              variant.options[0].value)
-                        );
-                        handleChange({...variant, qty: parseInt(e.target.value)}, opt);
-                        setSelectedVariant(
-                          selectedVariant.map((varSingle) => {
-                            if (varSingle.id === variant.id) {
-                              return {
-                                ...varSingle,
-                                qty: parseInt(e.target.value ?? 1),
-                                totalPrice:
-                                  parseInt(e.target.value ?? 1) *
-                                  (varSingle.selectedOption?.price ?? 0),
-                              };
-                            } else {
-                              return varSingle;
+                    <Grid container className="mb-2">
+                      <Grid item sm={3}>
+                        <TextField
+                          fullWidth
+                          label="Quantity"
+                          defaultValue={1}
+                          value={variant.qty}
+                          size="small"
+                          required
+                          error={parseInt(variant.qty as unknown as string) < 1}
+                          name={"Qty"}
+                          type="number"
+                          onChange={(e) => {
+                            const opt = variant.options.find(
+                              (optSingle: any) =>
+                                optSingle.value ===
+                                (value[variant.id]?.selectedOption?.value ??
+                                  variant.options[0].value)
+                            );
+                            handleChange(
+                              { ...variant, qty: parseInt(e.target.value) },
+                              opt
+                            );
+                            setSelectedVariant(
+                              selectedVariant.map((varSingle) => {
+                                if (varSingle.id === variant.id) {
+                                  return {
+                                    ...varSingle,
+                                    qty: parseInt(e.target.value ?? 1),
+                                    totalPrice:
+                                      parseInt(e.target.value ?? 1) *
+                                      (varSingle.selectedOption?.price ?? 0),
+                                  };
+                                } else {
+                                  return varSingle;
+                                }
+                              })
+                            );
+                          }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                )}
+                {(variant.hasOwnDimensionW ||
+                  variant.hasOwnDimensionL ||
+                  variant.hasOwnDimensionH) && (
+                  <Grid item md={12}>
+                    <Typography className="mb-2">
+                      This option has its own dimension. Please specify it
+                      below.
+                    </Typography>
+                    <Grid container className="mb-2" spacing={2}>
+                      {variant.hasOwnDimensionW && (
+                        <Grid item sm={3}>
+                          <TextField
+                            fullWidth
+                            label="Width"
+                            defaultValue={0}
+                            value={variant.ownWidth}
+                            size="small"
+                            required
+                            error={
+                              parseInt(variant.qty as unknown as string) < 1
                             }
-                          })
-                        );
-                      }}
-                    />
+                            name={"Width"}
+                            type="number"
+                            onChange={(e) => {
+                              const oldPt = variant.options.find(
+                                (optSingle: any) =>
+                                  optSingle.value ===
+                                  (value[variant.id]?.selectedOption?.value ??
+                                    variant.options[0].value)
+                              );
+                              const opt = { ...oldPt };
+                              opt.ownWidth = parseInt(e.target.value ?? 1);
+
+                              setSelectedVariant(
+                                selectedVariant.map((varSingle) => {
+                                  if (varSingle.id === variant.id) {
+                                    return {
+                                      ...varSingle,
+                                      ownWidth: parseInt(e.target.value ?? 1),
+                                      totalPrice:
+                                        parseInt(e.target.value ?? 1) *
+                                        (varSingle.selectedOption?.price ?? 0),
+                                      options: varSingle.options.map(
+                                        (optSingle: any) => {
+                                          if (
+                                            optSingle.value ===
+                                            (value[variant.id]
+                                              ?.selectedOption?.value ??
+                                              variant.options[0].value)
+                                          ) {
+                                            return {
+                                              ...optSingle,
+                                              ownWidth: parseInt(
+                                                e.target.value ?? 1
+                                              ),
+                                            };
+                                          }
+                                          return optSingle;
+                                        }
+                                      ),
+                                    };
+                                  } else {
+                                    return varSingle;
+                                  }
+                                })
+                              );
+                              handleChange(
+                                {
+                                  ...variant,
+                                  ownWidth: parseInt(e.target.value),
+                                },
+                                {
+                                  ...opt,
+                                }
+                              );
+                            }}
+                          />
+                        </Grid>
+                      )}
+                      {variant.hasOwnDimensionL && (
+                        <Grid item sm={3}>
+                          <TextField
+                            fullWidth
+                            label="Length"
+                            defaultValue={0}
+                            value={variant.ownLength}
+                            size="small"
+                            required
+                            error={
+                              parseInt(variant.qty as unknown as string) < 1
+                            }
+                            name={"Length"}
+                            type="number"
+                            onChange={(e) => {
+                              const oldPt = variant.options.find(
+                                (optSingle: any) =>
+                                  optSingle.value ===
+                                  (value[variant.id]?.selectedOption?.value ??
+                                    variant.options[0].value)
+                              );
+
+                              const opt = { ...oldPt };
+                              opt.ownLength = parseInt(e.target.value ?? 1);
+
+                              setSelectedVariant(
+                                selectedVariant.map((varSingle) => {
+                                  if (varSingle.id === variant.id) {
+                                    return {
+                                      ...varSingle,
+                                      ownLength: parseInt(e.target.value ?? 1),
+                                      totalPrice:
+                                        parseInt(e.target.value ?? 1) *
+                                        (varSingle.selectedOption?.price ?? 0),
+                                      options: varSingle.options.map(
+                                        (optSingle: any) => {
+                                          if (
+                                            optSingle.value ===
+                                            (value[variant.id]
+                                              ?.selectedOption?.value ??
+                                              variant.options[0].value)
+                                          ) {
+                                            return {
+                                              ...optSingle,
+                                              ownLength: parseInt(
+                                                e.target.value ?? 1
+                                              ),
+                                            };
+                                          }
+                                          return optSingle;
+                                        }
+                                      ),
+                                    };
+                                  } else {
+                                    return varSingle;
+                                  }
+                                })
+                              );
+                              handleChange(
+                                {
+                                  ...variant,
+                                  ownLength: parseInt(e.target.value),
+                                },
+                                {
+                                  ...opt,
+                                }
+                              );
+                            }}
+                          />
+                        </Grid>
+                      )}
+                      {variant.hasOwnDimensionH && (
+                        <Grid item sm={3}>
+                          <TextField
+                            fullWidth
+                            label="Height"
+                            defaultValue={1}
+                            value={variant.ownerHeight}
+                            size="small"
+                            required
+                            error={
+                              parseInt(variant.qty as unknown as string) < 1
+                            }
+                            name={"Height"}
+                            type="number"
+                            onChange={(e) => {
+                              const oldPt = variant.options.find(
+                                (optSingle: any) =>
+                                  optSingle.value ===
+                                  (value[variant.id]?.selectedOption?.value ??
+                                    variant.options[0].value)
+                              );
+
+                              const opt = { ...oldPt };
+                              opt.ownHeight = parseInt(e.target.value ?? 1);
+
+                              setSelectedVariant(
+                                selectedVariant.map((varSingle) => {
+                                  if (varSingle.id === variant.id) {
+                                    return {
+                                      ...varSingle,
+                                      ownHeight: parseInt(e.target.value ?? 1),
+                                      totalPrice:
+                                        parseInt(e.target.value ?? 1) *
+                                        (varSingle.selectedOption?.price ?? 0),
+                                      options: varSingle.options.map(
+                                        (optSingle: any) => {
+                                          if (
+                                            optSingle.value ===
+                                            (value[variant.id]
+                                              ?.selectedOption?.value ??
+                                              variant.options[0].value)
+                                          ) {
+                                            return {
+                                              ...optSingle,
+                                              ownHeight: parseInt(
+                                                e.target.value ?? 1
+                                              ),
+                                            };
+                                          }
+                                          return optSingle;
+                                        }
+                                      ),
+                                    };
+                                  } else {
+                                    return varSingle;
+                                  }
+                                })
+                              );
+                              handleChange(
+                                {
+                                  ...variant,
+                                  ownHeight: parseInt(e.target.value),
+                                },
+                                {
+                                  ...opt,
+                                }
+                              );
+                            }}
+                          />
+                        </Grid>
+                      )}
+                    </Grid>
                   </Grid>
                 )}
               </Grid>
@@ -133,59 +376,40 @@ export default function GarapinProductCustomizer({
             )}
           </Grid>
           <GarapinVariantSelector
-            handleChange={(val) => {
-              if (val === "not-sure" && options?.allowNotSure !== false) {
-                handleChange(variant, {
-                  name: "Not Sure",
-                  value: "not-sure",
-                  price: 0,
-                });
-                setSelectedVariant((prev) => {
-                  return prev.map((varSingle) => {
-                    if (varSingle.id === variant.id) {
-                      return {
-                        ...varSingle,
-                        selectedOption: {
-                          name: "Not Sure",
-                          value: "not-sure",
-                          price: 0,
-                        },
-                        totalPrice: 0,
-                      };
-                    }
-                    return varSingle;
-                  });
-                });
-              } else {
-                const findVariant = variant.options.find(
-                  (varOptSingle: { value: string }) =>
-                    varOptSingle.value === val
-                );
-                handleChange(
-                  {
-                    ...variant,
-                    selectedOption: findVariant,
-                    totalPrice: findVariant?.price ?? 0,
-                  },
-                  findVariant
-                );
-                setSelectedVariant((prev) => {
-                  return prev.map((varSingle) => {
-                    if (varSingle.id === variant.id) {
-                      return {
-                        ...varSingle,
-                        selectedOption: findVariant,
-                        totalPrice: findVariant?.price ?? 0,
-                      };
-                    } else {
-                      return varSingle;
-                    }
-                  });
-                });
+            handleChange={(val: any) => {
+              if(variant.hasOwnDimensionW) {
+                val.ownWidth = variant.ownWidth;
               }
+              if(variant.hasOwnDimensionL) {
+                val.ownLength = variant.ownLength;
+              }
+              if(variant.hasOwnDimensionH) {
+                val.ownHeight = variant.ownHeight;
+              }
+              setSelectedVariant((prev) => {
+                return prev.map((varSingle) => {
+                  if (varSingle.id === variant.id) {
+                    return {
+                      ...varSingle,
+                      selectedOption: val,
+                      totalPrice: val?.price ?? 0,
+                    };
+                  } else {
+                    return varSingle;
+                  }
+                });
+              });
+              handleChange(
+                {
+                  ...variant,
+                  selectedOption: val,
+                  totalPrice: val?.price ?? 0,
+                },
+                val
+              );
             }}
             options={variant.options}
-            value={value[variant.id]?.selectedOption.value}
+            value={value[variant.id]?.selectedOption}
             justifyContent={
               options?.alignVariantOptions === "left"
                 ? "flex-start"
@@ -193,6 +417,7 @@ export default function GarapinProductCustomizer({
                 ? "flex-end"
                 : "center"
             }
+            variant={variant}
           />
         </div>
       ))}

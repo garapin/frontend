@@ -46,6 +46,7 @@ export type VariantOption = {
     imgSrc?: string
     value: string
     price: number
+    label?: string
 }
 
 export type TemplateInput = {
