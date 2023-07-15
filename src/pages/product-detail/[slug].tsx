@@ -823,7 +823,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Quantity</b>
+                                          <b>Kuantitas</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -841,7 +841,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Weight per Unit</b>
+                                          <b>Berat Satuan</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -851,7 +851,7 @@ const ProductDetailPage = () => {
                                       >
                                         <Typography variant="body2">
                                           <b>
-                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.unitWeight.toFixed(2)))} Grams
+                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.unitWeight.toFixed(2)))} Gram
                                           </b>
                                         </Typography>
                                       </Grid>
@@ -859,7 +859,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Total Weight</b>
+                                          <b>Berat Total</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -869,7 +869,7 @@ const ProductDetailPage = () => {
                                       >
                                         <Typography variant="body2">
                                           <b>
-                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.totalWeight.toFixed(2)))} Grams
+                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.totalWeight.toFixed(2)))} Gram
                                           </b>
                                         </Typography>
                                       </Grid>
@@ -877,7 +877,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Price per unit</b>
+                                          <b>Harga Satuan</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -900,7 +900,7 @@ const ProductDetailPage = () => {
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
                                         <Typography variant="body2">
-                                          <b>Total Price</b>
+                                          <b>Harga Total</b>
                                         </Typography>
                                       </Grid>
                                       <Grid
