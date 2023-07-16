@@ -131,10 +131,10 @@ export default function GarapinProductCustomizer({
                   variant.hasOwnDimensionL ||
                   variant.hasOwnDimensionH) && (
                   <Grid item md={12}>
-                    <Typography className="mb-2">
+                    {/* <Typography className="mb-2">
                       This option has its own dimension. Please specify it
                       below.
-                    </Typography>
+                    </Typography> */}
                     <Grid container className="mb-2" spacing={2}>
                       {variant.hasOwnDimensionW && (
                         <Grid item sm={3}>

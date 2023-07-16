@@ -26,7 +26,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import FallbackSpinner from "@/components/spinner";
 import {
   getCalculateProductPricing,
-  getProductTemplate,
   getProductTemplatePrice,
   getSingleProduct,
   setCalculateTemplatePrice,
@@ -127,9 +126,10 @@ const ProductDetailPage = () => {
     errors,
     calculateTemplatePrice,
     calculationLoading,
+    templatePrice,
   } = useAppSelector((state) => state.product);
   const [open, setOpen] = React.useState(false);
-  const [itemQty, setItemQty] = React.useState<any>(0);
+  const [itemQty, setItemQty] = React.useState<any>(singleProduct?.moq?.toString() ?? 0);
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [variantSelectorValue, setVariantSelectorValue] =
@@ -257,6 +257,7 @@ const ProductDetailPage = () => {
       completeAddress: "",
       latLong: { lat: "", long: "" },
     });
+    dispatch(setCalculateTemplatePrice(null));
   };
 
   React.useEffect(() => {
@@ -264,13 +265,11 @@ const ProductDetailPage = () => {
       dispatch(getSingleProduct(slug as string));
     }
   }, [slug]);
-
   React.useEffect(() => {
-    if (singleProduct !== null && singleProduct !== undefined) {
-      dispatch(getProductTemplate(singleProduct.templateId!));
-      setItemQty(singleProduct?.moq?.toString());
+    if (slug !== undefined) {
+      setItemQty(singleProduct?.moq?.toString() ?? 0)
     }
-  }, [singleProduct]);
+  }, [singleProduct.moq]);
 
   const handleButtonClick = () => {
     const fileInput = document.getElementById("file-input");
@@ -308,18 +307,29 @@ const ProductDetailPage = () => {
       };
     }
   };
-
-  const addButton = (val: any) => {
+  
+  const debounceCalculatePrice = React.useRef(debounce(async (itemQty, singleProduct) => {
+    const data = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id));
+  }, 500)).current;
+  
+  const addButton = async (val: any) => {
     if (typeof val === "number") val = val.toString();
     setItemQty((parseInt(val.replace(/[^0-9]/g, "")) + 1).toString());
+    debounceCalculatePrice((parseInt(val.replace(/[^0-9]/g, "")) + 1).toString(), singleProduct);
   };
 
   const descButton = (val: any) => {
     if (val == 0) return;
     setItemQty((parseInt(val.replace(/[^0-9]/g, "")) - 1).toString());
+    debounceCalculatePrice((parseInt(val.replace(/[^0-9]/g, "")) - 1).toString(), singleProduct);
   };
 
   const handleAddToCart = async () => {
+    // if not login
+    if (auth.authUser === null) {
+      handleToLogin();
+      return;
+    }
     const productPrice = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id))
     if(itemQty < singleProduct?.moq) {
       toast.error(`Jumlah pesanan tidak boleh kurang dari ${singleProduct?.moq}`);
@@ -335,11 +345,11 @@ const ProductDetailPage = () => {
       productId: singleProduct?.id,
       qty: itemQty,
       status: "cart",
-      unitPrice: productPrice?.unitPrice,
+      unitPrice: templatePrice?.unitPrice,
       updatedAt: null,
       userId: auth?.authUser?.uid,
-      totalPrice: productPrice?.totalPrice,
-      calculationId: productPrice?.calculationId,
+      totalPrice: templatePrice?.totalPrice,
+      calculationId: templatePrice?.calculationId,
       weight: singleProduct?.weightCalculation,
     };
 
@@ -370,6 +380,7 @@ const ProductDetailPage = () => {
             thousandSeparator=","
             onChange={(e) => {
               setItemQty(e.target.value);
+              debounceCalculatePrice(e.target.value, singleProduct);
             }}
           />
           <button
@@ -432,8 +443,8 @@ const ProductDetailPage = () => {
               {singleProduct?.productName}
             </Typography>
             <Typography className="pt-2" variant="h5" color="#713F97">
-              Rp {singleProduct?.minPrice?.toLocaleString("id-ID")} - Rp{" "}
-              {singleProduct?.maxPrice?.toLocaleString("id-ID")} / pcs
+              Rp{" "}
+              {singleProduct?.productPrice?.toLocaleString("id-ID")} / pcs
             </Typography>
             <Box
               className="flex flex-row p-4 mt-6"
@@ -822,8 +833,8 @@ const ProductDetailPage = () => {
                                     ))}
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
-                                        <Typography variant="body2">
-                                          <b>Kuantitas</b>
+                                        <Typography variant="body1">
+                                          Kuantitas
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -831,17 +842,15 @@ const ProductDetailPage = () => {
                                         md={4}
                                         sx={{ textAlign: "right" }}
                                       >
-                                        <Typography variant="body2">
-                                          <b>
-                                            {calculateTemplatePrice?.quantity}
-                                          </b>
+                                        <Typography variant="body1">
+                                            {numberFormat(calculateTemplatePrice?.quantity)}
                                         </Typography>
                                       </Grid>
                                     </Grid>
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
-                                        <Typography variant="body2">
-                                          <b>Berat Satuan</b>
+                                        <Typography variant="body1">
+                                          Harga Satuan
                                         </Typography>
                                       </Grid>
                                       <Grid
@@ -849,57 +858,19 @@ const ProductDetailPage = () => {
                                         md={4}
                                         sx={{ textAlign: "right" }}
                                       >
-                                        <Typography variant="body2">
-                                          <b>
-                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.unitWeight.toFixed(2)))} Gram
-                                          </b>
-                                        </Typography>
-                                      </Grid>
-                                    </Grid>
-                                    <Grid container sx={{ marginTop: ".5rem" }}>
-                                      <Grid item md={8}>
-                                        <Typography variant="body2">
-                                          <b>Berat Total</b>
-                                        </Typography>
-                                      </Grid>
-                                      <Grid
-                                        item
-                                        md={4}
-                                        sx={{ textAlign: "right" }}
-                                      >
-                                        <Typography variant="body2">
-                                          <b>
-                                            {numberFormat(parseFloat(calculateTemplatePrice?.weight?.totalWeight.toFixed(2)))} Gram
-                                          </b>
-                                        </Typography>
-                                      </Grid>
-                                    </Grid>
-                                    <Grid container sx={{ marginTop: ".5rem" }}>
-                                      <Grid item md={8}>
-                                        <Typography variant="body2">
-                                          <b>Harga Satuan</b>
-                                        </Typography>
-                                      </Grid>
-                                      <Grid
-                                        item
-                                        md={4}
-                                        sx={{ textAlign: "right" }}
-                                      >
-                                        <Typography variant="body2">
-                                          <b>
+                                        <Typography variant="body1">
                                             {rupiah(
                                               parseFloat(
                                                 (calculateTemplatePrice?.unitPrice as string) ??
                                                   "0"
                                               )
                                             )}
-                                          </b>
                                         </Typography>
                                       </Grid>
                                     </Grid>
                                     <Grid container sx={{ marginTop: ".5rem" }}>
                                       <Grid item md={8}>
-                                        <Typography variant="body2">
+                                        <Typography variant="body1">
                                           <b>Harga Total</b>
                                         </Typography>
                                       </Grid>
@@ -908,7 +879,7 @@ const ProductDetailPage = () => {
                                         md={4}
                                         sx={{ textAlign: "right" }}
                                       >
-                                        <Typography variant="body2">
+                                        <Typography variant="body1">
                                           <b>
                                             {rupiah(
                                               parseFloat(
