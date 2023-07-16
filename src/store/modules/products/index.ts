@@ -387,9 +387,10 @@ export const getSingleProduct = (slug: string): AppThunk => {
       const data: any = await getSingleProductFromDB(slug);
       dispatch(setSingleProduct({
         ...data,
-        productPrice: 0
+        productPrice: data.maxPrice
       }));
-      dispatch(getCalculateProductPricing(data.moq, data.id));
+      dispatch(getProductTemplate(data.templateId!));
+      // dispatch(getCalculateProductPricing(data.moq, data.id));
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
@@ -512,6 +513,87 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
       );
     } finally {
       dispatch(setCalculateLoading(false));
+    }
+  };
+};
+
+export const getProductTemplatePriceCart = (data: any): AppThunk => {
+  return async (dispatch) => {
+    const { product, selectedOptions, quantity, dimension } = data;
+
+    let payload: any = {
+      idempotencyKey: uuid(),
+      productId: product.id,
+      templateId: product.templateId,
+      dimension: dimension,
+      quantity: quantity,
+      selectedOptions: {},
+    };
+
+    Object.keys(selectedOptions).forEach((key) => {
+      payload.selectedOptions[key] = {
+        variant: {
+          id: selectedOptions[key].variant.id,
+        },
+        selectedOption: Array.isArray(selectedOptions[key].selectedOption)
+          ? selectedOptions[key].selectedOption
+          : [selectedOptions[key].selectedOption],
+      };
+      if (selectedOptions[key].variant.hasQtyFields) {
+        payload.selectedOptions[key].quantity =
+          selectedOptions[key].variant.qty;
+      }
+
+      let dimensions = [
+        "hasOwnDimensionW",
+        "hasOwnDimensionH",
+        "hasOwnDimensionL",
+      ];
+      if (
+        dimensions.some((dimension) => selectedOptions[key].variant[dimension])
+      ) {
+        payload.selectedOptions[key].ownDimension = {};
+
+        if (selectedOptions[key].variant.hasOwnDimensionW) {
+          payload.selectedOptions[key].ownDimension.width =
+            selectedOptions[key].variant.ownWidth;
+        }
+
+        if (selectedOptions[key].variant.hasOwnDimensionH) {
+          payload.selectedOptions[key].ownDimension.height =
+            selectedOptions[key].variant.ownHeight;
+        }
+
+        if (selectedOptions[key].variant.hasOwnDimensionL) {
+          payload.selectedOptions[key].ownDimension.length =
+            selectedOptions[key].variant.ownLength;
+        }
+      }
+    });
+
+    try {
+      const templatePrice = await axios.post(
+        `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/calculate/templatePricing`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+              "",
+          },
+        }
+      );
+      if (templatePrice !== undefined) {
+        return templatePrice.data;
+      } else {
+        toast.error("Failed to calculate template price");
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error.response.data.message || "Failed to calculate template price"
+      );
     }
   };
 };
@@ -678,6 +760,50 @@ export const getCalculateProductPricing = (
         dispatch(setSingleProductPrice(productPricing?.data?.unitPrice));
         dispatch(setSingleProductTemplatePrice(productPricing?.data));
         return productPricing.data;
+      } else {
+        toast.error("Failed to calculate product price");
+      }
+    } catch (error: any) {
+      console.log(error);
+      toast.error(
+        error.response.data.message || "Failed to calculate product price"
+      );
+    } finally {
+      dispatch(setCalculateLoading(false));
+    }
+  };
+};
+
+export const getRecalculateCartRTB = (
+  quantity: any,
+  productId: string
+): AppThunk => {
+  return async (dispatch) => {
+    if (typeof quantity !== "number") {
+      quantity = parseInt(quantity.replace(/[^0-9]/g, ""));
+    }
+    let payload: any = {
+      idempotencyKey: uuid(),
+      productId: productId,
+      quantity: quantity,
+    };
+
+    try {
+      dispatch(setCalculateLoading(true));
+      const calculation = await axios.post(
+        `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/calculate/productPricing`,
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:
+              "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+              "",
+          },
+        }
+      );
+      if (calculation !== undefined) {
+        return calculation.data;
       } else {
         toast.error("Failed to calculate product price");
       }
