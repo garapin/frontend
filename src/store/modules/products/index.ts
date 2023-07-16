@@ -28,6 +28,7 @@ const defaultState: {
   products: Product[];
   productCategories: [];
   singleProduct?: any;
+  templatePrice: any;
   allProductsLoaded: boolean;
   lastProductQuery?: Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>;
   isProductLoading: boolean;
@@ -54,6 +55,7 @@ const defaultState: {
   productCategories: [],
   allProductsLoaded: false,
   singleProduct: [],
+  templatePrice: null,
   productCart: [],
   isProductLoading: false,
   isTemplateLoading: false,
@@ -97,6 +99,12 @@ export const ProductSlice = createSlice({
     setSingleProduct: (state, action) => {
       state.singleProduct = action.payload;
       state.isProductLoading = false;
+    },
+    setSingleProductPrice: (state, action) => {
+      state.singleProduct.productPrice = action.payload;
+    },
+    setSingleProductTemplatePrice: (state, action) => {
+      state.templatePrice = action.payload;
     },
     setProductCart: (state, action) => {
       state.productCart = action.payload;
@@ -179,6 +187,8 @@ export const {
   setProducts,
   setProductLoading,
   setSingleProduct,
+  setSingleProductPrice,
+  setSingleProductTemplatePrice,
   setProductCart,
   setError,
   setLastProductQuery,
@@ -374,8 +384,12 @@ export const getSingleProduct = (slug: string): AppThunk => {
   return async (dispatch) => {
     try {
       dispatch(setProductLoading());
-      const data = await getSingleProductFromDB(slug);
-      dispatch(setSingleProduct(data));
+      const data: any = await getSingleProductFromDB(slug);
+      dispatch(setSingleProduct({
+        ...data,
+        productPrice: 0
+      }));
+      dispatch(getCalculateProductPricing(data.moq, data.id));
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
@@ -489,11 +503,13 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
       if (templatePrice !== undefined) {
         dispatch(setCalculateTemplatePrice(templatePrice.data));
       } else {
-        dispatch(setError("Template not found"));
+        toast.error("Failed to calculate template price");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      dispatch(setError((error as any).message));
+      toast.error(
+        error.response.data.message || "Failed to calculate template price"
+      );
     } finally {
       dispatch(setCalculateLoading(false));
     }
@@ -659,6 +675,8 @@ export const getCalculateProductPricing = (
         }
       );
       if (productPricing !== undefined) {
+        dispatch(setSingleProductPrice(productPricing?.data?.unitPrice));
+        dispatch(setSingleProductTemplatePrice(productPricing?.data));
         return productPricing.data;
       } else {
         toast.error("Failed to calculate product price");
