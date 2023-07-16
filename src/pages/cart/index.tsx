@@ -7,17 +7,18 @@ import {
   Typography,
   debounce,
 } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Image from "next/image";
 import { rupiah } from "@/tools/rupiah";
 import { useRouter } from "next/router";
 import {
-  getCalculateProductPricing,
   getProductCart,
+  getProductTemplatePrice,
+  getProductTemplatePriceCart,
+  getRecalculateCartRTB,
 } from "@/store/modules/products";
-import { deleteItemCart } from "@/db";
+import { deleteItemCart, updateProductCartFromDBById } from "@/db";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
@@ -119,19 +120,61 @@ function Cart() {
     }, 0);
   };
 
-  const debounceGetPriceByQty = React.useRef(
-    debounce(async (qty: number, productId: string) => {
-      const dataa = await dispatch(getCalculateProductPricing(qty, productId));
-      return dataa;
+  const debounceCalculatePrice = React.useRef(
+    debounce(async (itemQty, productId, item?) => {
+      if (item.productCategoryId == 1) {
+        const data = await dispatch(getRecalculateCartRTB(itemQty, productId));
+        if (data) {
+          const payload = {
+            ...item,
+            qty: data.quantity,
+            totalPrice: data.totalPrice,
+            unitPrice: data.unitPrice,
+            calculationId: data.calculationId,
+          };
+          updateProductCartFromDBById(item.id, payload);
+          setCartList((prev: any) => {
+            return prev.map((val: any) => {
+              if (val.id == item.id) {
+                return payload;
+              }
+              return val;
+            });
+          });
+        }
+      } else {
+        const data = await dispatch(
+          getProductTemplatePriceCart({
+            product: item.product,
+            selectedOptions: item.selectedOptions,
+            dimension: item.dimension,
+            quantity: itemQty,
+          })
+        );
+
+        const payload = {
+          ...item,
+          qty: itemQty,
+          quantity: itemQty,
+          totalPrice: data.totalPrice,
+          unitPrice: data.unitPrice,
+          weight: data.weight,
+          calculationId: data.calculationId,
+        };
+        updateProductCartFromDBById(item.id, payload);
+        setCartList((prev: any) => {
+          return prev.map((val: any) => {
+            if (val.id == item.id) {
+              return payload;
+            }
+            return val;
+          });
+        });
+      }
     }, 500)
   ).current;
 
-  const adjustProductQuantity = async (
-    itemId: number,
-    newQuantity: any,
-    productId: string
-  ) => {
-    const newCalculation = await debounceGetPriceByQty(newQuantity, productId);
+  const adjustProductQuantity = async (itemId: number, newQuantity: any) => {
     const updatedProducts = cartList?.map((product: any) => {
       if (product.id === itemId) {
         return { ...product, qty: newQuantity };
@@ -239,12 +282,13 @@ function Cart() {
                               disabled={val.qty === 1}
                               onClick={() => {
                                 if (val.qty > val.product?.moq) {
-                                  adjustProductQuantity(
-                                    val.id,
-                                    val.qty - 1,
-                                    val.productId
-                                  );
+                                  adjustProductQuantity(val.id, val.qty - 1);
                                 }
+                                debounceCalculatePrice(
+                                  val.qty - 1,
+                                  val.productId,
+                                  val
+                                );
                               }}
                               className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
                             >
@@ -260,23 +304,33 @@ function Cart() {
                                   val.id,
                                   parseInt(
                                     e.target.value.replace(/[^0-9]/g, "")
+                                  )
+                                );
+                                debounceCalculatePrice(
+                                  parseInt(
+                                    e.target.value.replace(/[^0-9]/g, "")
                                   ),
-                                  val.productId
+                                  val.productId,
+                                  val
                                 );
                               }}
                             />
                             <button
                               disabled={val.qty === val.product?.stock}
-                              onClick={() =>
+                              onClick={() => {
                                 adjustProductQuantity(
                                   val.id,
                                   typeof val.qty === "string"
                                     ? parseInt(val.qty.replace(/[^0-9]/g, "")) +
                                         1
-                                    : val.qty + 1,
-                                  val.productId
-                                )
-                              }
+                                    : val.qty + 1
+                                );
+                                debounceCalculatePrice(
+                                  val.qty + 1,
+                                  val.productId,
+                                  val
+                                );
+                              }}
                               className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
                             >
                               +

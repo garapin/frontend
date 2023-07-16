@@ -211,6 +211,7 @@ const ProductDetailPage = () => {
           calculationId: calculateTemplatePrice?.calculationId,
           totalPrice: calculateTemplatePrice?.totalPrice,
           weight: calculateTemplatePrice?.weight,
+          selectedOptions: variantSelectorValue,
         };
 
         if (singleProduct?.category === "02" && !data.calculationId) {
@@ -330,12 +331,10 @@ const ProductDetailPage = () => {
       handleToLogin();
       return;
     }
-    const productPrice = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id))
     if(itemQty < singleProduct?.moq) {
       toast.error(`Jumlah pesanan tidak boleh kurang dari ${singleProduct?.moq}`);
       return;
     }
-    if(!productPrice) return
     const data = {
       channel: "printing",
       createAt: new Date(),

@@ -26,7 +26,6 @@ type ProductListDB = {
 export const getSingleProductFromDB = async (
   slug: string
 ): Promise<Product | undefined> => {
-  console.log("slug from db", slug);
   const data = await db
     .collection("products")
     .where("slug", "==", slug)
@@ -54,6 +53,17 @@ export const getProductCartFromDB = async (userId: any): Promise<any> => {
   });
 
   return data;
+};
+
+export const updateProductCartFromDBById = async (
+  id: string,
+  data: any
+): Promise<any> => {
+ await db.collection("product_carts").doc(id).update(data);
+
+ const response = await db
+    .collection("product_carts").doc(id).get();
+  return response.data();
 };
 
 export const getAllProductsFromDB = async (): Promise<ProductListDB> => {
@@ -174,8 +184,6 @@ export const getStoreInquiryToDB = async (): Promise<any> => {
     // Jika nilai 'seconds' sama, bandingkan nilai 'nanoseconds'
     return createdAtB.nanoseconds - createdAtA.nanoseconds;
   });
-
-
 
   return data;
 };
