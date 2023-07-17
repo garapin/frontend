@@ -91,6 +91,9 @@ export default function GarapinVariantSelector({
                         imgSrc={opt.imgSrc}
                         text={opt.name}
                         selectHandler={() => {
+                          if(tempValue.find((item: any) => item.value === opt.value)) {
+                            return;
+                          }
                           if (!variant.canSelectMultiple) {
                             handleChange({ ...opt });
                           } else {
@@ -165,6 +168,9 @@ export default function GarapinVariantSelector({
                     options={options}
                     value={options.find((item) => item.value === value?.value)}
                     onChange={(e, newVal) => {
+                      if(tempValue.find((item: any) => item.value === newVal?.value)) {
+                        return;
+                      }
                       if (!variant.canSelectMultiple) {
                         handleChange(newVal);
                       } else {
