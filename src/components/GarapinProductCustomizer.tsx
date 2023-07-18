@@ -8,6 +8,7 @@ import {
 import { Box, Divider, Grid, TextField, Typography } from "@mui/material";
 import React from "react";
 import GarapinVariantSelector from "./GarapinVariantSelector";
+import { NumericFormat } from "react-number-format";
 
 interface options {
   showPriceCalculation?: boolean;
@@ -138,18 +139,33 @@ export default function GarapinProductCustomizer({
                     <Grid container className="mb-2" spacing={2}>
                       {variant.hasOwnDimensionW && (
                         <Grid item sm={3}>
-                          <TextField
+                          <NumericFormat
                             fullWidth
+                            allowLeadingZeros
+                            allowNegative={false}
+                            allowedDecimalSeparators={[",", "."]}
+                            customInput={TextField}
+                            decimalSeparator="."
+                            min={0}
+                            variant="outlined"
                             label="Width"
+                            name={"width"}
                             defaultValue={0}
                             value={variant.ownWidth}
-                            size="small"
+                            inputProps={{
+                              style: {
+                                padding: "10px 14px",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                fontSize: "14px",
+                              },
+                            }}
                             required
                             error={
                               parseInt(variant.qty as unknown as string) < 1
                             }
-                            name={"Width"}
-                            type="number"
                             onChange={(e) => {
                               const oldPt = variant.options.find(
                                 (optSingle: any) =>
@@ -173,8 +189,8 @@ export default function GarapinProductCustomizer({
                                         (optSingle: any) => {
                                           if (
                                             optSingle.value ===
-                                            (value[variant.id]
-                                              ?.selectedOption?.value ??
+                                            (value[variant.id]?.selectedOption
+                                              ?.value ??
                                               variant.options[0].value)
                                           ) {
                                             return {
@@ -208,18 +224,36 @@ export default function GarapinProductCustomizer({
                       )}
                       {variant.hasOwnDimensionL && (
                         <Grid item sm={3}>
-                          <TextField
+                          <NumericFormat
                             fullWidth
-                            label="Length"
+                            allowLeadingZeros
+                            allowedDecimalSeparators={[",", "."]}
+                            customInput={TextField}
+                            allowNegative={false}
+                            decimalSeparator="."
+                            variant="outlined"
                             defaultValue={0}
+                            inputProps={{
+                              style: {
+                                padding: "10px 14px",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                fontSize: "14px",
+                              },
+                            }}
+                            required
+                            label="Length"
                             value={variant.ownLength}
                             size="small"
-                            required
+                            InputProps={{
+                              inputProps: { min: 0 },
+                            }}
                             error={
                               parseInt(variant.qty as unknown as string) < 1
                             }
                             name={"Length"}
-                            type="number"
                             onChange={(e) => {
                               const oldPt = variant.options.find(
                                 (optSingle: any) =>
@@ -244,8 +278,8 @@ export default function GarapinProductCustomizer({
                                         (optSingle: any) => {
                                           if (
                                             optSingle.value ===
-                                            (value[variant.id]
-                                              ?.selectedOption?.value ??
+                                            (value[variant.id]?.selectedOption
+                                              ?.value ??
                                               variant.options[0].value)
                                           ) {
                                             return {
@@ -279,18 +313,36 @@ export default function GarapinProductCustomizer({
                       )}
                       {variant.hasOwnDimensionH && (
                         <Grid item sm={3}>
-                          <TextField
+                          <NumericFormat
                             fullWidth
+                            allowLeadingZeros
+                            allowedDecimalSeparators={[",", "."]}
+                            customInput={TextField}
+                            allowNegative={false}
+                            decimalSeparator="."
+                            variant="outlined"
+                            defaultValue={0}
+                            inputProps={{
+                              style: {
+                                padding: "10px 14px",
+                              },
+                            }}
+                            InputLabelProps={{
+                              style: {
+                                fontSize: "14px",
+                              },
+                            }}
+                            required
                             label="Height"
-                            defaultValue={1}
                             value={variant.ownerHeight}
                             size="small"
-                            required
+                            InputProps={{
+                              inputProps: { min: 0 },
+                            }}
                             error={
                               parseInt(variant.qty as unknown as string) < 1
                             }
                             name={"Height"}
-                            type="number"
                             onChange={(e) => {
                               const oldPt = variant.options.find(
                                 (optSingle: any) =>
@@ -315,8 +367,8 @@ export default function GarapinProductCustomizer({
                                         (optSingle: any) => {
                                           if (
                                             optSingle.value ===
-                                            (value[variant.id]
-                                              ?.selectedOption?.value ??
+                                            (value[variant.id]?.selectedOption
+                                              ?.value ??
                                               variant.options[0].value)
                                           ) {
                                             return {
@@ -377,13 +429,13 @@ export default function GarapinProductCustomizer({
           </Grid>
           <GarapinVariantSelector
             handleChange={(val: any) => {
-              if(variant.hasOwnDimensionW) {
+              if (variant.hasOwnDimensionW) {
                 val.ownWidth = variant.ownWidth;
               }
-              if(variant.hasOwnDimensionL) {
+              if (variant.hasOwnDimensionL) {
                 val.ownLength = variant.ownLength;
               }
-              if(variant.hasOwnDimensionH) {
+              if (variant.hasOwnDimensionH) {
                 val.ownHeight = variant.ownHeight;
               }
               setSelectedVariant((prev) => {
