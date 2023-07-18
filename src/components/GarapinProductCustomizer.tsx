@@ -171,7 +171,10 @@ export default function GarapinProductCustomizer({
                                 (optSingle: any) =>
                                   optSingle.value ===
                                   (value[variant.id]?.selectedOption?.value ??
-                                    variant.options[0].value)
+                                    {
+                                      ...variant.options[0],
+                                      value: ''
+                                    })
                               );
                               const opt = { ...oldPt };
                               opt.ownWidth = parseInt(e.target.value ?? 1);
@@ -259,7 +262,10 @@ export default function GarapinProductCustomizer({
                                 (optSingle: any) =>
                                   optSingle.value ===
                                   (value[variant.id]?.selectedOption?.value ??
-                                    variant.options[0].value)
+                                    {
+                                      ...variant.options[0],
+                                      value: ''
+                                    })
                               );
 
                               const opt = { ...oldPt };
@@ -348,7 +354,10 @@ export default function GarapinProductCustomizer({
                                 (optSingle: any) =>
                                   optSingle.value ===
                                   (value[variant.id]?.selectedOption?.value ??
-                                    variant.options[0].value)
+                                    {
+                                      ...variant.options[0],
+                                      value: ''
+                                    })
                               );
 
                               const opt = { ...oldPt };
