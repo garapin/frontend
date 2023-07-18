@@ -29,7 +29,7 @@ export default function GarapinVariantSelector({
   options,
   value,
   justifyContent = "center",
-  allowNotSure = true,
+  allowNotSure = false,
   variant,
 }: {
   handleChange: (value: any) => void;
@@ -91,9 +91,6 @@ export default function GarapinVariantSelector({
                         imgSrc={opt.imgSrc}
                         text={opt.name}
                         selectHandler={() => {
-                          if(tempValue.find((item: any) => item.value === opt.value)) {
-                            return;
-                          }
                           if (!variant.canSelectMultiple) {
                             handleChange({ ...opt });
                           } else {
@@ -122,12 +119,12 @@ export default function GarapinVariantSelector({
                         if (tempValue.length === 1) return;
                         setTempValue(
                           tempValue.filter(
-                            (dat: any, i: number) => dat.value !== item.value
+                            (dat: any, i: number) => i !== index
                           )
                         );
                         handleChange(
                           tempValue.filter(
-                            (dat: any, i: number) => dat.value !== item.value
+                            (dat: any, i: number) => i !== index
                           )
                         );
                       }}
@@ -232,14 +229,15 @@ export default function GarapinVariantSelector({
                     }}
                     onClick={() => {
                       if (tempValue.length === 1) return;
+                      // delete by index
                       setTempValue(
                         tempValue.filter(
-                          (dat: any, i: number) => dat.value !== item.value
+                          (dat: any, i: number) => i !== index
                         )
                       );
                       handleChange(
                         tempValue.filter(
-                          (dat: any, i: number) => dat.value !== item.value
+                          (dat: any, i: number) => i !== index
                         )
                       );
                     }}
