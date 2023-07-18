@@ -123,7 +123,7 @@ function Cart() {
   const debounceCalculatePrice = React.useRef(
     debounce(async (itemQty, productId, item?) => {
       if (item.productCategoryId == 1) {
-        const data = await dispatch(getRecalculateCartRTB(itemQty, productId));
+        const data = await dispatch(getRecalculateCartRTB(itemQty, productId, item.idempotencyKey));
         if (data) {
           const payload = {
             ...item,
@@ -131,6 +131,7 @@ function Cart() {
             totalPrice: data.totalPrice,
             unitPrice: data.unitPrice,
             calculationId: data.calculationId,
+            idempotencyKey: data.idempotencyKey,
           };
           updateProductCartFromDBById(item.id, payload);
           setCartList((prev: any) => {
@@ -149,6 +150,7 @@ function Cart() {
             selectedOptions: item.selectedOptions,
             dimension: item.dimension,
             quantity: itemQty,
+            idempotencyKey: item.idempotencyKey,
           })
         );
 
@@ -160,6 +162,7 @@ function Cart() {
           unitPrice: data.unitPrice,
           weight: data.weight,
           calculationId: data.calculationId,
+          idempotencyKey: data.idempotencyKey,
         };
         updateProductCartFromDBById(item.id, payload);
         setCartList((prev: any) => {

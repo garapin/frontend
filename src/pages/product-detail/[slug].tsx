@@ -54,6 +54,7 @@ import { rupiah } from "@/tools/rupiah";
 import { NumericFormat } from "react-number-format";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { capitalizeString, numberFormat, uppercaseString } from "@/tools/utils";
+import { uuid } from "uuidv4";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -139,6 +140,8 @@ const ProductDetailPage = () => {
     completeAddress: "",
     latLong: { lat: "", long: "" },
   });
+  const productTemplateIdempotencyKey = React.useMemo(() => uuid(), []);
+  const templatePricingIdempotencyKey = React.useMemo(() => uuid(), []);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -210,6 +213,7 @@ const ProductDetailPage = () => {
           userId: auth?.authUser?.uid,
           calculationId: calculateTemplatePrice?.calculationId,
           totalPrice: calculateTemplatePrice?.totalPrice,
+          idempotencyKey: calculateTemplatePrice?.idempotencyKey,
           weight: calculateTemplatePrice?.weight,
           selectedOptions: variantSelectorValue,
         };
@@ -310,7 +314,7 @@ const ProductDetailPage = () => {
   };
   
   const debounceCalculatePrice = React.useRef(debounce(async (itemQty, singleProduct) => {
-    const data = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id));
+    const data = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id, templatePricingIdempotencyKey));
   }, 500)).current;
   
   const addButton = async (val: any) => {
@@ -350,6 +354,7 @@ const ProductDetailPage = () => {
       totalPrice: templatePrice?.totalPrice,
       calculationId: templatePrice?.calculationId,
       weight: singleProduct?.weightCalculation,
+      idempotencyKey: templatePrice?.idempotencyKey,
     };
 
     await addToCart(data);
@@ -776,6 +781,7 @@ const ProductDetailPage = () => {
                                       selectedOptions: variantSelectorValue,
                                       dimension: formik.values.dimension,
                                       quantity: formik.values.quantity,
+                                      idempotencyKey: productTemplateIdempotencyKey
                                     })
                                   )
                                 }

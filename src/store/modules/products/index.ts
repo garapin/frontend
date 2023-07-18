@@ -20,8 +20,6 @@ import {
 import axios from "axios";
 import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
-import API from "@/configs/api";
-import { uuid } from "uuidv4";
 import { toast } from "react-toastify";
 
 const defaultState: {
@@ -435,10 +433,10 @@ export const getProductTemplate = (templateId: string): AppThunk => {
 };
 export const getProductTemplatePrice = (data: any): AppThunk => {
   return async (dispatch) => {
-    const { product, selectedOptions, quantity, dimension } = data;
-
+    const { product, selectedOptions, quantity, dimension, idempotencyKey } = data;
+    console.log('idempotencyKey', idempotencyKey)
     let payload: any = {
-      idempotencyKey: uuid(),
+      idempotencyKey: idempotencyKey,
       productId: product.id,
       templateId: product.templateId,
       dimension: dimension,
@@ -519,10 +517,10 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
 
 export const getProductTemplatePriceCart = (data: any): AppThunk => {
   return async (dispatch) => {
-    const { product, selectedOptions, quantity, dimension } = data;
+    const { product, selectedOptions, quantity, dimension, idempotencyKey } = data;
 
     let payload: any = {
-      idempotencyKey: uuid(),
+      idempotencyKey: idempotencyKey,
       productId: product.id,
       templateId: product.templateId,
       dimension: dimension,
@@ -730,14 +728,15 @@ export const getPaymentStatus =
 
 export const getCalculateProductPricing = (
   quantity: any,
-  productId: string
+  productId: string,
+  templatePricingIdempotencyKey: string
 ): AppThunk => {
   return async (dispatch) => {
     if (typeof quantity !== "number") {
       quantity = parseInt(quantity.replace(/[^0-9]/g, ""));
     }
     let payload: any = {
-      idempotencyKey: uuid(),
+      idempotencyKey: templatePricingIdempotencyKey,
       productId: productId,
       quantity: quantity,
     };
@@ -776,14 +775,16 @@ export const getCalculateProductPricing = (
 
 export const getRecalculateCartRTB = (
   quantity: any,
-  productId: string
+  productId: string,
+  idempotencyKey: string
 ): AppThunk => {
   return async (dispatch) => {
+    console.log('idempotencyKey', idempotencyKey)
     if (typeof quantity !== "number") {
       quantity = parseInt(quantity.replace(/[^0-9]/g, ""));
     }
     let payload: any = {
-      idempotencyKey: uuid(),
+      idempotencyKey: idempotencyKey,
       productId: productId,
       quantity: quantity,
     };
