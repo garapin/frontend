@@ -130,7 +130,9 @@ const ProductDetailPage = () => {
     templatePrice,
   } = useAppSelector((state) => state.product);
   const [open, setOpen] = React.useState(false);
-  const [itemQty, setItemQty] = React.useState<any>(singleProduct?.moq?.toString() ?? 0);
+  const [itemQty, setItemQty] = React.useState<any>(
+    singleProduct?.moq?.toString() ?? 0
+  );
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [variantSelectorValue, setVariantSelectorValue] =
@@ -272,7 +274,7 @@ const ProductDetailPage = () => {
   }, [slug]);
   React.useEffect(() => {
     if (slug !== undefined) {
-      setItemQty(singleProduct?.moq?.toString() ?? 0)
+      setItemQty(singleProduct?.moq?.toString() ?? 0);
     }
   }, [singleProduct.moq]);
 
@@ -312,21 +314,35 @@ const ProductDetailPage = () => {
       };
     }
   };
-  
-  const debounceCalculatePrice = React.useRef(debounce(async (itemQty, singleProduct) => {
-    const data = await dispatch(getCalculateProductPricing(itemQty, singleProduct.id, templatePricingIdempotencyKey));
-  }, 500)).current;
-  
+
+  const debounceCalculatePrice = React.useRef(
+    debounce(async (itemQty, singleProduct) => {
+      const data = await dispatch(
+        getCalculateProductPricing(
+          itemQty,
+          singleProduct.id,
+          templatePricingIdempotencyKey
+        )
+      );
+    }, 500)
+  ).current;
+
   const addButton = async (val: any) => {
     if (typeof val === "number") val = val.toString();
     setItemQty((parseInt(val.replace(/[^0-9]/g, "")) + 1).toString());
-    debounceCalculatePrice((parseInt(val.replace(/[^0-9]/g, "")) + 1).toString(), singleProduct);
+    debounceCalculatePrice(
+      (parseInt(val.replace(/[^0-9]/g, "")) + 1).toString(),
+      singleProduct
+    );
   };
 
   const descButton = (val: any) => {
     if (val == 0) return;
     setItemQty((parseInt(val.replace(/[^0-9]/g, "")) - 1).toString());
-    debounceCalculatePrice((parseInt(val.replace(/[^0-9]/g, "")) - 1).toString(), singleProduct);
+    debounceCalculatePrice(
+      (parseInt(val.replace(/[^0-9]/g, "")) - 1).toString(),
+      singleProduct
+    );
   };
 
   const handleAddToCart = async () => {
@@ -335,8 +351,10 @@ const ProductDetailPage = () => {
       handleToLogin();
       return;
     }
-    if(itemQty < singleProduct?.moq) {
-      toast.error(`Jumlah pesanan tidak boleh kurang dari ${singleProduct?.moq}`);
+    if (itemQty < singleProduct?.moq) {
+      toast.error(
+        `Jumlah pesanan tidak boleh kurang dari ${singleProduct?.moq}`
+      );
       return;
     }
     const data = {
@@ -412,12 +430,14 @@ const ProductDetailPage = () => {
           sx={{ backgroundColor: "#713F97", color: "white" }}
           onClick={handleOpen}
         >
-          Minta Penawaran
+          {
+            singleProduct?.category == "02" ? "Customize Product" : "Minta Penawaran"
+          }
         </Button>
       );
     }
   };
-
+  
   if (isProductLoading) {
     return <FallbackSpinner />;
   } else {
@@ -446,10 +466,16 @@ const ProductDetailPage = () => {
             <Typography className="pt-10" variant="h4">
               {singleProduct?.productName}
             </Typography>
-            <Typography className="pt-2" variant="h5" color="#713F97">
-              Rp{" "}
-              {singleProduct?.productPrice?.toLocaleString("id-ID")} / pcs
-            </Typography>
+            {singleProduct?.category === "01" ? (
+              <Typography className="pt-2" variant="h5" color="#713F97">
+                Rp {singleProduct?.productPrice?.toLocaleString("id-ID")} / pcs
+              </Typography>
+            ) : (
+              <Typography className="pt-2" variant="h5" color="#713F97">
+                Rp {singleProduct?.minPrice?.toLocaleString("id-ID")} - Rp{" "}
+                {singleProduct?.maxPrice?.toLocaleString("id-ID")} / pcs
+              </Typography>
+            )}
             <Box
               className="flex flex-row p-4 mt-6"
               sx={{ borderRadius: "10px", backgroundColor: "#FADEFF" }}
@@ -781,7 +807,8 @@ const ProductDetailPage = () => {
                                       selectedOptions: variantSelectorValue,
                                       dimension: formik.values.dimension,
                                       quantity: formik.values.quantity,
-                                      idempotencyKey: productTemplateIdempotencyKey
+                                      idempotencyKey:
+                                        productTemplateIdempotencyKey,
                                     })
                                   )
                                 }
@@ -824,15 +851,15 @@ const ProductDetailPage = () => {
                                           </Typography>
                                         </Grid>
                                         <Grid item md={6}>
-                                            <Typography
-                                              variant="body1"
-                                              key={idx + 1}
-                                            >
-                                              :{" "}
-                                              {option?.selectedOption
-                                                ?.map((item: any) => item.name)
-                                                .join(", ")}
-                                            </Typography>
+                                          <Typography
+                                            variant="body1"
+                                            key={idx + 1}
+                                          >
+                                            :{" "}
+                                            {option?.selectedOption
+                                              ?.map((item: any) => item.name)
+                                              .join(", ")}
+                                          </Typography>
                                         </Grid>
                                       </Grid>
                                     ))}
@@ -848,7 +875,9 @@ const ProductDetailPage = () => {
                                         sx={{ textAlign: "right" }}
                                       >
                                         <Typography variant="body1">
-                                            {numberFormat(calculateTemplatePrice?.quantity)}
+                                          {numberFormat(
+                                            calculateTemplatePrice?.quantity
+                                          )}
                                         </Typography>
                                       </Grid>
                                     </Grid>
@@ -864,12 +893,12 @@ const ProductDetailPage = () => {
                                         sx={{ textAlign: "right" }}
                                       >
                                         <Typography variant="body1">
-                                            {rupiah(
-                                              parseFloat(
-                                                (calculateTemplatePrice?.unitPrice as string) ??
-                                                  "0"
-                                              )
-                                            )}
+                                          {rupiah(
+                                            parseFloat(
+                                              (calculateTemplatePrice?.unitPrice as string) ??
+                                                "0"
+                                            )
+                                          )}
                                         </Typography>
                                       </Grid>
                                     </Grid>
