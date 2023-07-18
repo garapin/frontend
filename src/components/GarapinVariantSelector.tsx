@@ -55,14 +55,14 @@ export default function GarapinVariantSelector({
     label: item.name,
   }));
 
-  if (allowNotSure) {
-    options.push({
-      label: "Not Sure",
-      name: "Not Sure",
-      value: "not-sure",
-      price: 0,
-    });
-  }
+  // if (allowNotSure) {
+  //   options.push({
+  //     label: "Not Sure",
+  //     name: "Not Sure",
+  //     value: "not-sure",
+  //     price: 0,
+  //   });
+  // }
   const [tempValue, setTempValue] = useState<any>(
     value ?? variant.canSelectMultiple
       ? [
