@@ -26,6 +26,7 @@ import ProductList from "@/components/ProductList/ProductList";
 import { AppState, wrapper } from "@/store";
 import { getAllProducts, getAllCategories } from "@/store/modules/products";
 import { connect } from "react-redux";
+import Image from "next/image";
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "#713F97",
@@ -381,7 +382,7 @@ function LandingPage(props: any) {
               }}
             >
               {categories.map((category: any) => (
-                <Grid key={category.id} item xs={6} sm={6} md={4} lg={3}>
+                <Grid key={category.id} item xs={12} sm={6} md={4} lg={3}>
                   <CardCategories
                     key={category.id}
                     imageUrl={category.image}
@@ -393,7 +394,7 @@ function LandingPage(props: any) {
               ))}
             </Grid>
           </Box>
-          <Box className="py-10 md:py-20" sx={{ backgroundColor: "#F8F4F9" }}>
+          <Box className="py-10 md:py-20 px-4" sx={{ backgroundColor: "#F8F4F9" }}>
             <Grid
               container
               spacing={{
@@ -403,15 +404,15 @@ function LandingPage(props: any) {
               }}
               className="max-w-6xl px-4 md:px-6 mx-auto"
             >
-              <Grid item md={6}>
+              <Grid item md={6} sx={{p: 4}}>
                 <img
                   className="w-full"
-                  src={dummyImg}
-                  alt="Image with stock photos"
+                  src={"https://images.pexels.com/photos/6790033/pexels-photo-6790033.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
+                  alt="Invitation for Craftsmen"
                 />
               </Grid>
-              <Grid item md={6}>
-                <Box className="max-w-sm">
+              <Grid item md={6} alignItems={'center'} display={'flex'}>
+                <Box className="max-w-sm" flexGrow={1}>
                   <Typography
                     variant="h4"
                     color="#713F97"
@@ -427,8 +428,8 @@ function LandingPage(props: any) {
               </Grid>
             </Grid>
           </Box>
-          <Box className="flex flex-col md:flex-row items-center justify-between py-10 md:py-20 px-4 max-w-6xl mx-auto bg-white">
-            <Box className="max-w-sm pb-8">
+          <Box className="flex flex-col md:flex-row items-center justify-between py-10 md:py-20 px-4 max-w-6xl mx-auto bg-white gap-4">
+            <Box className="max-w-sm pb-8 pr-12">
               <Typography
                 variant="h4"
                 color="#713F97"
