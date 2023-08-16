@@ -192,7 +192,10 @@ const ProductDetailPage = () => {
         const fileData = await handleFileUpload();
         const dataBody = {
           ...values,
-          address: addressMap,
+          address: {
+            ...addressMap,
+            postalCode: addressMap.postalCode ?? "",
+          },
           product: singleProduct,
           template: productTemplate,
           selectedOptions: variantSelectorValue,
@@ -366,7 +369,7 @@ const ProductDetailPage = () => {
       productId: singleProduct?.id,
       qty: itemQty,
       status: "cart",
-      unitPrice: templatePrice?.unitPrice,
+      unitPrice: templatePrice?.unitPrice ?? 0,
       updatedAt: null,
       userId: auth?.authUser?.uid,
       totalPrice: templatePrice?.totalPrice,
@@ -430,14 +433,14 @@ const ProductDetailPage = () => {
           sx={{ backgroundColor: "#713F97", color: "white" }}
           onClick={handleOpen}
         >
-          {
-            singleProduct?.category == "02" ? "Customize Product" : "Minta Penawaran"
-          }
+          {singleProduct?.category == "02"
+            ? "Customize Product"
+            : "Minta Penawaran"}
         </Button>
       );
     }
   };
-  
+
   if (isProductLoading) {
     return <FallbackSpinner />;
   } else {
@@ -994,6 +997,7 @@ const ProductDetailPage = () => {
                                 };
 
                                 setAddressMap(objAddress);
+                                formik.setFieldValue("postalCode", postalCode);
                               }}
                               label=""
                             />

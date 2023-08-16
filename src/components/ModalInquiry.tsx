@@ -351,6 +351,16 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                       (val: any) => val.charAt(0).toUpperCase() + val.slice(1)
                     )
                     .join(" ");
+
+                  let selectedOptionName;
+
+                  if (!Array.isArray(selected.selectedOption)) {
+                    selectedOptionName = selected.selectedOption.name;
+                  } else {
+                    selectedOptionName = selected.selectedOption
+                      .map((val: any) => val.name)
+                      .join(", ");
+                  }
                   return (
                     <Grid item md={6} key={i} className="w-full">
                       <Box className="p-4 h-full shadow-md rounded-md">
@@ -373,7 +383,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                 fontWeight: 600,
                               }}
                             >
-                              {selected.selectedOption.name}
+                              {selectedOptionName}
                             </span>
                           </Typography>
                         </Box>
@@ -550,7 +560,11 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                       {rupiah(quotation.shipping.cost)}
                                     </Typography>
                                   </Grid>
-                                  <Grid item md={12} className="flex items-center">
+                                  <Grid
+                                    item
+                                    md={12}
+                                    className="flex items-center"
+                                  >
                                     {getCourierByCode(
                                       quotation.shipping.courier
                                     )?.img && (
@@ -565,7 +579,11 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                       />
                                     )}
                                     <Typography>
-                                      {`${capitalizeString(quotation.shipping.courier)}-${capitalizeString(quotation.shipping.service)}`}
+                                      {`${capitalizeString(
+                                        quotation.shipping.courier
+                                      )}-${capitalizeString(
+                                        quotation.shipping.service
+                                      )}`}
                                     </Typography>
                                   </Grid>
                                 </Grid>
@@ -634,7 +652,9 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                           <Typography
                             variant="body1"
                             className="max-w-xl text-slate-500"
-                          > Decline Reason: {quotation.statusREJECTEDReason}
+                          >
+                            {" "}
+                            Decline Reason: {quotation.statusREJECTEDReason}
                           </Typography>
                         </Box>
                       )}

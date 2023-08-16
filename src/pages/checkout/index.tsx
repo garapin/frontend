@@ -155,7 +155,7 @@ function CheckoutPage() {
           .catch((error) => {
             console.error(error);
             setBusy(false);
-          })
+          });
       } catch (e: any) {
         console.error(e);
         toast.error(e.message);
@@ -576,7 +576,6 @@ function CheckoutPage() {
                   <Button
                     onClick={() => router.push("/cart")}
                     variant="outlined"
-                    disabled={busy || !formik.isValid}
                     className={`text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full cursor-pointer`}
                     type="submit"
                   >
