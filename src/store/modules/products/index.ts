@@ -383,10 +383,12 @@ export const getSingleProduct = (slug: string): AppThunk => {
     try {
       dispatch(setProductLoading());
       const data: any = await getSingleProductFromDB(slug);
-      dispatch(setSingleProduct({
-        ...data,
-        productPrice: data.maxPrice
-      }));
+      dispatch(
+        setSingleProduct({
+          ...data,
+          productPrice: data.maxPrice,
+        })
+      );
       dispatch(getProductTemplate(data.templateId!));
       // dispatch(getCalculateProductPricing(data.moq, data.id));
     } catch (error) {
@@ -433,8 +435,8 @@ export const getProductTemplate = (templateId: string): AppThunk => {
 };
 export const getProductTemplatePrice = (data: any): AppThunk => {
   return async (dispatch) => {
-    const { product, selectedOptions, quantity, dimension, idempotencyKey } = data;
-    console.log('idempotencyKey', idempotencyKey)
+    const { product, selectedOptions, quantity, dimension, idempotencyKey } =
+      data;
     let payload: any = {
       idempotencyKey: idempotencyKey,
       productId: product.id,
@@ -517,7 +519,8 @@ export const getProductTemplatePrice = (data: any): AppThunk => {
 
 export const getProductTemplatePriceCart = (data: any): AppThunk => {
   return async (dispatch) => {
-    const { product, selectedOptions, quantity, dimension, idempotencyKey } = data;
+    const { product, selectedOptions, quantity, dimension, idempotencyKey } =
+      data;
 
     let payload: any = {
       idempotencyKey: idempotencyKey,
@@ -779,7 +782,6 @@ export const getRecalculateCartRTB = (
   idempotencyKey: string
 ): AppThunk => {
   return async (dispatch) => {
-    console.log('idempotencyKey', idempotencyKey)
     if (typeof quantity !== "number") {
       quantity = parseInt(quantity.replace(/[^0-9]/g, ""));
     }

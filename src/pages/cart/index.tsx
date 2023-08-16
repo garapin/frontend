@@ -115,7 +115,9 @@ function Cart() {
 
   const getTotalPrice = () => {
     return selectedProducts.reduce((total, productId) => {
-      const product = cartList?.find((p: any) => p.id === productId);
+      const product = cartList?.find((p: any) => p.id === productId) ?? {
+        totalPrice: 0,
+      };
       return total + product.totalPrice;
     }, 0);
   };
@@ -123,7 +125,9 @@ function Cart() {
   const debounceCalculatePrice = React.useRef(
     debounce(async (itemQty, productId, item?) => {
       if (item.productCategoryId == 1) {
-        const data = await dispatch(getRecalculateCartRTB(itemQty, productId, item.idempotencyKey));
+        const data = await dispatch(
+          getRecalculateCartRTB(itemQty, productId, item.idempotencyKey)
+        );
         if (data) {
           const payload = {
             ...item,
@@ -200,7 +204,14 @@ function Cart() {
                 {t("cart.title")}
               </Typography>
               <Box className="flex items-center">
-                <Checkbox onClick={selectAllProducts} />
+                <Checkbox
+                  onClick={selectAllProducts}
+                  checked={
+                    selectedProducts?.length > 0 &&
+                    selectedProducts?.length ===
+                      cartList?.filter((product: any) => product.qty > 0).length
+                  }
+                />
                 <Typography fontSize={17} fontWeight={400} color="text.primary">
                   {t("cart.selectAll")}
                 </Typography>

@@ -27,8 +27,13 @@ import { imagePlaceholder } from "@/components/ProductList/ProductList";
 const TransactionListIndex = () => {
   const auth = useFirebaseAuth();
   const { categories } = useAppSelector((state) => state.appDefaults);
-  const { products, isProductLoading, allProductsLoaded, isFetchingNext, history } =
-    useAppSelector((state) => state.product);
+  const {
+    products,
+    isProductLoading,
+    allProductsLoaded,
+    isFetchingNext,
+    history,
+  } = useAppSelector((state) => state.product);
   const dispatch = useDispatch();
   const [isTab, setTab] = React.useState("cp");
 
@@ -54,8 +59,7 @@ const TransactionListIndex = () => {
               isTab === "cp" ? "bg-[#713F97]" : "bg-[#bb86fc]"
             }`}
           >
-            Custom Packaging{" "}
-            <span className="bg-[#cfd6c8] rounded-full p-1">5</span>
+            Custom Packaging
           </div>
           <div
             onClick={() => handleChangeTabs("dp")}
@@ -63,8 +67,7 @@ const TransactionListIndex = () => {
               isTab === "dp" ? "bg-[#713F97]" : "bg-[#bb86fc]"
             }`}
           >
-            Digital Packaging{" "}
-            <span className="bg-[#cfd6c8] rounded-full p-1">2</span>
+            Digital Packaging
           </div>
           <div
             onClick={() => handleChangeTabs("rtb")}
@@ -72,8 +75,7 @@ const TransactionListIndex = () => {
               isTab === "rtb" ? "bg-[#713F97]" : "bg-[#bb86fc]"
             }`}
           >
-            Ready To Buy{" "}
-            <span className="bg-[#cfd6c8] rounded-full p-1">7</span>
+            Ready To Buy
           </div>
         </Box>
         <Box>
