@@ -9,27 +9,31 @@
 
     },
     "section2":{
-        "header": "Copy Message 1: Semudah 1,2,3.",
+        "header": "Cara Kerja Garapin: 1, 2, 3, Kirim.",
         "content": {
             "step1": {
-                "header": "Cari.",
-                "content": "This is the content of step 1."
+                "header": "Ide.",
+                "content": "Ide Kamu penting dan berharga, dan kamu membutuhkan bantuan untuk mewujudkan ide Kamu."
             },
             "step2": {
-                "header": "Buat",
-                "content": "This is the content of step 2."
+                "header": "Cari",
+                "content": "Temukan dan pelajari produk yang sesuai untuk kebutuhan idemu."
             },
             "step3": {
+                "header": "Proses",
+                "content": "Setelah menemukan produk yang sesuai, biar kami memulai mengerjakan ide Kamu. Kamu bebas untuk memonitor dan memastikan pekerjaan sesuai dengan keinginan Kamu."
+            },
+            "step4": {
                 "header": "Kirim",
-                "content": "This is the content of step 3."
+                "content": "Produk Kamu sudah jadi! Kami segera mengirimkan ke tempat Kamu. Jangan lupa di cek, dan berikan penilaian ya."
             }
         }
 
     },
     "sectionJelajah": {
         "header": "Jelajahi Produk di Garapin",
-        "viewAllButton": "Lihat Semua"
-
+        "viewAllButton": "Lihat Semua",
+        "categoryHeader": "Jelajahi Berdasar Kategori"
     },
     "section3":{
         "header": "Mengundang mitra baru untuk bergabung!",
@@ -37,8 +41,7 @@
     },
     "section4": {
         "header": "Dalam Sorotan Media",
-        "content": "This is the content of section 4."
-    },
+        "content": "Garapin telah diliput di beberapa media! Tetap stay tuned ya, supaya kamu bisa tahu lebih banyak tentang perjalanan kami, pencapaian yang udah kami raih, dan dampak yang kami ciptakan. Yuk, ikut bergabung dengan kami dalam meneruskan semangat berinovasi dan mewujudkan ide-idemu!"},
     "section5": {
         "header": "Mudahkan Produksi Usahamu Bersama Garapin",
         "content": "This is the content of section 5.",

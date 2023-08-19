@@ -23,6 +23,7 @@ import TransactionList from "@/components/TransactionList";
 import { faker } from "@faker-js/faker";
 import Link from "next/link";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
+import { getProductPrice } from "@/tools/rupiah";
 
 const TransactionListIndex = () => {
   const auth = useFirebaseAuth();
@@ -123,7 +124,7 @@ const TransactionListIndex = () => {
                     key={product.id}
                     slug={product.id ?? ""}
                     productName={product.productName}
-                    price={`Rp${product.minPrice} - Rp${product.maxPrice}`}
+                    price={getProductPrice(product)}
                     location="Jakarta"
                     imageUrl={product.img[0] ?? imagePlaceholder}
                   />

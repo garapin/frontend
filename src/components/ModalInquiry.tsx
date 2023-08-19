@@ -34,10 +34,11 @@ import {
   handleRejectAcceptQuotation,
 } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
-import { rupiah } from "@/tools/rupiah";
+import { getProductPrice, rupiah } from "@/tools/rupiah";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { capitalizeString, numberFormat } from "@/tools/utils";
+import { Product } from "@/types/product";
 
 const ModalInquiry = ({ modal, setModal }: any) => {
   const { open, data } = modal;
@@ -299,9 +300,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
             imageUrl={data?.product?.img?.[0]}
             productName={data?.product?.productName}
             price={
-              rupiah(data?.product?.minPrice) +
-              "-" +
-              rupiah(data?.product?.maxPrice)
+              getProductPrice(data?.product as Product)
             }
             location="Jakarta"
             slug={data?.product?.slug}

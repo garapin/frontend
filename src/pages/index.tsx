@@ -291,9 +291,9 @@ function LandingPage(props: any) {
               </Typography>
             </Box>
             {/* </Trans> */}
-            <Box className="flex flex-col md:flex-row items-center md:justify-around">
+            <Box className="flex flex-col md:flex-row items-top md:justify-around">
               <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
-                <RoundedImage src={dummyImg} alt="Rounded Image" />
+                <RoundedImage src={"/assets/ide.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
                   color="text.primary"
@@ -307,7 +307,7 @@ function LandingPage(props: any) {
                 </Typography>
               </Box>
               <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
-                <RoundedImage src={dummyImg} alt="Rounded Image" />
+                <RoundedImage src={"/assets/cari.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
                   color="text.primary"
@@ -321,7 +321,7 @@ function LandingPage(props: any) {
                 </Typography>
               </Box>
               <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
-                <RoundedImage src={dummyImg} alt="Rounded Image" />
+                <RoundedImage src={"/assets/proses.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
                   color="text.primary"
@@ -332,6 +332,20 @@ function LandingPage(props: any) {
                 </Typography>
                 <Typography variant="body1" color="text.primary" align="center">
                   {t("section2.content.step3.content")}
+                </Typography>
+              </Box>
+              <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
+                <RoundedImage src={"/assets/kirim.png"} alt="Rounded Image" />
+                <Typography
+                  variant="h5"
+                  color="text.primary"
+                  className="pt-3"
+                  fontWeight="bold"
+                >
+                  {t("section2.content.step4.header")}
+                </Typography>
+                <Typography variant="body1" color="text.primary" align="center">
+                  {t("section2.content.step4.content")}
                 </Typography>
               </Box>
             </Box>
@@ -369,7 +383,7 @@ function LandingPage(props: any) {
                 variant="h4"
                 color="#713F97"
               >
-                Jelajahi Berdasar Kategori
+                {t("sectionJelajah.categoryHeader")}
               </Typography>
             </Box>
             <Divider className="mx-10 md:mx-0 pt-6" />
@@ -452,7 +466,7 @@ function LandingPage(props: any) {
               alt="Startup 4 Industries Logo"
             />
           </Box>
-          <Box
+          {/* <Box
             className="flex flex-col items-center justify-around py-10 md:py-20 px-4"
             sx={{ backgroundColor: "#F8F4F9" }}
           >
@@ -483,7 +497,7 @@ function LandingPage(props: any) {
                 </Button>
               </Box>
             </Box>
-          </Box>
+          </Box> */}
           {/* <GarapinFooter/> */}
         </Box>
       </main>

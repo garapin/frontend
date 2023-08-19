@@ -22,7 +22,7 @@ import {
   getAllProducts,
   getAllProductsBasedOnCategories,
 } from "@/store/modules/products";
-import { rupiah } from "@/tools/rupiah";
+import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { useRef } from "react";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 
@@ -118,9 +118,7 @@ const ProductCategoryPage = () => {
                     key={product.id}
                     imageUrl={product.img[0] ?? imagePlaceholder}
                     productName={product.productName}
-                    price={`${rupiah(product.minPrice)} - ${rupiah(
-                      product.maxPrice
-                    )}`}
+                    price={getProductPrice(product)}
                     location="Jakarta"
                     slug={product.slug?.toString() ?? product.sku}
                   />

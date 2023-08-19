@@ -50,7 +50,7 @@ import ImageCarousel from "@/components/ImageCarousel";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { storeRequestInquiryToDB, addToCart } from "@/db";
 import * as Yup from "yup";
-import { rupiah } from "@/tools/rupiah";
+import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { NumericFormat } from "react-number-format";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { capitalizeString, numberFormat, uppercaseString } from "@/tools/utils";
@@ -543,12 +543,7 @@ const ProductDetailPage = () => {
                         <CardVertical
                           imageUrl={singleProduct?.img?.[0] ?? imagePlaceholder}
                           productName={singleProduct?.productName ?? ""}
-                          price={`Rp ${singleProduct?.minPrice?.toLocaleString(
-                            "id-ID"
-                          )} -
-                                            Rp ${singleProduct?.maxPrice?.toLocaleString(
-                                              "id-ID"
-                                            )}`}
+                          price={getProductPrice(singleProduct)}
                           location="Jakarta"
                           slug={singleProduct?.slug ?? ""}
                           clickable={false}
