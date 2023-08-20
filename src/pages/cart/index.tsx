@@ -24,6 +24,7 @@ import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { NumericFormat } from "react-number-format";
+import { changeCurrency } from "@/tools/utils";
 
 interface Product {
   id: number;
@@ -64,7 +65,7 @@ function Cart() {
       return;
     }
 
-    if (product.qty > 0) {
+    if (changeCurrency(product.qty) > 0) {
       setSelectedProducts((prevSelectedProducts) =>
         prevSelectedProducts.includes(productId)
           ? prevSelectedProducts.filter((id) => id !== productId)
@@ -209,7 +210,9 @@ function Cart() {
                   checked={
                     selectedProducts?.length > 0 &&
                     selectedProducts?.length ===
-                      cartList?.filter((product: any) => product.qty > 0).length
+                      cartList?.filter(
+                        (product: any) => changeCurrency(product.qty) > 0
+                      ).length
                   }
                 />
                 <Typography fontSize={17} fontWeight={400} color="text.primary">

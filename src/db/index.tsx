@@ -59,10 +59,9 @@ export const updateProductCartFromDBById = async (
   id: string,
   data: any
 ): Promise<any> => {
- await db.collection("product_carts").doc(id).update(data);
+  await db.collection("product_carts").doc(id).update(data);
 
- const response = await db
-    .collection("product_carts").doc(id).get();
+  const response = await db.collection("product_carts").doc(id).get();
   return response.data();
 };
 
@@ -122,13 +121,15 @@ export const getAllProductsFromDBBasedOnCategories = async (
 export const getAllProductsNextFromDB = async (
   lastProductQuery:
     | Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
-    | undefined
+    | undefined,
+  categoryId: string
 ): Promise<ProductListDB> => {
   const response = await db
     .collection("products")
     .where("active", "==", true)
     .where("deleted", "==", false)
     .where("channel", "==", "printing")
+    .where("category", "==", categoryId)
     // .where('__name__', '>=', '')
     // .orderBy('__name__')
     .startAfter(lastProductQuery)

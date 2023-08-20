@@ -16,3 +16,10 @@ export const uppercaseString = (str: string) => {
     })
     .join(" ");
 };
+
+export const changeCurrency = (value: any) => {
+  if (typeof value === "string") {
+    return parseInt(value.replace(/[^0-9]/g, ""));
+  }
+  return value;
+};

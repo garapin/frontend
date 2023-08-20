@@ -321,13 +321,13 @@ export const getSearchProduct = (productName: string): AppThunk => {
   };
 };
 
-export const getAllProductNext = (): AppThunk => {
+export const getAllProductNext = (category: string): AppThunk => {
   return async (dispatch, getState) => {
     const { lastProductQuery, products } = getState().product;
     try {
       dispatch(setIsFetchingNext(true));
       dispatch(setAllProductsLoaded(false));
-      const data = await getAllProductsNextFromDB(lastProductQuery);
+      const data = await getAllProductsNextFromDB(lastProductQuery, category);
       dispatch(setIsFetchingNext(false));
       dispatch(setProducts([...products, ...data.data]));
       if (data.data.length < pageSize) {
