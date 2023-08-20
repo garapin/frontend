@@ -133,6 +133,7 @@ const ProductDetailPage = () => {
   const [itemQty, setItemQty] = React.useState<any>(
     singleProduct?.moq?.toString() ?? 0
   );
+  const [fetchingPrice, setFetchingPrice] = React.useState(false);
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [variantSelectorValue, setVariantSelectorValue] =
@@ -320,6 +321,7 @@ const ProductDetailPage = () => {
 
   const debounceCalculatePrice = React.useRef(
     debounce(async (itemQty, singleProduct) => {
+      setFetchingPrice(true);
       const data = await dispatch(
         getCalculateProductPricing(
           itemQty,
@@ -327,6 +329,9 @@ const ProductDetailPage = () => {
           templatePricingIdempotencyKey
         )
       );
+      if (data) {
+        setFetchingPrice(false);
+      }
     }, 500)
   ).current;
 
@@ -418,6 +423,7 @@ const ProductDetailPage = () => {
           <Button
             className="w-fit ml-8"
             variant="contained"
+            disabled={fetchingPrice}
             sx={{ backgroundColor: "#713F97", color: "white" }}
             onClick={() => handleAddToCart()}
           >

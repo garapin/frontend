@@ -136,7 +136,7 @@ const ProductCategoryPage = () => {
                 <Button
                   variant="contained"
                   disabled={isFetchingNext}
-                  onClick={() => dispatch(getAllProductNext())}
+                  onClick={() => dispatch(getAllProductNext(category()))}
                 >
                   Load more...{" "}
                   {isFetchingNext && <CircularProgress size={10} />}
