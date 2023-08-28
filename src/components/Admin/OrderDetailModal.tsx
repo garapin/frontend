@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { invoiceStatus, invoiceStatusColor } from '@/const/status';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppRedux';
 import { setInvoice, setInvoiceModalOpen } from '@/store/modules/admin';
@@ -10,8 +11,7 @@ import React from 'react'
 
 export default function OrderDetailModal() {
     const {invoice, invoiceModalOpen} = useAppSelector(state => state.admin);
-    const {shippingCompanies} = useAppSelector(state => state.product);
-    const {categories} = useAppSelector(state => state.appDefaults);
+    const {shippingCompanies, category} = useAppSelector(state => state.product);
     const dispatch = useAppDispatch();
 
     const handleClose = () => {
@@ -28,9 +28,8 @@ export default function OrderDetailModal() {
       };
 
     const getCategoryById = (id: string | any) => {
-        console.log(categories);
-        categories.length === 0 && dispatch(getAllCategories());
-        return categories.find((val: any) => val.id === id)
+        category.length === 0 && dispatch(getAllCategories());
+        return category.find((val: any) => val.id === id)
     }
 
     const priceItem = invoice.products?.map((val: { totalPrice: number }) => val.totalPrice)
@@ -187,7 +186,6 @@ export default function OrderDetailModal() {
                                     align="right"
                                 >
                                     {getCategoryById(val.product.category)?.name}
-                                    {val.product.category}
                                 </TableCell>
                                 <TableCell
                                     className={
