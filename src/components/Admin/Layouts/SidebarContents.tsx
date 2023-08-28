@@ -11,11 +11,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 const drawerItems = [
-  {
-    label: 'Dashboard',
-    icon: <DashboardIcon />,
-    href: '/admin/dashboard'
-  },
+  // {
+  //   label: 'Dashboard',
+  //   icon: <DashboardIcon />,
+  //   href: '/admin/dashboard'
+  // },
   {
     label: 'Orders',
     icon: <ShoppingCartIcon />,
