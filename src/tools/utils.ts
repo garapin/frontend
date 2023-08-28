@@ -23,3 +23,11 @@ export const changeCurrency = (value: any) => {
   }
   return value;
 };
+
+export const formatDateTime = (date?: Date) => {
+  return date !== undefined ? new Date(date).toLocaleString("id-ID", {
+    timeZone: "Asia/Jakarta",
+    dateStyle: "long",
+    timeStyle: "long",
+  }): '';
+};

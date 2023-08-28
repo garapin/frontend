@@ -1,4 +1,4 @@
-import { getFirestore } from "@/configs/firebase";
+import { getAuth, getFirestore } from "@/configs/firebase";
 import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
 import { Category } from "@/types/category";
@@ -275,3 +275,30 @@ export const getPaymentStatusFromDB = async (id: string): Promise<any> => {
   const response = await db.collection("product_invoices").doc(id).get();
   return response.data();
 };
+
+
+export const getAdminProductInvoicesFromDB = async () => {
+    const response = await db.collection('product_invoices').orderBy('createdAt', 'desc').get()
+
+    const data = response.docs.map(doc => {
+        return {
+            ...doc.data(),
+            id: doc.id,
+            paymentExpiredAt: doc.data().paymentExpiredAt?.toDate(),
+            paidAt: doc.data().paidAt?.toDate(),
+            createdAt: doc.data().createdAt?.toDate(),
+        }
+    });
+
+    return data;
+}
+
+
+export const updateProductInvoiceStatus = async (id: string, status: string) => {
+    const invoiceRef = db.collection('product_invoices').doc(id);
+    await invoiceRef.update({
+        status: status,
+        [`${status}At`]: Firebase.firestore.FieldValue.serverTimestamp(),
+        [`${status}By`]: getAuth().currentUser?.uid,
+    });
+}
