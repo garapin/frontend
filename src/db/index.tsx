@@ -231,6 +231,7 @@ export const getProductInvoicesFromDB = async (
   const response = await db
     .collection("product_invoices")
     .where("userId", "==", userId)
+    .orderBy("createdAt", "desc")
     .get();
 
   const data = response.docs.map((doc) => {

@@ -7,6 +7,7 @@ export const invoiceStatus = [
   {status: 'delivered', label: 'Sudah Diterima'},
   {status: 'finished', label: 'Selesai'},
   {status: 'canceled', label: 'Batal'},
+  {status: 'expired', label: 'Dibatalkan Otomatis (Kedaluwarsa)'}
 ]
 
 export const invoiceStatusColor = (status: string) => {
@@ -25,6 +26,8 @@ export const invoiceStatusColor = (status: string) => {
           return 'success';
       case 'canceled':
           return 'error';
+      case 'expired':
+        return 'error';
       default:
           return 'default';
   }

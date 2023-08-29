@@ -3,6 +3,7 @@ import { invoiceStatus, invoiceStatusColor } from '@/const/status';
 import { useAppDispatch, useAppSelector } from '@/hooks/useAppRedux';
 import { setInvoice, setInvoiceModalOpen } from '@/store/modules/admin';
 import { getAllCategories, getShippingCompany } from '@/store/modules/products';
+import { toDate } from '@/tools/firebaseDate';
 import { rupiah } from '@/tools/rupiah';
 import { formatDateTime } from '@/tools/utils';
 import { Close } from '@mui/icons-material';
@@ -63,11 +64,11 @@ export default function OrderDetailModal() {
                         </TableRow>
                         <TableRow>
                             <TableCell>Order Date</TableCell>
-                            <TableCell>{formatDateTime(invoice.createdAt)}</TableCell>
+                            <TableCell>{formatDateTime(toDate(invoice.createdAt))}</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Payment Date</TableCell>
-                            <TableCell>{formatDateTime(invoice.paidAt)}</TableCell>
+                            <TableCell>{formatDateTime(toDate(invoice.paidAt))}</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Status</TableCell>
