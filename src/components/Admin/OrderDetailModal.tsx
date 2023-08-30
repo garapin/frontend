@@ -66,10 +66,18 @@ export default function OrderDetailModal() {
                             <TableCell>Order Date</TableCell>
                             <TableCell>{formatDateTime(toDate(invoice.createdAt))}</TableCell>
                         </TableRow>
-                        <TableRow>
-                            <TableCell>Payment Date</TableCell>
-                            <TableCell>{formatDateTime(toDate(invoice.paidAt))}</TableCell>
-                        </TableRow>
+                        { invoice.paidAt &&
+                            <TableRow>
+                                <TableCell>Payment Date</TableCell>
+                                <TableCell>{formatDateTime(toDate(invoice.paidAt))}</TableCell>
+                            </TableRow> 
+                        }
+                        { invoice.processedAt &&
+                            <TableRow>
+                                <TableCell>Processing Date</TableCell>
+                                <TableCell>{formatDateTime(toDate(invoice.processedAt))}</TableCell>
+                            </TableRow> 
+                        }
                         <TableRow>
                             <TableCell>Status</TableCell>
                             <TableCell><Chip color={invoiceStatusColor(invoice.status)} 
@@ -77,7 +85,12 @@ export default function OrderDetailModal() {
                                 />
                             </TableCell>
                         </TableRow>
-
+                        { invoice.status === 'shipped' && invoice.shippedAt && invoice.shippingOrderData.courier.waybill_id && 
+                        <TableRow>
+                            <TableCell>Waybill/Resi ID</TableCell>
+                            <TableCell sx={{fontWeight: 'bold'}}>{invoice.shippingOrderData.courier.waybill_id}</TableCell>
+                        </TableRow>
+                        }
                     </Table>
                 </Grid>
                 <Grid item xs={12} sm={6}>

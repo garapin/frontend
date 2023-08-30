@@ -11,6 +11,8 @@ export interface Invoices {
   paymentExpiredAt:  Date;
   shippingOrderData: ShippingOrderData;
   paidAt:            Date;
+  processedAt:            Date;
+  shippedAt:            Date;
   createdAt:         Date;
   paymentId:         string;
   status:            string;
