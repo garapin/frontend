@@ -25,7 +25,7 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles((theme) => ({
   loginUi: {
     height: "calc(100vh - 64px)",
     minHeight: "calc(100vh - 64px)",
@@ -110,7 +110,7 @@ const LoginPage = () => {
         if (user) {
           await user.user?.updateProfile({ displayName: values.namaLengkap });
           await user.user?.sendEmailVerification({
-            url: "https://garap.in/?verified=true",
+            url: `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/?verified=true`,
           });
           await user.user?.reload();
         }
@@ -136,15 +136,15 @@ const LoginPage = () => {
   const { t } = useTranslation("auth");
 
   return (
-    <Box className={classes.loginUi}>
+    <Box className={`h-auto md:${classes.loginUi}`}>
       <Paper>
         <GarapinAppBar searchVariant />
 
         <Box
-          className={`${classes.loginUi} flex flex-row flex-grow`}
+          className={`h-auto md:${classes.loginUi} flex flex-row flex-grow`}
           style={{ marginTop: "64px" }}
         >
-          <Box className="sm:w-0 md:w-2/3  bg-gray-200 p-3">
+          <Box className="w-0 hidden md:block md:w-2/3  bg-gray-200 p-3">
             <ImageCarousel
               className={classes.carousel}
               dataSource={imageSet}
@@ -155,7 +155,7 @@ const LoginPage = () => {
               rimProps={{ className: classes.carousel }}
             />
           </Box>
-          <Box className="sm:w-full lg:w-1/3 bg-gray-100">
+          <Box className="w-full lg:w-1/3 bg-gray-100 py-10 md:py-0">
             <Box className="flex flex-col justify-center h-full">
               <Box
                 className="flex flex-col justify-center items-center"
@@ -168,7 +168,7 @@ const LoginPage = () => {
               </Box>
               <form onSubmit={formik.handleSubmit}>
                 <Box className="flex flex-col justify-center items-center">
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("register.fields.namaLengkap")}
                       variant="outlined"
@@ -186,7 +186,7 @@ const LoginPage = () => {
                       }
                     />
                   </Box>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("register.fields.email")}
                       variant="outlined"
@@ -201,7 +201,7 @@ const LoginPage = () => {
                       helperText={formik.touched.email && formik.errors.email}
                     />
                   </Box>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("register.fields.password")}
                       type="password"
@@ -220,7 +220,7 @@ const LoginPage = () => {
                       }
                     />
                   </Box>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("register.fields.password_confirmation")}
                       type="password"
@@ -240,7 +240,7 @@ const LoginPage = () => {
                       }
                     />
                   </Box>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("register.fields.nomorHp")}
                       variant="outlined"
@@ -260,7 +260,7 @@ const LoginPage = () => {
                   <Typography variant="subtitle1" sx={{ pt: 4 }}>
                     {t("register.fields.dataPerusahaan")}
                   </Typography>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("register.fields.namaPerusahaan")}
                       variant="outlined"
@@ -279,7 +279,7 @@ const LoginPage = () => {
                     />
                   </Box>
 
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <FormControl fullWidth>
                       <InputLabel id="business-label">
                         {t("register.fields.liniBisnis")}
@@ -311,7 +311,7 @@ const LoginPage = () => {
                     </FormControl>
                   </Box>
                   {formik.values.liniBisnis === "Lainnya" && (
-                    <Box className="w-1/2 py-2">
+                    <Box className="w-3/4 md:w-1/2 py-2">
                       <TextField
                         label={t("register.fields.liniBisnisOther")}
                         variant="outlined"
@@ -330,7 +330,7 @@ const LoginPage = () => {
                       />
                     </Box>
                   )}
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <Button
                       variant="contained"
                       fullWidth

@@ -27,6 +27,8 @@ import { AppState, wrapper } from "@/store";
 import { getAllProducts, getAllCategories } from "@/store/modules/products";
 import { connect } from "react-redux";
 import Image from "next/image";
+import useFirebaseAuth from "@/hooks/useFirebaseAuth";
+import { toast } from "react-toastify";
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "#713F97",
@@ -72,8 +74,11 @@ const dummyImg =
 
 function LandingPage(props: any) {
   const { t } = useTranslation("landing");
+  const { t:tCom } = useTranslation("common");
   const router = useRouter();
+  const auth = useFirebaseAuth();
   const fieldRef = React.useRef<HTMLFormElement>(null);
+  const [checkVerified, setCheckVerified] = React.useState(false);
   const handleSubmit = (event: any) => {
     router.push(
       `search${
@@ -85,6 +90,14 @@ function LandingPage(props: any) {
   };
   const productList = props?.product?.products;
   const categories = props?.product?.category;
+
+  React.useEffect(() => {
+    const vr = router.query.verified;
+    if (vr === "true" && auth.authUser !== undefined && auth.authUser?.emailVerified && !checkVerified) {
+      toast.success(tCom("email.verified"));
+      setCheckVerified(true);
+    }
+  }, [router.query.verified, auth.authUser, tCom, checkVerified]);
 
   return (
     <>
@@ -291,8 +304,8 @@ function LandingPage(props: any) {
               </Typography>
             </Box>
             {/* </Trans> */}
-            <Box className="flex flex-col md:flex-row items-top md:justify-around">
-              <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
+            <Box className="flex flex-col md:flex-row items-top md:justify-around flex-wrap">
+              <Box className="flex flex-col items-center justify-center px-10 lg:w-72 pb-10 basis-1/2 lg:basis-1/4">
                 <RoundedImage src={"/assets/ide.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
@@ -306,7 +319,7 @@ function LandingPage(props: any) {
                   {t("section2.content.step1.content")}
                 </Typography>
               </Box>
-              <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
+              <Box className="flex flex-col items-center justify-center px-10 lg:w-72 pb-10 basis-1/2 lg:basis-1/4">
                 <RoundedImage src={"/assets/cari.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
@@ -320,7 +333,7 @@ function LandingPage(props: any) {
                   {t("section2.content.step2.content")}
                 </Typography>
               </Box>
-              <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
+              <Box className="flex flex-col items-center justify-center px-10 lg:w-72 pb-10 basis-1/2 lg:basis-1/4">
                 <RoundedImage src={"/assets/proses.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
@@ -334,7 +347,7 @@ function LandingPage(props: any) {
                   {t("section2.content.step3.content")}
                 </Typography>
               </Box>
-              <Box className="flex flex-col items-center justify-center md:w-72 pb-10">
+              <Box className="flex flex-col items-center justify-center px-10 lg:w-72 pb-10 basis-1/2 lg:basis-1/4">
                 <RoundedImage src={"/assets/kirim.png"} alt="Rounded Image" />
                 <Typography
                   variant="h5"
