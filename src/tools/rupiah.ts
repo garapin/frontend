@@ -11,6 +11,7 @@ export const rupiah = (number: number|bigint, options?: Intl.NumberFormatOptions
   }
 
   export const getProductPrice = (product: Product) => {
+    if (product==undefined) return rupiah(0);
     if (product.category === "01") {
       return rupiah(product.maxPrice);
     } else {

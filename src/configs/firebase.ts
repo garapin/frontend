@@ -30,3 +30,5 @@ export default Firebase
 export const getFirestore = () => firebaseApp.firestore();
 
 export const getStorage = () => firebaseApp.storage();
+
+export const getAuth = () => firebaseApp.auth();

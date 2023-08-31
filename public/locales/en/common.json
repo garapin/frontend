@@ -29,5 +29,8 @@
         "totalPrice": "Total Price",
         "deleteButton": "delete",
         "selectAll": "Select All"
+    },
+    "email": {
+        "verified": "Email verified successfully!"
     }
 }

@@ -28,5 +28,8 @@
         "totalPrice": "Total Harga",
         "deleteButton": "hapus",
         "selectAll": "Pilih semua"
+    },
+    "email": {
+        "verified": "Email berhasil diverifikasi!"
     }
 }

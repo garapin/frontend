@@ -17,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import GarapinAppBar from '@/components/GarapinAppBar';
 import GarapinFooter from '@/components/GarapinFooter';
 import FirestoreLoader from '@/components/FirestoreLoader';
+import { useRouter } from 'next/router';
+import AdminPanelLayout from '@/components/Admin/Layouts/AdminLayout';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -69,10 +71,11 @@ type ExtendedAppProps = AppProps & {
 type GuardProps = {
     authGuard: boolean
     guestGuard: boolean
+    adminGuard: boolean
     children: ReactNode
   }
 
-const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
+const Guard = ({ children, authGuard, guestGuard, adminGuard }: GuardProps) => {
     if (guestGuard) {
       console.log('Guest guard!')
   
@@ -84,7 +87,7 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
     } else {
       console.log('auth guard!')
   
-      return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>
+      return <AuthGuard fallback={<Spinner />} adminGuard={adminGuard??false}>{children}</AuthGuard>
     }
   }
 
@@ -94,14 +97,18 @@ const GarapinApp = (props: ExtendedAppProps) => {
 
     useEffect(() => {
       setIsClient(true);
-    }, []);
+    const router = useRouter();
+    const isRouteAdmin = router.pathname.startsWith('/admin');
 
-    const authGuard = Component.authGuard ?? false
+    const authGuard = Component.authGuard ?? false // TODO: Add guard automatically for admin page
+    const adminGuard = Component.adminGuard ?? false // TODO: Add guard automatically for admin page
 
     const guestGuard = Component.guestGuard ?? false
 
-    const showFooter = Component.showFooter ?? true
+    const showFooter = Component.showFooter ?? isRouteAdmin? false: true
     const showAppBar = Component.showAppBar ?? true    
+
+
 
     return <>
           <Head>
@@ -109,12 +116,14 @@ const GarapinApp = (props: ExtendedAppProps) => {
               <meta name='viewport' content='initial-scale=1, width=device-width' />
           </Head>
           <FirebaseAuthProvider>
-              <Guard authGuard={authGuard} guestGuard={guestGuard}>
+              <Guard authGuard={authGuard} guestGuard={guestGuard} adminGuard={adminGuard}>
                   <ThemeProvider theme={garapinTheme}>
                       <Suspense fallback={<div>Loading...</div>}>
                           {showAppBar && <GarapinAppBar /> }
                               {/* <FirestoreLoader /> */}
-                              {isClient && <Component {...pageProps}/>}
+                              {
+                                isRouteAdmin ? <AdminPanelLayout> {isClient && <Component {...pageProps}/>}</AdminPanelLayout> : <Component {...pageProps}/>
+                              }
                             {showFooter && <GarapinFooter /> }
                           <ToastContainer />
                       </Suspense>

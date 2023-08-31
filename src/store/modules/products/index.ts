@@ -21,6 +21,7 @@ import axios from "axios";
 import { Product, Template } from "@/types/product";
 import Firebase from "@/configs/firebase";
 import { toast } from "react-toastify";
+import { Invoices } from "@/types/admin";
 
 const defaultState: {
   products: Product[];
@@ -44,7 +45,7 @@ const defaultState: {
   calculationLoading: boolean | null;
   detailQuotation: any;
   quotationStatus: string;
-  productInvoices: string[];
+  productInvoices: Invoices[];
   shippingCompanies: string[];
   paymentStatus: any;
   calculateProductPricing: any;

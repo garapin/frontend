@@ -60,7 +60,9 @@ const TransactionListIndex = () => {
               isTab === "cp" ? "bg-[#713F97]" : "bg-[#bb86fc]"
             }`}
           >
+            <Typography variant="body2">
             Custom Packaging
+            </Typography>
           </div>
           <div
             onClick={() => handleChangeTabs("dp")}
@@ -68,16 +70,18 @@ const TransactionListIndex = () => {
               isTab === "dp" ? "bg-[#713F97]" : "bg-[#bb86fc]"
             }`}
           >
-            Digital Packaging
+            <Typography variant="body2">
+            Digital Packaging & Ready To Buy
+            </Typography>
           </div>
-          <div
+          {/* <div
             onClick={() => handleChangeTabs("rtb")}
             className={`p-3 mr-5 rounded-md cursor-pointer text-white ${
               isTab === "rtb" ? "bg-[#713F97]" : "bg-[#bb86fc]"
             }`}
           >
             Ready To Buy
-          </div>
+          </div> */}
         </Box>
         <Box>
           <TransactionList currentTab={isTab} />

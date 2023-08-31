@@ -29,6 +29,7 @@ import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import Link from "next/link";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { makeStyles } from "@mui/styles";
+import IsAdmin from "./Admin/CheckIsAdmin";
 
 const useStyles = makeStyles({
   menuAppBar: {
@@ -294,6 +295,13 @@ const GarapinAppBar = ({
                         {auth.authUser.displayName ?? auth.authUser.email}
                       </Typography>
                     </MenuItem>
+                    <IsAdmin>
+                      <Link href="/admin/orders">
+                        <MenuItem>
+                          Manage Orders
+                        </MenuItem>
+                      </Link>
+                    </IsAdmin>
                     <MenuItem onClick={() => {}}>
                       <Link href="/transaction-list">
                         {t("appBar.menu.profile")}

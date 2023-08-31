@@ -139,7 +139,7 @@ function CheckoutPage() {
             serviceName: ship?.courier_service_name,
             type: ship?.type,
             duration: ship?.duration,
-            price: priceItem + shipPrice,
+            price: ship.price,
             insuranceFee: ship?.insurance_fee,
           },
         };
@@ -390,7 +390,7 @@ function CheckoutPage() {
                 <TextField
                   fullWidth
                   label="Keterangan Alamat"
-                  placeholder="A green fence house has a big tree in front of it"
+                  placeholder="Contoh: Rumah hijau yang ada pohon besar di depannya"
                   error={
                     formik.touched.addressNote &&
                     Boolean(formik.errors.addressNote)
@@ -587,6 +587,7 @@ function CheckoutPage() {
                 </Grid>
                 <Grid item md={6}>
                   <Button
+                  fullWidth
                     variant="contained"
                     onClick={formik.submitForm}
                     type="submit"

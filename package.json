@@ -32,6 +32,8 @@
     "firebase": "^9.17.1",
     "formik": "^2.2.9",
     "i18next": "^22.4.9",
+    "i18next-browser-languagedetector": "^7.0.2",
+    "i18next-http-backend": "^2.2.1",
     "next": "13.1.6",
     "next-i18next": "^13.1.5",
     "next-redux-wrapper": "7.0.5",

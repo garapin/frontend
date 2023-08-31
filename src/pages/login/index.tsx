@@ -104,7 +104,7 @@ const LoginPage = () => {
               </Box>
               <form onSubmit={formik.handleSubmit}>
                 <Box className="flex flex-col justify-center items-center">
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("login.fields.email")}
                       variant="outlined"
@@ -118,7 +118,7 @@ const LoginPage = () => {
                       helperText={formik.touched.email && formik.errors.email}
                     />
                   </Box>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <TextField
                       label={t("login.fields.password")}
                       type="password"
@@ -136,7 +136,7 @@ const LoginPage = () => {
                       }
                     />
                   </Box>
-                  <Box className="w-1/2 py-2">
+                  <Box className="w-3/4 md:w-1/2 py-2">
                     <Button
                       variant="contained"
                       fullWidth
