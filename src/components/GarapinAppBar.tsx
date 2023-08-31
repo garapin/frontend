@@ -198,9 +198,7 @@ const GarapinAppBar = ({
                 flexShrink: 1,
               }}
             >
-              <Box
-                className="hidden items-center md:flex"
-              >
+              <Box className="hidden items-center md:flex">
                 <LanguageSelector>
                   <Box sx={{ minWidth: 120 }}>
                     <FormControl fullWidth>
@@ -292,9 +290,7 @@ const GarapinAppBar = ({
                     onClose={handleClose}
                   >
                     <MenuItem className="flex md:hidden">
-                      <Typography
-                        variant="body1"
-                      >
+                      <Typography variant="body1">
                         {auth.authUser.displayName ?? auth.authUser.email}
                       </Typography>
                     </MenuItem>

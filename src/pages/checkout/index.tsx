@@ -52,6 +52,9 @@ function CheckoutPage() {
   const priceItem = checkoutData
     .map((val: { totalPrice: number }) => val.totalPrice)
     ?.reduce((acc: any, curr: any) => acc + curr);
+  const totalWeight = checkoutData
+    .map((val: { product: { unitWeight: number } }) => val.product?.unitWeight)
+    ?.reduce((acc: any, curr: any) => acc + curr);
   const [shipment, setShipment] = useState([]);
   const { shippingCompanies } = useAppSelector((state) => state.product);
   const [shippingLoading, setShippingLoading] = useState(false);
@@ -126,7 +129,7 @@ function CheckoutPage() {
             },
             postalCode: values.zipCode,
             addressNote: values.addressNote,
-            totalWeight: 2500,
+            totalWeight: totalWeight,
             notes: values.notes,
           },
           shippingMethod: {
@@ -166,7 +169,7 @@ function CheckoutPage() {
 
   const handleGetShippingCompanyService = (courierCode: string | any) => {
     const payload = {
-      weight: 2500,
+      weight: totalWeight,
       destination_postal: formik.values.zipCode,
       destination_lat: addressMap.latLong?.lat,
       destination_long: addressMap.latLong?.lng,
@@ -776,6 +779,9 @@ function CheckoutPage() {
     </Grid>
   );
 }
+
+CheckoutPage.guestGuard = false;
+CheckoutPage.authGuard = true;
 
 export default CheckoutPage;
 

@@ -279,6 +279,9 @@ const ProductDetailPage = () => {
   React.useEffect(() => {
     if (slug !== undefined) {
       setItemQty(singleProduct?.moq?.toString() ?? 0);
+      if (singleProduct.moq) {
+        debounceCalculatePrice(singleProduct?.moq?.toString(), singleProduct);
+      }
     }
   }, [singleProduct.moq]);
 
