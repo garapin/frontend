@@ -97,6 +97,7 @@ const GarapinApp = (props: ExtendedAppProps) => {
 
     useEffect(() => {
       setIsClient(true);
+    }, []);
     const router = useRouter();
     const isRouteAdmin = router.pathname.startsWith('/admin');
 
