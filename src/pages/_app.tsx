@@ -5,7 +5,7 @@ import Head from "next/head";
 import { CssBaseline, PaletteColorOptions } from '@mui/material';
 import { appWithTranslation } from 'next-i18next'
 import LandingPage from "@/pages/index";
-import { Suspense, ReactNode, useEffect } from 'react';
+import { Suspense, ReactNode, useEffect, useState } from 'react';
 import { FirebaseAuthProvider } from '@/context/FirebaseContext';
 import GuestGuard from '@/components/auth/GuestGuard';
 import AuthGuard from '@/components/auth/AuthGuard';
@@ -93,6 +93,11 @@ const Guard = ({ children, authGuard, guestGuard, adminGuard }: GuardProps) => {
 
 const GarapinApp = (props: ExtendedAppProps) => {
     const { Component, pageProps } = props
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
     const router = useRouter();
     const isRouteAdmin = router.pathname.startsWith('/admin');
 
@@ -118,7 +123,7 @@ const GarapinApp = (props: ExtendedAppProps) => {
                           {showAppBar && <GarapinAppBar /> }
                               {/* <FirestoreLoader /> */}
                               {
-                                isRouteAdmin ? <AdminPanelLayout><Component {...pageProps}/></AdminPanelLayout> : <Component {...pageProps}/>
+                                isRouteAdmin ? <AdminPanelLayout> {isClient && <Component {...pageProps}/>}</AdminPanelLayout> : <Component {...pageProps}/>
                               }
                             {showFooter && <GarapinFooter /> }
                           <ToastContainer />

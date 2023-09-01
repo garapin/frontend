@@ -387,6 +387,9 @@ function Cart() {
   );
 }
 
+Cart.guestGuard = false;
+Cart.authGuard = true;
+
 export default Cart;
 
 export const getServerSideProps = async ({ locale }: { locale: string }) => {
