@@ -27,7 +27,7 @@ const createColor = (mainColor: string) => augmentColor({ color: { main: mainCol
 const garapinTheme = createTheme({
     spacing: [0, 4, 8, 16, 32, 64],
     typography: {
-        fontFamily: 'Roboto, Arial',
+        fontFamily: 'Archivo, Arial, Roboto',
     },
     palette: {
         mode: 'light',

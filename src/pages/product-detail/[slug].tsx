@@ -2,7 +2,7 @@ import LoginPage from "@/pages/login";
 import * as React from "react";
 import { useState } from "react";
 import clsx from "clsx";
-import ModalUnstyled from "@mui/base/ModalUnstyled";
+// import ModalUnstyled from "@mui/base/ModalUnstyled";
 import {
   Alert,
   Box,
@@ -71,20 +71,20 @@ const BackdropUnstyled = React.forwardRef<
   );
 });
 
-styled(ModalUnstyled)(`
-  position: fixed;
-  z-index: 1300;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  &.MuiModal-hidden {
-    visibility: hidden;
-  }
-`);
+// styled(ModalUnstyled)(`
+//   position: fixed;
+//   z-index: 1300;
+//   right: 0;
+//   bottom: 0;
+//   top: 0;
+//   left: 0;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   &.MuiModal-hidden {
+//     visibility: hidden;
+//   }
+// `);
 
 const Backdrop = styled(BackdropUnstyled)`
   z-index: -1;
@@ -325,7 +325,7 @@ const ProductDetailPage = () => {
   const debounceCalculatePrice = React.useRef(
     debounce(async (itemQty, singleProduct) => {
       setFetchingPrice(true);
-      const data = await dispatch(
+      const data: any = await dispatch(
         getCalculateProductPricing(
           itemQty,
           singleProduct.id,
@@ -553,7 +553,6 @@ const ProductDetailPage = () => {
                           imageUrl={singleProduct?.img?.[0] ?? imagePlaceholder}
                           productName={singleProduct?.productName ?? ""}
                           price={getProductPrice(singleProduct)}
-                          location="Jakarta"
                           slug={singleProduct?.slug ?? ""}
                           clickable={false}
                           maxWidth="300px"

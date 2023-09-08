@@ -3,69 +3,97 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { CardActionArea } from "@mui/material";
+import { Button, CardActionArea, Chip } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { Star } from "@mui/icons-material";
 
 export default function CardVertical({
   imageUrl,
   productName,
   price,
-  location,
   slug,
   clickable = true,
   maxWidth = "100%",
+  category,
+  reviews = 4,
 }: {
   imageUrl: string;
   productName: string;
   price: string;
-  location: string;
   slug: string;
   clickable?: boolean;
   maxWidth?: string;
+  category?: string;
+  reviews?: number;
 }) {
   const router = useRouter();
+  const [showDiscount, setShowDiscount] = React.useState(false);
+  const [showRating, setShowRating] = React.useState(false);
   return (
-    <Card
-      sx={{ maxWidth: maxWidth, height: "100%" }}
-      onClick={() => {
-        if (clickable) {
-          router.push({
-            pathname: `/product-detail/${slug}`
-          })
-        }
-      }}
-    >
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          image={imageUrl}
-          alt="Card Image"
-          sx={{
-            width: "100%",
-            height: 190,
-            objectFit: "cover",
-            objectPosition: "center",
-          }}
+    <Box className="bg-[#F9FAFB] p-4 rounded-lg">
+      <div className="relative mb-2">
+        <img
+          src={imageUrl}
+          alt={productName}
+          className="w-full aspect-square rounded-lg"
         />
-        <CardContent>
-          <Typography variant="h6">{productName}</Typography>
-          <Typography
-            color="text.secondary"
-            sx={{ fontSize: 12 }}
-            className="pb-3"
-          >
-            {price}
-          </Typography>
-          <Box className="flex flex-row" style={{ alignItems: "center" }}>
-            <LocationOnIcon className="mr-1" sx={{ width: 9 }} />
-            <Typography color="text.secondary" sx={{ fontSize: 12 }}>
-              {location}
-            </Typography>
-          </Box>
-        </CardContent>
-      </CardActionArea>
-    </Card>
+        {showDiscount && (
+          <Chip
+            color="primary"
+            size="small"
+            label="DISKON 30%"
+            className="absolute top-2 left-2"
+          />
+        )}
+      </div>
+      <div className="space-y-2">
+        <Typography
+          variant="body1"
+          color="purple"
+          className="text-sm font-semibold"
+        >
+          {category}
+        </Typography>
+        <Typography variant="h6" className="text-lg line-clamp-1">
+          {productName}
+        </Typography>
+        {showRating && (
+          <div className="flex items-center gap-1">
+            <span className="text-yellow-500">{reviews}</span>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                fontSize="small"
+                className={`${
+                  i + 1 <= reviews ? "text-yellow-500" : "text-slate-500"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+        <Typography color="purple" sx={{ fontSize: 13 }}>
+          {price}
+        </Typography>
+
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          className="capitalize"
+          onClick={() => {
+            if (clickable) {
+              router.push({
+                pathname: `/product-detail/${slug}`,
+              });
+            }
+          }}
+        >
+          Beli Kemasan
+        </Button>
+      </div>
+    </Box>
   );
 }
