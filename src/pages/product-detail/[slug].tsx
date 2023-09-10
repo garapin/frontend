@@ -455,11 +455,14 @@ const ProductDetailPage = () => {
   } else {
     return (
       <Box className="items-center">
-        <GarapinAppBar searchVariant={true} />
-        <Grid maxWidth="lg" container className="pt-20 mx-auto justify-between">
+        <Grid
+          maxWidth="lg"
+          container
+          className="max-w-md mx-auto justify-between"
+        >
           <Grid
             item
-            lg={4}
+            lg={12}
             alignItems="center"
             justifyContent="center"
             className="w-full px-5"
@@ -474,7 +477,7 @@ const ProductDetailPage = () => {
               }
             />
           </Grid>
-          <Grid item lg={8} className="block flex-col px-5 w-full">
+          <Grid item lg={12} className="block flex-col px-5 w-full">
             <Typography className="pt-10" variant="h4">
               {singleProduct?.productName}
             </Typography>
@@ -1121,7 +1124,7 @@ const ProductDetailPage = () => {
             </Box>
           </Grid>
         </Grid>
-        <Box className="py-20 md:px-60">
+        <Box className="py-20 max-w-md mx-auto">
           <img width="100%" src="/banner_inquiry.svg" alt="banner inquiry" />
         </Box>
       </Box>

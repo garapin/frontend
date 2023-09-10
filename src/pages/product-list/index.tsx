@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   Grid,
+  IconButton,
   InputAdornment,
   TextField,
 } from "@mui/material";
@@ -17,10 +18,16 @@ import { useRouter } from "next/router";
 import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
-import { getAllProductNext, getAllProducts } from "@/store/modules/products";
+import { getAllProductList, getAllProducts } from "@/store/modules/products";
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { useRef } from "react";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
+import { getCategoryLabel } from "@/tools/utils";
+import { Search } from "@mui/icons-material";
+import { SearchPackageIconSVG } from "@/assets/icons/search-package-icon";
+import { SearchIconSVG } from "@/assets/icons/search-icon";
+import { FilterIconSVG } from "@/assets/icons/filter-icon";
+import ImageSlider from "@/components/ImageSlider";
 
 const ProductListPage = () => {
   const router = useRouter();
@@ -39,43 +46,54 @@ const ProductListPage = () => {
 
   React.useEffect(() => {
     if (searchRef.current !== null) {
-      searchRef.current.value = search;
+      searchRef.current.value = search ?? "";
     }
   }, [search]);
 
   return (
     <Box>
-      <GarapinAppBar searchVariant={true} />
-      <Box className="max-w-xl px-10 pt-20 block md:hidden">
+      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2">
         <TextField
-          placeholder="Saya mau buat..."
+          placeholder="Cari produk anda..."
           fullWidth
           inputRef={searchRef}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              router.push(
+                `/search${
+                  searchRef?.current?.value !== undefined
+                    ? `?q=${searchRef?.current?.value}`
+                    : ""
+                }`
+              );
+            }
+          }}
           InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Button
-                  variant="contained"
-                  color="garapinColor"
-                  onClick={(event) => {
-                    router.push(
-                      `/search${
-                        searchRef?.current?.value !== undefined
-                          ? `?q=${searchRef?.current?.value}`
-                          : ""
-                      }`
-                    );
-                  }}
-                >
-                  Cari
-                </Button>
-              </InputAdornment>
+            startAdornment: (
+              <IconButton
+                onClick={(event) => {
+                  router.push(
+                    `/search${
+                      searchRef?.current?.value !== undefined
+                        ? `?q=${searchRef?.current?.value}`
+                        : ""
+                    }`
+                  );
+                }}
+              >
+                <SearchIconSVG className="w-6 h-6 text-black" />
+              </IconButton>
             ),
           }}
         ></TextField>
+
+        <Button variant="contained" className="rounded-md">
+          <FilterIconSVG className="w-6 h-6 text-white" />
+        </Button>
       </Box>
-      <Container>
-        <Box className="flex flex-col py-4 md:py-20">
+      <Container className="max-w-md mx-auto">
+        <ImageSlider />
+        <Box className="flex flex-col py-4">
           {search !== undefined && (
             <Typography
               className="px-10 md:px-0"
@@ -94,12 +112,7 @@ const ProductListPage = () => {
               })}
             </Typography>
           )}
-          <Grid
-            className="px-10 md:px-0 pt-4 md:pt-8"
-            container
-            spacing={4}
-            alignItems="stretch"
-          >
+          <Grid container spacing={3} alignItems="stretch">
             {isProductLoading ? (
               <CircularProgress />
             ) : (
@@ -112,20 +125,14 @@ const ProductListPage = () => {
                     : true
                 )
                 .map((product: any) => (
-                  <Grid
-                    key={product.id}
-                    item
-                    xs={6}
-                    md={3}
-                    className="content-center"
-                  >
+                  <Grid key={product.id} item xs={6} className="content-center">
                     <CardVertical
                       key={product.id}
                       imageUrl={product.img[0] ?? imagePlaceholder}
                       productName={product.productName}
                       price={getProductPrice(product)}
-                      location="Jakarta"
                       slug={product.slug?.toString() ?? product.sku}
+                      category={getCategoryLabel(product.category)}
                     />
                   </Grid>
                 ))
@@ -141,7 +148,7 @@ const ProductListPage = () => {
                 <Button
                   variant="contained"
                   disabled={isFetchingNext}
-                  onClick={() => dispatch(getAllProductNext())}
+                  onClick={() => dispatch(getAllProductList())}
                 >
                   Load more...{" "}
                   {isFetchingNext && <CircularProgress size={10} />}

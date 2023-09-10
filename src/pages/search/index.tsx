@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   Grid,
+  IconButton,
   InputAdornment,
   TextField,
 } from "@mui/material";
@@ -26,108 +27,11 @@ import {
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { useRef } from "react";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
-
-const productData = [
-  {
-    id: 1,
-    name: "Product 1",
-    price: 10000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    price: 20000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    price: 30000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    price: 10000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 5,
-    name: "Product 5",
-    price: 20000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 6,
-    name: "Product 6",
-    price: 30000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 7,
-    name: "Product 7",
-    price: 10000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 8,
-    name: "Product 8",
-    price: 20000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 9,
-    name: "Product 9",
-    price: 10000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 10,
-    name: "Product 10",
-    price: 20000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 11,
-    name: "Product 11",
-    price: 10000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 12,
-    name: "Product 12",
-    price: 20000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 13,
-    name: "Product 13",
-    price: 10000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-  {
-    id: 14,
-    name: "Product 14",
-    price: 20000,
-    image:
-      "https://edit.co.uk/uploads/2016/12/Image-1-Alternatives-to-stock-photography-Thinkstock.jpg",
-  },
-];
-
+import { getCategoryLabel } from "@/tools/utils";
+import { SearchIconSVG } from "@/assets/icons/search-icon";
+import { FilterIconSVG } from "@/assets/icons/filter-icon";
+import ImageSlider from "@/components/ImageSlider";
+import NoResult from "@/components/NoResult";
 const ProductListPage = () => {
   const router = useRouter();
 
@@ -156,97 +60,115 @@ const ProductListPage = () => {
 
   return (
     <Box>
-      <GarapinAppBar searchVariant={true} />
-      <Box className="max-w-6xl px-10 pt-20 mx-auto md:hidden">
+      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2">
         <TextField
-          placeholder="Saya mau buat..."
+          placeholder="Cari produk anda..."
           fullWidth
           inputRef={searchRef}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              router.push(
+                `/search${
+                  searchRef?.current?.value !== undefined
+                    ? `?q=${searchRef?.current?.value}`
+                    : ""
+                }`
+              );
+            }
+          }}
           InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Button
-                  variant="contained"
-                  color="garapinColor"
-                  onClick={(event) => {
-                    router.push(
-                      `/search${
-                        searchRef?.current?.value !== undefined
-                          ? `?q=${searchRef?.current?.value}`
-                          : ""
-                      }`
-                    );
-                  }}
-                >
-                  Cari
-                </Button>
-              </InputAdornment>
+            startAdornment: (
+              <IconButton
+                onClick={(event) => {
+                  router.push(
+                    `/search${
+                      searchRef?.current?.value !== undefined
+                        ? `?q=${searchRef?.current?.value}`
+                        : ""
+                    }`
+                  );
+                }}
+              >
+                <SearchIconSVG className="w-6 h-6 text-black" />
+              </IconButton>
             ),
           }}
         ></TextField>
+
+        <Button variant="contained" className="rounded-md">
+          <FilterIconSVG className="w-6 h-6 text-white" />
+        </Button>
       </Box>
-      <Container>
-        <Box className="flex flex-col py-4 md:py-20">
-          {q !== undefined && (
-            <Typography
-              className="px-10 md:px-0"
-              variant="h6"
-              color="text.primary"
-            >
-              {t("searchResult", {
-                result: searchHit,
-                searchTerm: q ?? "",
-              })}
-            </Typography>
-          )}
-          <Grid
-            className="px-10 md:px-0 pt-4 md:pt-8"
-            container
-            spacing={4}
-            alignItems="stretch"
-          >
-            {isProductLoading ? (
-              <CircularProgress />
+      <Container className="max-w-md mx-auto">
+        <ImageSlider />
+        {isProductLoading ? (
+          <CircularProgress />
+        ) : (
+          <Box>
+            {searchHit === 0 ? (
+              <div className="py-6">
+                <NoResult />
+              </div>
             ) : (
-              products.map((product: any) => (
+              <Box className="flex flex-col py-4">
+                {q !== undefined && (
+                  <Typography
+                    className="px-10 md:px-0"
+                    variant="h6"
+                    color="text.primary"
+                  >
+                    {t("searchResult", {
+                      result: searchHit,
+                      searchTerm: q ?? "",
+                    })}
+                  </Typography>
+                )}
                 <Grid
-                  key={product.id}
-                  item
-                  xs={6}
-                  md={3}
-                  className="content-center"
+                  className="px-10 md:px-0 pt-4 md:pt-8"
+                  container
+                  spacing={3}
+                  alignItems="stretch"
                 >
-                  <CardVertical
-                    key={product.id}
-                    imageUrl={product.img[0] ?? imagePlaceholder}
-                    productName={product.productName}
-                    price={getProductPrice(product)}
-                    location="Jakarta"
-                    slug={product.slug?.toString() ?? product.sku}
-                  />
+                  {products.map((product: any) => (
+                    <Grid
+                      key={product.id}
+                      item
+                      xs={6}
+                      className="content-center"
+                    >
+                      <CardVertical
+                        key={product.id}
+                        imageUrl={product.img[0] ?? imagePlaceholder}
+                        productName={product.productName}
+                        price={getProductPrice(product)}
+                        slug={product.slug?.toString() ?? product.sku}
+                        category={getCategoryLabel(product.category)}
+                      />
+                    </Grid>
+                  ))}
+                  {!allProductsLoaded && (
+                    <Grid
+                      item
+                      xs={12}
+                      alignItems="center"
+                      display={"flex"}
+                      justifyContent={"center"}
+                    >
+                      <Button
+                        variant="contained"
+                        disabled={isFetchingNext}
+                        onClick={() => dispatch(getNextSearchProduct())}
+                      >
+                        Load more...{" "}
+                        {isFetchingNext && <CircularProgress size={10} />}
+                      </Button>
+                    </Grid>
+                  )}
                 </Grid>
-              ))
+              </Box>
             )}
-            {!allProductsLoaded && (
-              <Grid
-                item
-                xs={12}
-                alignItems="center"
-                display={"flex"}
-                justifyContent={"center"}
-              >
-                <Button
-                  variant="contained"
-                  disabled={isFetchingNext}
-                  onClick={() => dispatch(getNextSearchProduct())}
-                >
-                  Load more...{" "}
-                  {isFetchingNext && <CircularProgress size={10} />}
-                </Button>
-              </Grid>
-            )}
-          </Grid>
-        </Box>
+          </Box>
+        )}
       </Container>
     </Box>
   );

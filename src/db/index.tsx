@@ -143,6 +143,29 @@ export const getAllProductsNextFromDB = async (
   });
   return { data, lastProductQuery: response.docs[response.docs.length - 1] };
 };
+export const getAllProductsListFromDB = async (
+  lastProductQuery:
+    | Firebase.firestore.QueryDocumentSnapshot<Firebase.firestore.DocumentData>
+    | undefined
+): Promise<ProductListDB> => {
+  const response = await db
+    .collection("products")
+    .where("active", "==", true)
+    .where("deleted", "==", false)
+    .where("channel", "==", "printing")
+    // .where('__name__', '>=', '')
+    // .orderBy('__name__')
+    .startAfter(lastProductQuery)
+    .limit(pageSize)
+    .get();
+  const data: Product[] = response.docs.map((doc) => {
+    return {
+      ...(doc.data() as Product),
+      id: doc.id,
+    };
+  });
+  return { data, lastProductQuery: response.docs[response.docs.length - 1] };
+};
 
 export const getProductTemplateFromDB = async (
   templateId: string
@@ -277,29 +300,33 @@ export const getPaymentStatusFromDB = async (id: string): Promise<any> => {
   return response.data();
 };
 
-
 export const getAdminProductInvoicesFromDB = async () => {
-    const response = await db.collection('product_invoices').orderBy('createdAt', 'desc').get()
+  const response = await db
+    .collection("product_invoices")
+    .orderBy("createdAt", "desc")
+    .get();
 
-    const data = response.docs.map(doc => {
-        return {
-            ...doc.data(),
-            id: doc.id,
-            paymentExpiredAt: doc.data().paymentExpiredAt?.toDate(),
-            paidAt: doc.data().paidAt?.toDate(),
-            createdAt: doc.data().createdAt?.toDate(),
-        }
-    });
+  const data = response.docs.map((doc) => {
+    return {
+      ...doc.data(),
+      id: doc.id,
+      paymentExpiredAt: doc.data().paymentExpiredAt?.toDate(),
+      paidAt: doc.data().paidAt?.toDate(),
+      createdAt: doc.data().createdAt?.toDate(),
+    };
+  });
 
-    return data;
-}
+  return data;
+};
 
-
-export const updateProductInvoiceStatus = async (id: string, status: string) => {
-    const invoiceRef = db.collection('product_invoices').doc(id);
-    await invoiceRef.update({
-        status: status,
-        [`${status}At`]: Firebase.firestore.FieldValue.serverTimestamp(),
-        [`${status}By`]: getAuth().currentUser?.uid,
-    });
-}
+export const updateProductInvoiceStatus = async (
+  id: string,
+  status: string
+) => {
+  const invoiceRef = db.collection("product_invoices").doc(id);
+  await invoiceRef.update({
+    status: status,
+    [`${status}At`]: Firebase.firestore.FieldValue.serverTimestamp(),
+    [`${status}By`]: getAuth().currentUser?.uid,
+  });
+};

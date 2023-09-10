@@ -16,6 +16,7 @@ import {
   getQuotationFromDB,
   getShippingCompanyFromDB,
   getPaymentStatusFromDB,
+  getAllProductsListFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
@@ -329,6 +330,28 @@ export const getAllProductNext = (category: string): AppThunk => {
       dispatch(setIsFetchingNext(true));
       dispatch(setAllProductsLoaded(false));
       const data = await getAllProductsNextFromDB(lastProductQuery, category);
+      dispatch(setIsFetchingNext(false));
+      dispatch(setProducts([...products, ...data.data]));
+      if (data.data.length < pageSize) {
+        console.log("All products loaded");
+        dispatch(setLastProductQuery(undefined));
+        dispatch(setAllProductsLoaded(true));
+      } else {
+        dispatch(setLastProductQuery(data.lastProductQuery));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(setError((error as any).message));
+    }
+  };
+};
+export const getAllProductList = (): AppThunk => {
+  return async (dispatch, getState) => {
+    const { lastProductQuery, products } = getState().product;
+    try {
+      dispatch(setIsFetchingNext(true));
+      dispatch(setAllProductsLoaded(false));
+      const data = await getAllProductsListFromDB(lastProductQuery);
       dispatch(setIsFetchingNext(false));
       dispatch(setProducts([...products, ...data.data]));
       if (data.data.length < pageSize) {

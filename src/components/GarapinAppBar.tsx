@@ -147,13 +147,15 @@ const GarapinAppBar = ({
   return (
     <Box className="max-w-md mx-auto py-6 px-4 bg-white">
       <div className="flex items-center justify-between">
-        <Image
-          src="/garapin-logo-colored.png"
-          alt="login-bg"
-          width={300}
-          height={100}
-          className="w-[132px] h-[38px]"
-        />
+        <Link href="/">
+          <Image
+            src="/garapin-logo-colored.png"
+            alt="login-bg"
+            width={300}
+            height={100}
+            className="w-[132px] h-[38px]"
+          />
+        </Link>
         <IconButton aria-label="menu" size="medium">
           <HamburgerIconSVG />
         </IconButton>
