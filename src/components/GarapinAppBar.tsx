@@ -9,6 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import {
   Avatar,
   Container,
+  Divider,
   FormControl,
   IconButton,
   Menu,
@@ -96,7 +97,7 @@ const GarapinAppBar = ({
   const { language: currentLanguage } = i18n;
   const router = useRouter();
   const locales = router.locales ?? [currentLanguage];
-  const auth = useFirebaseAuth();
+  const auth: any = useFirebaseAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const { search } = router.query;
   const fieldRef = useRef<HTMLInputElement>(null);
@@ -156,10 +157,75 @@ const GarapinAppBar = ({
             className="w-[132px] h-[38px]"
           />
         </Link>
-        <IconButton aria-label="menu" size="medium">
+        <IconButton aria-label="menu" size="medium" onClick={handleClick}>
           <HamburgerIconSVG />
         </IconButton>
       </div>
+      <Menu
+        sx={{ mt: "45px" }}
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        className={classes.menuAppBar}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        {!auth.loading &&
+          auth.authUser == null &&
+          router.pathname !== "/login" && (
+            <Link
+              href="/login"
+              style={{ paddingTop: "4px", paddingBottom: "4px" }}
+            >
+              <Button variant="contained" fullWidth>
+                {t("appBar.loginButton")}
+              </Button>{" "}
+            </Link>
+          )}
+        {!auth.loading && auth.authUser !== null && (
+          <>
+            <div className="flex flex-col gap-2 text-black items-center justify-center">
+              <Avatar sx={{ ml: 2 }} />
+              <Typography
+                className="hidden md:block min-w-max max-w-max"
+                variant="body1"
+              >
+                {auth.authUser.displayName ?? auth.authUser.email}
+              </Typography>
+            </div>
+            <Divider />
+            <MenuItem className="flex md:hidden">
+              <Typography variant="body1">
+                {auth?.authUser.displayName ?? auth?.authUser.email}
+              </Typography>
+            </MenuItem>
+            <IsAdmin>
+              <Link href="/admin/orders">
+                <MenuItem>Manage Orders</MenuItem>
+              </Link>
+            </IsAdmin>
+            <MenuItem onClick={() => {}}>
+              <Link href="/cart">{t("appBar.menu.cart")}</Link>
+            </MenuItem>
+            <MenuItem onClick={() => {}}>
+              <Link href="/transaction-list">
+                {t("appBar.menu.totalTransaction")}
+              </Link>
+            </MenuItem>
+            <MenuItem onClick={handleLogOut}>
+              {t("appBar.menu.logout")}
+            </MenuItem>
+          </>
+        )}
+      </Menu>
     </Box>
     // <Container maxWidth="xl">
     //   <AppBar position="fixed" style={{ zIndex: 1300 }}>

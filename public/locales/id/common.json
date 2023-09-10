@@ -28,7 +28,9 @@
     "searchBarText": "Cari sesuatu...",
     "menu": {
       "profile": "Profil",
-      "logout": "Keluar"
+      "logout": "Keluar",
+      "totalTransaction": "Total Transaksi",
+      "cart": "Keranjang"
     },
     "loginButton": "Masuk"
   },
