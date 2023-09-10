@@ -87,9 +87,9 @@ const ProductListPage = () => {
           }}
         ></TextField>
 
-        <Button variant="contained" className="rounded-md">
+        {/* <Button variant="contained" className="rounded-md">
           <FilterIconSVG className="w-6 h-6 text-white" />
-        </Button>
+        </Button> */}
       </Box>
       <Container className="max-w-md mx-auto">
         <ImageSlider />

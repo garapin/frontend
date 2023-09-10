@@ -44,6 +44,7 @@ export default function ImageMagnifier({
             maxWidth: maxWidth,
             objectFit: "cover",
             cursor: "zoom-in",
+            borderRadius: "16px",
             ...rimStyles,
           }}
           onMouseEnter={(e) => {

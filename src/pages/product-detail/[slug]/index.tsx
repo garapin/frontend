@@ -53,8 +53,17 @@ import * as Yup from "yup";
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { NumericFormat } from "react-number-format";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
-import { capitalizeString, numberFormat, uppercaseString } from "@/tools/utils";
+import {
+  capitalizeString,
+  getCategoryLabel,
+  numberFormat,
+  uppercaseString,
+} from "@/tools/utils";
 import { uuid } from "uuidv4";
+import { Star } from "@mui/icons-material";
+import { ShoppingBagIconSVG } from "@/assets/icons/shopping-bag-icon";
+import { TimeIconSVG } from "@/assets/icons/time-icon";
+import { TruckIconSVG } from "@/assets/icons/truck-icon";
 
 // eslint-disable-next-line react/display-name
 const BackdropUnstyled = React.forwardRef<
@@ -145,6 +154,7 @@ const ProductDetailPage = () => {
   });
   const productTemplateIdempotencyKey = React.useMemo(() => uuid(), []);
   const templatePricingIdempotencyKey = React.useMemo(() => uuid(), []);
+  const [showRating, setShowRating] = React.useState(false);
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -395,6 +405,8 @@ const ProductDetailPage = () => {
     router.push("/login");
   };
 
+  console.log("singleProduct", singleProduct);
+
   const renderButton = () => {
     if (singleProduct?.category === "01") {
       return (
@@ -458,14 +470,14 @@ const ProductDetailPage = () => {
         <Grid
           maxWidth="lg"
           container
-          className="max-w-md mx-auto justify-between"
+          className="max-w-md mx-auto justify-between px-4"
         >
           <Grid
             item
             lg={12}
             alignItems="center"
             justifyContent="center"
-            className="w-full px-5"
+            className="w-full"
           >
             <ImageCarousel
               dataSource={
@@ -477,56 +489,139 @@ const ProductDetailPage = () => {
               }
             />
           </Grid>
-          <Grid item lg={12} className="block flex-col px-5 w-full">
-            <Typography className="pt-10" variant="h4">
+          <Grid item lg={12} className="w-full space-y-4">
+            <Typography
+              className="text-[#713F97] text-sm font-semibold"
+              variant="body1"
+            >
+              {getCategoryLabel(singleProduct.category)}
+            </Typography>
+            <Typography className="text-[32px] font-semibold" variant="h4">
               {singleProduct?.productName}
             </Typography>
+            {showRating && (
+              <>
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500 text-xl">
+                    {singleProduct?.reviews ?? 0}
+                  </span>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      fontSize="medium"
+                      className={`${
+                        i + 1 <= singleProduct?.reviews ?? 0
+                          ? "text-yellow-500"
+                          : "text-slate-500"
+                      }`}
+                    />
+                  ))}
+                  <Typography
+                    className="text-slate-600 text-xl"
+                    variant="body1"
+                  >
+                    {`(16,325)`}
+                  </Typography>
+                </div>
+                <Typography
+                  className="text-slate-600 text-xl font-bold"
+                  variant="body1"
+                >
+                  2789 Sold
+                </Typography>
+              </>
+            )}
             {singleProduct?.category === "01" ? (
-              <Typography className="pt-2" variant="h5" color="#713F97">
-                Rp {singleProduct?.productPrice?.toLocaleString("id-ID")} / pcs
+              <Typography
+                className="text-[26px] font-semibold"
+                variant="h5"
+                color="#713F97"
+              >
+                Rp {singleProduct?.productPrice?.toLocaleString("id-ID")}
               </Typography>
             ) : (
-              <Typography className="pt-2" variant="h5" color="#713F97">
+              <Typography
+                className="text-[26px] font-semibold"
+                variant="h5"
+                color="#713F97"
+              >
                 Rp {singleProduct?.minPrice?.toLocaleString("id-ID")} - Rp{" "}
                 {singleProduct?.maxPrice?.toLocaleString("id-ID")} / pcs
               </Typography>
             )}
-            <Box
-              className="flex flex-row p-4 mt-6"
-              sx={{ borderRadius: "10px", backgroundColor: "#FADEFF" }}
-            >
-              <img src="/warning_icon.svg" alt="icon warning" />
-              <Typography className="pl-4">
-                Harga yang tertera merupakan estimasi dan dapat berubah sesuai
-                kebutuhan atau permintaan yang diajukan
-              </Typography>
-            </Box>
-            <Box className="flex flex-col">
-              <Box className="flex flex-row items-center justify-between pt-6">
-                <Typography variant="body2">Min. Pemesananan</Typography>
-                <Typography variant="body1">
-                  <b>{singleProduct?.moq?.toLocaleString("id-ID")} pcs</b>
-                </Typography>
-              </Box>
-              <Divider className="pt-2" />
-              <Box className="flex flex-row items-center justify-between pt-2">
-                <Box className="flex flex-row items-center">
-                  <Typography className="mr-2" variant="body2">
-                    Lama Pengerjaan
-                  </Typography>
-                  <img
-                    className="w-3 h-3"
-                    src="/warning_icon.svg"
-                    alt="icon warning"
-                  />
-                </Box>
-                <Typography variant="body1">
-                  <b>{singleProduct?.leadTime} hari</b>
-                </Typography>
-              </Box>
-              <Divider className="pt-2" />
 
-              {renderButton()}
+            <Button
+              variant="contained"
+              className="capitalize py-3"
+              fullWidth
+              onClick={() => {
+                router.push(`/product-detail/${singleProduct?.slug}/create`);
+              }}
+            >
+              Minta Penawaran
+            </Button>
+
+            <Box className="pt-2 space-y-4">
+              <Typography className="font-semibold text-2xl" variant="h2">
+                Info Pemesanan
+              </Typography>
+              <Box className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <ShoppingBagIconSVG />
+                  <Typography
+                    variant="body2"
+                    className="text-[22px] font-light text-slate-600"
+                  >
+                    Minimal. Pemesananan
+                  </Typography>
+                </div>
+                <Typography
+                  variant="body1"
+                  className="text-[22px] font-light text-[#713F97]"
+                >
+                  {singleProduct?.moq?.toLocaleString("id-ID")} pcs
+                </Typography>
+              </Box>
+              <Box className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <TimeIconSVG />
+                  <Typography
+                    variant="body2"
+                    className="text-[22px] font-light text-slate-600"
+                  >
+                    Lama Pengerjaan (per karton)
+                  </Typography>
+                </div>
+                <Typography
+                  variant="body1"
+                  className="text-[22px] font-light text-[#713F97]"
+                >
+                  {singleProduct?.leadTime} hari
+                </Typography>
+              </Box>
+              <Box className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <TruckIconSVG />
+                  <Typography
+                    variant="body2"
+                    className="text-[22px] font-light text-slate-600"
+                  >
+                    Dikirim Dari
+                  </Typography>
+                </div>
+                <Typography
+                  variant="body1"
+                  className="text-[22px] font-light text-[#713F97]"
+                >
+                  Jawa Tengah
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box className="flex flex-col">
+              {/* <Divider className="pt-2" />
+
+              {renderButton()} */}
 
               <form onSubmit={formik.handleSubmit}>
                 <Dialog
@@ -1112,21 +1207,20 @@ const ProductDetailPage = () => {
                   </DialogActions>
                 </Dialog>
               </form>
-              <Divider className="pt-2" />
-              <Box>
-                <Typography className="pt-16" color="#7C7C7C" variant="h5">
+              <Box className="mb-8 space-y-4">
+                <Typography className="font-semibold" variant="h5">
                   Tentang Produk
                 </Typography>
-                <Typography className="pt-6" color="#3A3A3A" variant="body2">
+                <Typography
+                  className="text-base text-slate-700"
+                  variant="body2"
+                >
                   {singleProduct?.description}
                 </Typography>
               </Box>
             </Box>
           </Grid>
         </Grid>
-        <Box className="py-20 max-w-md mx-auto">
-          <img width="100%" src="/banner_inquiry.svg" alt="banner inquiry" />
-        </Box>
       </Box>
     );
   }

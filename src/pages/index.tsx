@@ -269,6 +269,9 @@ function LandingPage(props: any) {
                       item
                       xs={12}
                       className="mb-2 relative group hover:cursor-pointer overflow-hidden"
+                      onClick={() =>
+                        router.push("/product-category/custom-packaging")
+                      }
                     >
                       <Image
                         src="/assets/custom-packaging-cover.png"
@@ -291,6 +294,9 @@ function LandingPage(props: any) {
                       item
                       xs={12}
                       className="mb-2 relative group hover:cursor-pointer overflow-hidden"
+                      onClick={() =>
+                        router.push("/product-category/ready-to-buy")
+                      }
                     >
                       <Image
                         src="/assets/ready-to-buy-cover.png"
@@ -313,6 +319,9 @@ function LandingPage(props: any) {
                       item
                       xs={12}
                       className="relative group hover:cursor-pointer overflow-hidden"
+                      onClick={() =>
+                        router.push("/product-category/digital-packaging")
+                      }
                     >
                       <Image
                         src="/assets/digital-packaging-cover.png"

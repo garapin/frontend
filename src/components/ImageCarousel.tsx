@@ -71,17 +71,18 @@ export default function ImageCarousel({
         ))}
       </ReactSlick>
       {withThumbnail && (
-        <div className="flex pb-2 overflow-x-auto">
+        <div className="flex py-2 overflow-x-auto">
           {dataSource.map((_, index) => (
             <div
               key={index}
-              className="min-w-[4rem] w-16 h-16 min-h-[4rem] mr-2 rounded-md cursor-pointer"
+              className="min-w-[4rem] w-28 h-20 min-h-[4rem] mr-2 cursor-pointer"
               onClick={(e) => slider?.slickGoTo(index)}
               style={{
                 backgroundImage: `url(${dataSource[index].srcUrl})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 opacity: index === currentSlide ? 1 : 0.5,
+                borderRadius: "16px",
               }}
             ></div>
           ))}
