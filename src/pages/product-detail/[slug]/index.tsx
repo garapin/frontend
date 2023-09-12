@@ -136,13 +136,8 @@ const ProductDetailPage = () => {
     errors,
     calculateTemplatePrice,
     calculationLoading,
-    templatePrice,
   } = useAppSelector((state) => state.product);
   const [open, setOpen] = React.useState(false);
-  const [itemQty, setItemQty] = React.useState<any>(
-    singleProduct?.moq?.toString() ?? 0
-  );
-  const [fetchingPrice, setFetchingPrice] = React.useState(false);
   const [scroll, setScroll] = React.useState<DialogProps["scroll"]>("paper");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [variantSelectorValue, setVariantSelectorValue] =
@@ -153,7 +148,6 @@ const ProductDetailPage = () => {
     latLong: { lat: "", long: "" },
   });
   const productTemplateIdempotencyKey = React.useMemo(() => uuid(), []);
-  const templatePricingIdempotencyKey = React.useMemo(() => uuid(), []);
   const [showRating, setShowRating] = React.useState(false);
 
   const formik = useFormik({
@@ -286,14 +280,6 @@ const ProductDetailPage = () => {
       dispatch(getSingleProduct(slug as string));
     }
   }, [slug]);
-  React.useEffect(() => {
-    if (slug !== undefined) {
-      setItemQty(singleProduct?.moq?.toString() ?? 0);
-      if (singleProduct.moq) {
-        debounceCalculatePrice(singleProduct?.moq?.toString(), singleProduct);
-      }
-    }
-  }, [singleProduct.moq]);
 
   const handleButtonClick = () => {
     const fileInput = document.getElementById("file-input");
@@ -332,134 +318,9 @@ const ProductDetailPage = () => {
     }
   };
 
-  const debounceCalculatePrice = React.useRef(
-    debounce(async (itemQty, singleProduct) => {
-      setFetchingPrice(true);
-      const data: any = await dispatch(
-        getCalculateProductPricing(
-          itemQty,
-          singleProduct.id,
-          templatePricingIdempotencyKey
-        )
-      );
-      if (data) {
-        setFetchingPrice(false);
-      }
-    }, 500)
-  ).current;
-
-  const addButton = async (val: any) => {
-    if (typeof val === "number") val = val.toString();
-    setItemQty((parseInt(val.replace(/[^0-9]/g, "")) + 1).toString());
-    debounceCalculatePrice(
-      (parseInt(val.replace(/[^0-9]/g, "")) + 1).toString(),
-      singleProduct
-    );
-  };
-
-  const descButton = (val: any) => {
-    if (val == 0) return;
-    setItemQty((parseInt(val.replace(/[^0-9]/g, "")) - 1).toString());
-    debounceCalculatePrice(
-      (parseInt(val.replace(/[^0-9]/g, "")) - 1).toString(),
-      singleProduct
-    );
-  };
-
-  const handleAddToCart = async () => {
-    // if not login
-    if (auth.authUser === null) {
-      handleToLogin();
-      return;
-    }
-    if (itemQty < singleProduct?.moq) {
-      toast.error(
-        `Jumlah pesanan tidak boleh kurang dari ${singleProduct?.moq}`
-      );
-      return;
-    }
-    const data = {
-      channel: "printing",
-      createAt: new Date(),
-      delete: false,
-      product: singleProduct,
-      productCategoryId: singleProduct?.category,
-      productId: singleProduct?.id,
-      qty: itemQty,
-      status: "cart",
-      unitPrice: templatePrice?.unitPrice ?? 0,
-      updatedAt: null,
-      userId: auth?.authUser?.uid,
-      totalPrice: templatePrice?.totalPrice,
-      calculationId: templatePrice?.calculationId,
-      weight: singleProduct?.weightCalculation,
-      idempotencyKey: templatePrice?.idempotencyKey,
-    };
-
-    await addToCart(data);
-    toast.success("Berhasil Menambahkan Ke Cart");
-  };
-
   const handleToLogin = () => {
     localStorage.setItem("redirect", router.asPath);
     router.push("/login");
-  };
-
-  console.log("singleProduct", singleProduct);
-
-  const renderButton = () => {
-    if (singleProduct?.category === "01") {
-      return (
-        <Box className="flex items-center my-10 gap-2">
-          <button
-            disabled={itemQty == 0}
-            onClick={() => descButton(itemQty)}
-            className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
-          >
-            -
-          </button>
-          <NumericFormat
-            value={itemQty}
-            allowLeadingZeros
-            className="w-20 h-7 text-center"
-            thousandSeparator=","
-            onChange={(e) => {
-              setItemQty(e.target.value);
-              debounceCalculatePrice(e.target.value, singleProduct);
-            }}
-          />
-          <button
-            disabled={itemQty === singleProduct?.stock}
-            onClick={() => addButton(itemQty)}
-            className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
-          >
-            +
-          </button>
-          <Button
-            className="w-fit ml-8"
-            variant="contained"
-            disabled={fetchingPrice}
-            sx={{ backgroundColor: "#713F97", color: "white" }}
-            onClick={() => handleAddToCart()}
-          >
-            Add TO Cart
-          </Button>
-        </Box>
-      );
-    } else {
-      return (
-        <Button
-          className="my-10 w-fit"
-          variant="contained"
-          sx={{ backgroundColor: "#713F97", color: "white" }}
-          onClick={handleOpen}
-        >
-          {singleProduct?.category == "02"
-            ? "Customize Product"
-            : "Minta Penawaran"}
-        </Button>
-      );
-    }
   };
 
   if (isProductLoading) {
