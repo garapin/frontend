@@ -292,7 +292,7 @@ const index = () => {
                 disabled={itemQty == 0}
                 onClick={() => descButton(itemQty)}
                 variant="contained"
-                className="rounded-md p-2 max-w-[40px] h-[40px]"
+                className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
               >
                 <RemoveIcon />
               </Button>
@@ -310,7 +310,7 @@ const index = () => {
                 disabled={itemQty === singleProduct?.stock}
                 onClick={() => addButton(itemQty)}
                 variant="contained"
-                className="rounded-md p-2 max-w-[40px] h-[40px]"
+                className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
               >
                 <AddIcon />
               </Button>

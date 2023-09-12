@@ -35,7 +35,7 @@
     "loginButton": "Masuk"
   },
   "cart": {
-    "title": "Keranjang",
+    "title": "Keranjang Belanja",
     "confirmButton": "BELI",
     "totalPrice": "Total Harga",
     "deleteButton": "hapus",

@@ -3,6 +3,7 @@ import {
   Button,
   Checkbox,
   Container,
+  Divider,
   Grid,
   Typography,
   debounce,
@@ -24,7 +25,7 @@ import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { NumericFormat } from "react-number-format";
-import { changeCurrency } from "@/tools/utils";
+import { changeCurrency, getCategoryLabel } from "@/tools/utils";
 
 interface Product {
   id: number;
@@ -194,193 +195,148 @@ function Cart() {
 
   return (
     <>
-      <main>
-        <Box maxWidth="lg" className="flex flex-col content-center mx-auto">
-          <Box className="h-min-screen flex flex-col justify-center bg-white">
-            <Container
-              maxWidth="xl"
-              className="px-4 pt-36 pb-28 md:pt-48 md:pb-48"
+      <main className="max-w-md mx-auto bg-slate-50 p-6">
+        <Box className="h-min-screen flex flex-col justify-center bg-white rounded-xl py-8">
+          <Container maxWidth="xl" className="px-4 space-y-4">
+            <Typography
+              fontSize={32}
+              color="text.primary"
+              className="pb-2 font-semibold"
             >
-              <Typography fontSize={26} fontWeight={700} color="text.primary">
-                {t("cart.title")}
-              </Typography>
-              <Box className="flex items-center">
-                <Checkbox
-                  onClick={selectAllProducts}
-                  checked={
-                    selectedProducts?.length > 0 &&
-                    selectedProducts?.length ===
-                      cartList?.filter(
-                        (product: any) => changeCurrency(product.qty) > 0
-                      ).length
-                  }
-                />
-                <Typography fontSize={17} fontWeight={400} color="text.primary">
-                  {t("cart.selectAll")}
-                </Typography>
-              </Box>
-              <hr className="h-px my-2 bg-[#E2E2E2] border-0 dark:bg-[#E2E2E2]" />
-              {cartList?.map((val: any) => (
-                <>
-                  {val?.delete ? null : (
-                    <>
-                      <Box className="mt-5 flex justify-between">
-                        <Box className="flex items-center flex-1">
-                          <Checkbox
-                            checked={selectedProducts.includes(val.id)}
-                            onChange={() => toggleProductSelection(val.id)}
-                          />
+              {t("cart.title")}
+            </Typography>
+            {cartList?.map((val: any) => (
+              <>
+                {val?.delete ? null : (
+                  <>
+                    <Box>
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          checked={selectedProducts.includes(val.id)}
+                          onChange={() => toggleProductSelection(val.id)}
+                        />
+                        <div className="w-full bg-slate-50 p-4 rounded-lg space-y-2">
                           <img
-                            width={120}
                             style={{ borderRadius: "20%" }}
-                            className="rounded-lg object-contain mr-3"
-                            height={120}
+                            className="rounded-lg object-contain w-full"
                             src={val?.product?.img?.[0] || imagePlaceholder}
                             alt="image"
                           />
-                          <Box className="flex-1">
-                            {val?.productCategoryId === "02" ? (
-                              <Typography
-                                style={{
-                                  background: "gray",
-                                  borderRadius: "10px",
-                                  textAlign: "center",
+                          <Typography
+                            className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                            fontSize={14}
+                            fontWeight={400}
+                          >
+                            {getCategoryLabel(val?.productCategoryId)}
+                          </Typography>
+                          <Typography
+                            fontSize={17}
+                            fontWeight={400}
+                            color="text.primary"
+                            className="font-semibold"
+                          >
+                            {val?.product?.productName}
+                          </Typography>
+                          <Typography className="text-sm text-slate-600">
+                            {rupiah(val.totalPrice)}
+                          </Typography>
+                          <Box className="space-y-4">
+                            <Box className="flex items-center">
+                              <Button
+                                disabled={val.qty === 1}
+                                onClick={() => {
+                                  if (val.qty > val.product?.moq) {
+                                    adjustProductQuantity(val.id, val.qty - 1);
+                                  }
+                                  debounceCalculatePrice(
+                                    val.qty - 1,
+                                    val.productId,
+                                    val
+                                  );
                                 }}
-                                className="font-bold max-w-[12rem]"
-                                fontSize={17}
-                                fontWeight={400}
-                                color="text.primary"
+                                className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-4"
                               >
-                                Digital Packaging
-                              </Typography>
-                            ) : (
-                              <Typography
-                                style={{
-                                  background: "gray",
-                                  borderRadius: "10px",
-                                  textAlign: "center",
+                                -
+                              </Button>
+                              <NumericFormat
+                                value={val.qty}
+                                allowLeadingZeros
+                                className="w-full border-none outline-none text-center font-semibold text-sm py-3"
+                                thousandSeparator=","
+                                onChange={(e) => {
+                                  adjustProductQuantity(
+                                    val.id,
+                                    parseInt(
+                                      e.target.value.replace(/[^0-9]/g, "")
+                                    )
+                                  );
+                                  debounceCalculatePrice(
+                                    parseInt(
+                                      e.target.value.replace(/[^0-9]/g, "")
+                                    ),
+                                    val.productId,
+                                    val
+                                  );
                                 }}
-                                className="font-bold max-w-[12rem]"
-                                fontSize={17}
-                                fontWeight={400}
-                                color="text.primary"
+                              />
+                              <Button
+                                disabled={val.qty === val.product?.stock}
+                                onClick={() => {
+                                  adjustProductQuantity(
+                                    val.id,
+                                    typeof val.qty === "string"
+                                      ? parseInt(
+                                          val.qty.replace(/[^0-9]/g, "")
+                                        ) + 1
+                                      : val.qty + 1
+                                  );
+                                  debounceCalculatePrice(
+                                    val.qty + 1,
+                                    val.productId,
+                                    val
+                                  );
+                                }}
+                                className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-3"
                               >
-                                Ready to buy
-                              </Typography>
-                            )}
-                            <Typography
-                              fontSize={17}
-                              fontWeight={400}
-                              color="text.primary"
+                                +
+                              </Button>
+                            </Box>
+                            <Button
+                              variant="contained"
+                              className="capitalize"
+                              fullWidth
                             >
-                              {val?.product?.productName}
-                            </Typography>
-                            <Typography
-                              fontSize={17}
-                              fontWeight={600}
-                              color="text.primary"
-                            >
-                              {rupiah(val.totalPrice)}
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        <Box>
-                          <div className="flex justify-center">
+                              Detail
+                            </Button>
                             <Button
                               onClick={() => handleDelete(val)}
-                              className="text-red-500"
+                              variant="outlined"
+                              className="capitalize"
+                              fullWidth
                             >
-                              hapus
+                              Delete
                             </Button>
-                          </div>
-                          <Box className="flex items-center gap-2">
-                            <button
-                              disabled={val.qty === 1}
-                              onClick={() => {
-                                if (val.qty > val.product?.moq) {
-                                  adjustProductQuantity(val.id, val.qty - 1);
-                                }
-                                debounceCalculatePrice(
-                                  val.qty - 1,
-                                  val.productId,
-                                  val
-                                );
-                              }}
-                              className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
-                            >
-                              -
-                            </button>
-                            <NumericFormat
-                              value={val.qty}
-                              allowLeadingZeros
-                              className="w-20 h-7 text-center font-bold text-base"
-                              thousandSeparator=","
-                              onChange={(e) => {
-                                adjustProductQuantity(
-                                  val.id,
-                                  parseInt(
-                                    e.target.value.replace(/[^0-9]/g, "")
-                                  )
-                                );
-                                debounceCalculatePrice(
-                                  parseInt(
-                                    e.target.value.replace(/[^0-9]/g, "")
-                                  ),
-                                  val.productId,
-                                  val
-                                );
-                              }}
-                            />
-                            <button
-                              disabled={val.qty === val.product?.stock}
-                              onClick={() => {
-                                adjustProductQuantity(
-                                  val.id,
-                                  typeof val.qty === "string"
-                                    ? parseInt(val.qty.replace(/[^0-9]/g, "")) +
-                                        1
-                                    : val.qty + 1
-                                );
-                                debounceCalculatePrice(
-                                  val.qty + 1,
-                                  val.productId,
-                                  val
-                                );
-                              }}
-                              className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
-                            >
-                              +
-                            </button>
                           </Box>
-                        </Box>
-                      </Box>
-                      <hr className="h-px my-2 bg-[#E2E2E2] border-0 dark:bg-[#E2E2E2]" />
-                    </>
-                  )}
-                </>
-              ))}
-              <Box className="mt-7 flex justify-between items-center">
-                <Typography
-                  fontSize={17}
-                  marginLeft="15px"
-                  marginRight="15px"
-                  fontWeight={500}
-                  color="text.primary"
-                >
-                  Total Harga:{" "}
-                  <span className="font-bold">{rupiah(getTotalPrice())}</span>
-                </Typography>
-                <button
-                  disabled={selectedProducts?.length === 0}
-                  onClick={() => buySelectedProducts()}
-                  className="w-16 h-9 bg-[#713F97] border-none rounded-md text-slate-50 cursor-pointer"
-                >
-                  Beli
-                </button>
-              </Box>
-            </Container>
-          </Box>
+                        </div>
+                      </div>
+                    </Box>
+                  </>
+                )}
+              </>
+            ))}
+            <Box className="pt-8 space-y-6">
+              <Divider />
+              <Button
+                variant="contained"
+                className="py-3 capitalize text-lg"
+                onClick={() => buySelectedProducts()}
+                disabled={selectedProducts?.length === 0}
+                fullWidth
+              >
+                Lanjut Pembayaran
+              </Button>
+            </Box>
+          </Container>
         </Box>
       </main>
     </>
