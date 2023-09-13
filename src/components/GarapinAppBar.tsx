@@ -153,8 +153,8 @@ const GarapinAppBar = ({
 
   const { t } = useTranslation("common");
   return (
-    <Box className="max-w-md mx-auto py-6 px-4 bg-white relative">
-      <div className="flex items-center justify-between">
+    <Box className="max-w-md mx-auto pt-6 bg-white relative">
+      <div className="flex items-center justify-between shadow-sm pb-6 px-4">
         <Link href="/">
           <Image
             src="/garapin-logo-colored.png"
@@ -171,7 +171,7 @@ const GarapinAppBar = ({
       {openMenu && (
         <ClickAwayListener onClickAway={handleClick}>
           <Box className="absolute top-0 left-0 h-screen w-full bg-white shadow-md z-50 py-6">
-            <div className="flex items-center justify-between shadow-sm px-4 pb-4">
+            <div className="flex items-center justify-between shadow-sm px-4 pb-6">
               <Link href="/">
                 <Image
                   src="/garapin-logo-colored.png"
@@ -214,24 +214,39 @@ const GarapinAppBar = ({
                     </Typography>
                   </div>
                   <IsAdmin>
-                    <MenuItem className="py-4 rounded-lg hover:bg-[#713F97] hover:text-white">
-                      <Link href="/admin/orders">Manage Orders</Link>
+                    <MenuItem
+                      className="py-4 rounded-lg hover:bg-[#713F97] hover:text-white"
+                      onClick={() => {
+                        router.push("/admin/orders");
+                        setOpenMenu(false);
+                      }}
+                    >
+                      <Box>Manage Orders</Box>
                     </MenuItem>
                   </IsAdmin>
-                  <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
-                    <Link
-                      href="/transaction-list"
-                      className="flex items-center gap-4"
-                    >
+                  <MenuItem
+                    className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white"
+                    onClick={() => {
+                      router.push("/transaction-list");
+                      setOpenMenu(false);
+                    }}
+                  >
+                    <Box className="flex items-center gap-4">
                       <TransactionIconSVG className="fill-[#8692A6] group-hover:fill-[#fff]" />
                       {t("appBar.menu.totalTransaction")}
-                    </Link>
+                    </Box>
                   </MenuItem>
-                  <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
-                    <Link href="/cart" className="flex items-center gap-4">
+                  <MenuItem
+                    className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white"
+                    onClick={() => {
+                      router.push("/cart");
+                      setOpenMenu(false);
+                    }}
+                  >
+                    <Box className="flex items-center gap-4">
                       <CartIconSVG />
                       {t("appBar.menu.totalShop")}
-                    </Link>
+                    </Box>
                   </MenuItem>
                   {/* <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
                     <Link href="#" className="flex items-center gap-4">
