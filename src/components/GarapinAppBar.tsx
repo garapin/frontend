@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Avatar,
+  ClickAwayListener,
   Container,
   Divider,
   FormControl,
@@ -33,6 +34,10 @@ import { makeStyles } from "@mui/styles";
 import IsAdmin from "./Admin/CheckIsAdmin";
 import Image from "next/image";
 import { HamburgerIconSVG } from "@/assets/icons/hamburger-icon";
+import CloseIcon from "@mui/icons-material/Close";
+import { TransactionIconSVG } from "@/assets/icons/transaction-icon";
+import { CartIconSVG } from "@/assets/icons/cart-icon";
+import { BagIconSVG } from "@/assets/icons/bag-icon";
 
 const useStyles = makeStyles({
   menuAppBar: {
@@ -102,11 +107,13 @@ const GarapinAppBar = ({
   const { search } = router.query;
   const fieldRef = useRef<HTMLInputElement>(null);
   const classes = useStyles();
+  const [openMenu, setOpenMenu] = useState(false);
 
   useEffect(() => {}, [auth]);
 
   const handleClick = (event: any) => {
-    setAnchorEl(event.currentTarget);
+    // setAnchorEl(event.currentTarget);
+    setOpenMenu(!openMenu);
   };
 
   const handleClose = () => {
@@ -146,7 +153,7 @@ const GarapinAppBar = ({
 
   const { t } = useTranslation("common");
   return (
-    <Box className="max-w-md mx-auto py-6 px-4 bg-white">
+    <Box className="max-w-md mx-auto py-6 px-4 bg-white relative">
       <div className="flex items-center justify-between">
         <Link href="/">
           <Image
@@ -157,75 +164,96 @@ const GarapinAppBar = ({
             className="w-[132px] h-[38px]"
           />
         </Link>
-        <IconButton aria-label="menu" size="medium" onClick={handleClick}>
+        <IconButton aria-label="menu" size="small" onClick={handleClick}>
           <HamburgerIconSVG />
         </IconButton>
       </div>
-      <Menu
-        sx={{ mt: "45px" }}
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        className={classes.menuAppBar}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        {!auth.loading &&
-          auth.authUser == null &&
-          router.pathname !== "/login" && (
-            <Link
-              href="/login"
-              style={{ paddingTop: "4px", paddingBottom: "4px" }}
-            >
-              <Button variant="contained" fullWidth>
-                {t("appBar.loginButton")}
-              </Button>{" "}
-            </Link>
-          )}
-        {!auth.loading && auth.authUser !== null && (
-          <>
-            <div className="flex flex-col gap-2 text-black items-center justify-center">
-              <Avatar sx={{ ml: 2 }} />
-              <Typography
-                className="hidden md:block min-w-max max-w-max"
-                variant="body1"
+      {openMenu && (
+        <ClickAwayListener onClickAway={handleClick}>
+          <Box className="absolute top-0 left-0 h-screen w-full bg-white shadow-md z-50 py-6">
+            <div className="flex items-center justify-between shadow-sm px-4 pb-4">
+              <Link href="/">
+                <Image
+                  src="/garapin-logo-colored.png"
+                  alt="login-bg"
+                  width={300}
+                  height={100}
+                  className="w-[132px] h-[38px]"
+                />
+              </Link>
+              <IconButton
+                aria-label="menu"
+                size="small"
+                onClick={() => setOpenMenu(false)}
               >
-                {auth.authUser.displayName ?? auth.authUser.email}
-              </Typography>
+                <CloseIcon />
+              </IconButton>
             </div>
-            <Divider />
-            <MenuItem className="flex md:hidden">
-              <Typography variant="body1">
-                {auth?.authUser.displayName ?? auth?.authUser.email}
-              </Typography>
-            </MenuItem>
-            <IsAdmin>
-              <Link href="/admin/orders">
-                <MenuItem>Manage Orders</MenuItem>
-              </Link>
-            </IsAdmin>
-            <MenuItem onClick={() => {}}>
-              <Link href="/cart">{t("appBar.menu.cart")}</Link>
-            </MenuItem>
-            <MenuItem onClick={() => {}}>
-              <Link href="/transaction-list">
-                {t("appBar.menu.totalTransaction")}
-              </Link>
-            </MenuItem>
-            <MenuItem onClick={handleLogOut}>
-              {t("appBar.menu.logout")}
-            </MenuItem>
-          </>
-        )}
-      </Menu>
+            <div className="p-4">
+              {!auth.loading &&
+                auth.authUser == null &&
+                router.pathname !== "/login" && (
+                  <Link
+                    href="/login"
+                    style={{ paddingTop: "4px", paddingBottom: "4px" }}
+                  >
+                    <Button variant="contained" fullWidth>
+                      {t("appBar.loginButton")}
+                    </Button>{" "}
+                  </Link>
+                )}
+              {!auth.loading && auth.authUser !== null && (
+                <Box className="space-y-4">
+                  <div className="flex gap-4 text-black items-center">
+                    <Avatar sx={{ ml: 2 }} className="w-16 h-16" />
+                    <Typography
+                      className="text-base font-semibold"
+                      variant="body1"
+                    >
+                      {auth.authUser.displayName ?? auth.authUser.email}
+                    </Typography>
+                  </div>
+                  <IsAdmin>
+                    <MenuItem className="py-4 rounded-lg hover:bg-[#713F97] hover:text-white">
+                      <Link href="/admin/orders">Manage Orders</Link>
+                    </MenuItem>
+                  </IsAdmin>
+                  <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
+                    <Link
+                      href="/transaction-list"
+                      className="flex items-center gap-4"
+                    >
+                      <TransactionIconSVG className="fill-[#8692A6] group-hover:fill-[#fff]" />
+                      {t("appBar.menu.totalTransaction")}
+                    </Link>
+                  </MenuItem>
+                  <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
+                    <Link href="/cart" className="flex items-center gap-4">
+                      <CartIconSVG />
+                      {t("appBar.menu.totalShop")}
+                    </Link>
+                  </MenuItem>
+                  {/* <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
+                    <Link href="#" className="flex items-center gap-4">
+                      <BagIconSVG className="stroke-green-700" />
+                      {t("appBar.menu.shopPoint")}
+                    </Link>
+                  </MenuItem> */}
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleLogOut}
+                    className="py-4 rounded-lg capitalize text-base font-bold"
+                    fullWidth
+                  >
+                    {t("appBar.menu.logout")}
+                  </Button>
+                </Box>
+              )}
+            </div>
+          </Box>
+        </ClickAwayListener>
+      )}
     </Box>
     // <Container maxWidth="xl">
     //   <AppBar position="fixed" style={{ zIndex: 1300 }}>

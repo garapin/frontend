@@ -127,7 +127,7 @@ function Cart() {
   const debounceCalculatePrice = React.useRef(
     debounce(async (itemQty, productId, item?) => {
       if (item.productCategoryId == 1) {
-        const data = await dispatch(
+        const data: any = await dispatch(
           getRecalculateCartRTB(itemQty, productId, item.idempotencyKey)
         );
         if (data) {
@@ -150,7 +150,7 @@ function Cart() {
           });
         }
       } else {
-        const data = await dispatch(
+        const data: any = await dispatch(
           getProductTemplatePriceCart({
             product: item.product,
             selectedOptions: item.selectedOptions,

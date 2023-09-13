@@ -28,8 +28,10 @@
     "searchBarText": "Cari sesuatu...",
     "menu": {
       "profile": "Profil",
-      "logout": "Keluar",
+      "logout": "Log Out",
       "totalTransaction": "Total Transaksi",
+      "totalShop": "Total Belanja",
+      "shopPoint": "Point Belanja",
       "cart": "Keranjang"
     },
     "loginButton": "Masuk"
