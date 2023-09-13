@@ -13,8 +13,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { getPaymentStatus } from "@/store/modules/products";
 import DoDisturbOnIcon from "@mui/icons-material/DoDisturbOn";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import HeadsetIcon from "@mui/icons-material/Headset";
 
 function PaymentComplete() {
   const router = useRouter();
@@ -28,27 +28,53 @@ function PaymentComplete() {
     dispatch(getPaymentStatus(router.query.slug as string));
   }, []);
 
-  const PaymentStatusComp = ({ status, className }: any) => {
+  const PaymentStatusComp = ({ status }: any) => {
     if (status === "PAID") {
       return (
-        <div className={className}>
-          <CheckCircleIcon className="text-[120px] text-green-500" />
+        <div className={`space-y-4`}>
+          <div className="text-center">
+            <img
+              src="/assets/thankyou.png"
+              alt="success"
+              className="w-1/2 mx-auto"
+            />
+          </div>
           <Typography
             variant="h4"
-            color="#713F97"
-            fontWeight="bold"
-            className="pt-4"
+            className="text-2xl font-semibold text-center"
           >
-            Payment Successful!
+            Terimakasih Telah Berbelanja
           </Typography>
-          <Typography fontWeight="500" className="text-gray-600 text-lg">
-            Payment received succesfully! We will process your order shortly
+          <Typography className="text-gray-600 text-base leading-6">
+            Terima kasih telah memilih Garapin sebagai pilihan Anda untuk
+            memenuhi kebutuhan packaging. Kami sangat menghargai kepercayaan
+            Anda dan berharap produk-produk kami dapat memberikan manfaat dan
+            kepuasan dalam penggunaannya. Kami akan terus berkomitmen untuk
+            memberikan layanan terbaik dan kualitas produk yang terbaik bagi
+            pelanggan setia seperti Anda. Sampai jumpa di pembelian selanjutnya
+            di website Garapin!
           </Typography>
+          <Button
+            variant="contained"
+            className="capitalize text-lg py-4"
+            fullWidth
+            onClick={() => router.push("/product-list")}
+          >
+            Lihat Produk Lainnya
+          </Button>
+          <Button
+            variant="outlined"
+            className="capitalize text-lg py-4"
+            fullWidth
+            onClick={() => router.push("/")}
+          >
+            Kembali Ke Beranda
+          </Button>
         </div>
       );
     } else if (status === "PENDING") {
       return (
-        <div className={className}>
+        <div>
           <DoDisturbOnIcon className="text-[120px] text-amber-500" />
           <Typography
             variant="h4"
@@ -65,53 +91,65 @@ function PaymentComplete() {
       );
     } else {
       return (
-        <div className={className}>
-          <CancelIcon className="text-[120px] text-red-500" />
+        <div className={`space-y-4`}>
+          <div className="text-center">
+            <img
+              src="/assets/failed.png"
+              alt="success"
+              className="w-1/2 mx-auto"
+            />
+          </div>
           <Typography
             variant="h4"
-            color="#713F97"
-            fontWeight="bold"
-            className="pt-4"
+            className="text-2xl font-semibold text-center max-w-sm"
           >
-            Payment Failed!
+            Terjadi Kesalahan Pada Pembayaran
           </Typography>
-          <Typography fontWeight="500" className="text-gray-600 text-lg">
-            Sorry, we failed to process your payment. Please contact us for
-            further support
+          <Typography className="text-gray-600 text-base leading-6">
+            Anda dapat melakukan pemesanan ulang namun jika masih tidak bisa,
+            anda dapat menghubungi tim kami agar kami dapat membantu anda
           </Typography>
+          <Button
+            variant="contained"
+            className="capitalize text-lg py-4"
+            fullWidth
+            startIcon={<HeadsetIcon />}
+          >
+            Hubungi Tim Support
+          </Button>
         </div>
       );
     }
   };
 
   return (
-    <Container className="h-[80vh] w-screen flex items-center justify-center">
-      <Box className="max-w-3xl w-full flex justify-center flex-col mx-auto p-6 bg-white rounded-lg shadow-xl items-center">
+    <Container className="max-w-md mx-auto py-6">
+      <Box>
         {!paymentStatus ? (
           <Box className="w-full mx-auto">
             <Skeleton
-              variant="circular"
-              width={120}
-              height={120}
+              variant="rectangular"
+              width={200}
+              height={160}
               className="mb-10 mx-auto"
             />
             <Skeleton
               variant="rectangular"
-              className="max-w-xl mx-auto h-10 mb-4"
+              className="max-w-xl mx-auto h-10 mb-2"
+            />
+            <Skeleton
+              variant="rectangular"
+              className="max-w-xl mx-auto h-10 mb-2"
             />
             <Skeleton
               variant="rectangular"
               className="max-w-xl mx-auto h-8 mb-10"
             />
-            <Skeleton variant="rectangular" className="w-60 h-12 mx-auto" />
+            <Skeleton variant="rectangular" className="w-full h-12 mx-auto" />
           </Box>
         ) : (
           <Box className="flex justify-center flex-col items-center">
-            <PaymentStatusComp
-              status={paymentStatus?.paymentStatus}
-              className="mb-6 text-center"
-            />
-            <Button onClick={() => router.push("/")}>Back to home</Button>
+            <PaymentStatusComp status={paymentStatus?.paymentStatus} />
           </Box>
         )}
       </Box>
