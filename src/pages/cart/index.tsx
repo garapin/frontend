@@ -2,8 +2,10 @@ import {
   Box,
   Button,
   Checkbox,
+  Collapse,
   Container,
   Divider,
+  Fade,
   Grid,
   Typography,
   debounce,
@@ -44,6 +46,10 @@ function Cart() {
   const router = useRouter();
   const auth = useFirebaseAuth();
   const dispatch = useAppDispatch();
+  const [cardDetail, setCardDetail] = useState<any>({
+    open: false,
+    data: {},
+  });
 
   const handleDelete = async (product: any) => {
     deleteItemCart(product?.id, auth?.authUser?.uid);
@@ -301,13 +307,30 @@ function Cart() {
                                 +
                               </Button>
                             </Box>
-                            <Button
-                              variant="contained"
-                              className="capitalize"
-                              fullWidth
-                            >
-                              Detail
-                            </Button>
+                            {val?.productCategoryId == 2 && (
+                              <>
+                                <Button
+                                  variant="contained"
+                                  className="capitalize"
+                                  fullWidth
+                                  onClick={() => {
+                                    if (val.id == cardDetail?.data?.id) {
+                                      setCardDetail({
+                                        open: false,
+                                        data: {},
+                                      });
+                                    } else {
+                                      setCardDetail({
+                                        open: true,
+                                        data: val,
+                                      });
+                                    }
+                                  }}
+                                >
+                                  Detail
+                                </Button>
+                              </>
+                            )}
                             <Button
                               onClick={() => handleDelete(val)}
                               variant="outlined"
@@ -316,6 +339,58 @@ function Cart() {
                             >
                               Delete
                             </Button>
+                            {val?.productCategoryId == 2 &&
+                              cardDetail?.open &&
+                              cardDetail?.data?.id == val?.id &&
+                              Object?.keys(val?.selectedOptions).map(
+                                (key: any, i) => {
+                                  const selected: any =
+                                    val?.selectedOptions[`${key as number}`];
+                                  const keyName = key
+                                    .split("-")
+                                    .map(
+                                      (val: any) =>
+                                        val.charAt(0).toUpperCase() +
+                                        val.slice(1)
+                                    )
+                                    .join(" ");
+
+                                  let selectedOptionName;
+
+                                  if (!Array.isArray(selected.selectedOption)) {
+                                    selectedOptionName =
+                                      selected.selectedOption.name;
+                                  } else {
+                                    selectedOptionName = selected.selectedOption
+                                      .map((val: any) => val.name)
+                                      .join(", ");
+                                  }
+                                  return (
+                                    <Fade in={cardDetail.open} timeout={500}>
+                                      <Grid
+                                        item
+                                        md={6}
+                                        key={i}
+                                        className="w-full"
+                                      >
+                                        <Typography className="font-medium text-slate-600 text-sm">
+                                          {keyName}
+                                        </Typography>
+                                        <Box
+                                          style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          <Typography className="font-medium text-[#713F97] text-sm">
+                                            {selectedOptionName}
+                                          </Typography>
+                                        </Box>
+                                      </Grid>
+                                    </Fade>
+                                  );
+                                }
+                              )}
                           </Box>
                         </div>
                       </div>
