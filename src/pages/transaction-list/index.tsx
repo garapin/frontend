@@ -1,50 +1,19 @@
 import React, { useRef } from "react";
-import CardVertical from "@/components/CardVertical";
-import { getFirestore } from "@/configs/firebase";
-import { useAppSelector } from "@/hooks/useAppRedux";
-import useFirebaseAuth from "@/hooks/useFirebaseAuth";
-import {
-  getAllProductList,
-  getAllProductNext,
-  getAllProducts,
-} from "@/store/modules/products";
-import { Product } from "@/types/product";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { getAllProducts } from "@/store/modules/products";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import TransactionList from "@/components/TransactionList";
-
-import { faker } from "@faker-js/faker";
-import Link from "next/link";
-import { imagePlaceholder } from "@/components/ProductList/ProductList";
-import { getProductPrice } from "@/tools/rupiah";
 import { SearchIconSVG } from "@/assets/icons/search-icon";
 
 const TransactionListIndex = () => {
-  const auth = useFirebaseAuth();
-  const { categories } = useAppSelector((state) => state.appDefaults);
-  const {
-    products,
-    isProductLoading,
-    allProductsLoaded,
-    isFetchingNext,
-    history,
-  } = useAppSelector((state) => state.product);
   const dispatch = useDispatch();
   const [isTab, setTab] = React.useState("cp");
   const searchRef = useRef<HTMLFormElement | any>(null);
+  const [query, setQuery] = React.useState<any>("");
 
   useEffect(() => {
     dispatch<any>(getAllProducts());
@@ -69,18 +38,10 @@ const TransactionListIndex = () => {
             placeholder="Cari Produk Anda"
             fullWidth
             inputRef={searchRef}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                // fetch
-              }
-            }}
+            onChange={(e) => setQuery(e.target.value)}
             InputProps={{
               startAdornment: (
-                <IconButton
-                  onClick={(event) => {
-                    // fetch
-                  }}
-                >
+                <IconButton>
                   <SearchIconSVG className="w-6 h-6 text-black" />
                 </IconButton>
               ),
@@ -140,7 +101,7 @@ const TransactionListIndex = () => {
               </div>
             </div>
 
-            <TransactionList currentTab={isTab} />
+            <TransactionList currentTab={isTab} query={query} />
           </Box>
         </Container>
       </Box>

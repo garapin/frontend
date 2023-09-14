@@ -9,7 +9,7 @@ import { setInvoice, setInvoiceModalOpen } from "@/store/modules/admin";
 import { invoiceStatus } from "@/const/status";
 import TransactionCard from "./TransactionCard";
 
-export default function TransactionList({ currentTab }: any) {
+export default function TransactionList({ currentTab, query }: any) {
   const [modalInquiry, setModalInquiry] = React.useState<any>({
     open: false,
     data: {},
@@ -68,63 +68,72 @@ export default function TransactionList({ currentTab }: any) {
             md: 3,
           }}
         >
-          {dataHistory?.map(
-            (
-              val: {
-                product: {
-                  category: any;
-                  img: (string | undefined)[];
-                  productName: string;
-                  maxPrice: number;
-                };
-                products?: [
-                  {
-                    product: {
-                      category: any;
-                      img: (string | undefined)[];
-                      productName: string;
-                      maxPrice: number;
-                    };
-                    qty: number;
-                    totalPrice: number;
-                    unitPrice: number;
-                  }
-                ];
-                status: string;
-                quantity: number;
-                orderDescription: string;
-                totalPrice?: number;
-                paymentLink?: string;
-                id: string;
-                createdAt: FirebaseDate;
-                paymentExpiredAt: FirebaseDate;
-              },
-              i: number
-            ) => {
-              const milliseconds =
-                val.createdAt?.seconds * 1000 +
-                Math.floor(val.createdAt?.nanoseconds / 1000000);
-              const dateHistory = new Date(milliseconds);
-
-              let expiredDate: Date | undefined = undefined;
-              if (val.paymentExpiredAt) {
-                const millisecondsExpired =
-                  val.paymentExpiredAt?.seconds * 1000 +
-                  Math.floor(val.paymentExpiredAt?.nanoseconds / 1000000);
-                expiredDate = new Date(millisecondsExpired);
+          {dataHistory
+            ?.filter((dat: any) => {
+              if (query) {
+                return dat?.product?.productName
+                  ?.toLowerCase()
+                  .includes(query.toLowerCase());
               }
-              return (
-                <TransactionCard
-                  key={val.id}
-                  val={val}
-                  currentTab={currentTab}
-                  dateHistory={dateHistory}
-                  invoiceStatus={invoiceStatus}
-                  handleOpen={handleOpen}
-                />
-              );
-            }
-          )}
+              return true;
+            })
+            ?.map(
+              (
+                val: {
+                  product: {
+                    category: any;
+                    img: (string | undefined)[];
+                    productName: string;
+                    maxPrice: number;
+                  };
+                  products?: [
+                    {
+                      product: {
+                        category: any;
+                        img: (string | undefined)[];
+                        productName: string;
+                        maxPrice: number;
+                      };
+                      qty: number;
+                      totalPrice: number;
+                      unitPrice: number;
+                    }
+                  ];
+                  status: string;
+                  quantity: number;
+                  orderDescription: string;
+                  totalPrice?: number;
+                  paymentLink?: string;
+                  id: string;
+                  createdAt: FirebaseDate;
+                  paymentExpiredAt: FirebaseDate;
+                },
+                i: number
+              ) => {
+                const milliseconds =
+                  val.createdAt?.seconds * 1000 +
+                  Math.floor(val.createdAt?.nanoseconds / 1000000);
+                const dateHistory = new Date(milliseconds);
+
+                let expiredDate: Date | undefined = undefined;
+                if (val.paymentExpiredAt) {
+                  const millisecondsExpired =
+                    val.paymentExpiredAt?.seconds * 1000 +
+                    Math.floor(val.paymentExpiredAt?.nanoseconds / 1000000);
+                  expiredDate = new Date(millisecondsExpired);
+                }
+                return (
+                  <TransactionCard
+                    key={val.id}
+                    val={val}
+                    currentTab={currentTab}
+                    dateHistory={dateHistory}
+                    invoiceStatus={invoiceStatus}
+                    handleOpen={handleOpen}
+                  />
+                );
+              }
+            )}
 
           {currentTab != "cp" && <OrderDetailModal />}
 
