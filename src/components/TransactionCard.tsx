@@ -27,7 +27,7 @@ const TransactionCard = ({
 }: any) => {
   const [openDetail, setOpenDetail] = React.useState(false);
   return (
-    <Grid item md={12} onClick={() => handleOpen(val)}>
+    <Grid item md={12} onClick={() => handleOpen(val)} className="w-full">
       <Box className="space-y-4 bg-slate-50 p-4 rounded-lg">
         <img
           src={val?.product?.img?.[0] ?? val?.products?.[0]?.product?.img?.[0]}
