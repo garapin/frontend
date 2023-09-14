@@ -51,8 +51,8 @@ const ProductListPage = () => {
   }, [search]);
 
   return (
-    <Box>
-      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2">
+    <Box className="">
+      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2 bg-white mb-4">
         <TextField
           placeholder="Cari produk anda..."
           fullWidth
@@ -91,15 +91,11 @@ const ProductListPage = () => {
           <FilterIconSVG className="w-6 h-6 text-white" />
         </Button> */}
       </Box>
-      <Container className="max-w-md mx-auto">
+      <Container className="max-w-md mx-auto bg-slate-50 px-4">
         <ImageSlider />
         <Box className="flex flex-col py-4">
           {search !== undefined && (
-            <Typography
-              className="px-10 md:px-0"
-              variant="h6"
-              color="text.primary"
-            >
+            <Typography className="px-0" variant="h6" color="text.primary">
               {t("searchResult", {
                 result: products.filter((productSingle: any) =>
                   search !== undefined
@@ -133,6 +129,7 @@ const ProductListPage = () => {
                       price={getProductPrice(product)}
                       slug={product.slug?.toString() ?? product.sku}
                       category={getCategoryLabel(product.category)}
+                      isWhiteBg
                     />
                   </Grid>
                 ))

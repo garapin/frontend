@@ -89,7 +89,7 @@ function LandingPage(props: any) {
   const auth = useFirebaseAuth();
   const fieldRef = React.useRef<HTMLFormElement>(null);
   const [checkVerified, setCheckVerified] = React.useState(false);
-  const [tabVal, setTabVal] = React.useState(2);
+  const [tabVal, setTabVal] = React.useState(0);
 
   const handleChangeTabVal = (
     event: React.SyntheticEvent,
@@ -147,7 +147,7 @@ function LandingPage(props: any) {
               }}
               className="py-0 w-full h-1/3 object-cover"
             />
-            <Container maxWidth="sm">
+            <Container maxWidth="sm" className="px-4">
               <Box>
                 <Box className="space-y-4">
                   <Typography
@@ -261,8 +261,10 @@ function LandingPage(props: any) {
                 </Box>
                 <Box className="mt-20 space-y-6">
                   <h2 className="font-semibold text-[32px] text-center max-w-sm">
-                    Jelajahi Berbagai Kemasan Unik Berdasarkan{" "}
-                    <span className="text-[#713F97]">Kategori</span>
+                    {t("sectionJelajah.header")}{" "}
+                    <span className="text-[#713F97]">
+                      {t("sectionJelajah.category")}
+                    </span>
                   </h2>
                   <Grid container>
                     <Grid
@@ -282,11 +284,10 @@ function LandingPage(props: any) {
                       />
                       <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
                         <p className="uppercase font-bold text-2xl">
-                          Custom Packaging
+                          {t("sectionJelajah.custom_packaging.header")}
                         </p>
                         <p className="font-light leading-5">
-                          Kustomisasi seluruh elemen kemasan dengan mengikuti
-                          kemauan anda.
+                          {t("sectionJelajah.custom_packaging.desc")}
                         </p>
                       </div>
                     </Grid>
@@ -307,11 +308,10 @@ function LandingPage(props: any) {
                       />
                       <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
                         <p className="uppercase font-bold text-2xl">
-                          Ready To Buy
+                          {t("sectionJelajah.ready_to_buy.header")}
                         </p>
                         <p className="font-light leading-5">
-                          Kemasan yang dapat anda beli langsung, karena kemasan
-                          stok sudah tersedia
+                          {t("sectionJelajah.ready_to_buy.desc")}
                         </p>
                       </div>
                     </Grid>
@@ -332,11 +332,10 @@ function LandingPage(props: any) {
                       />
                       <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
                         <p className="uppercase font-bold text-2xl">
-                          Digital Packaging
+                          {t("sectionJelajah.digital_packaging.header")}
                         </p>
                         <p className="font-light leading-5">
-                          Kustomisasi dengan mudah untuk kemasan yang anda
-                          sukai.
+                          {t("sectionJelajah.digital_packaging.desc")}
                         </p>
                       </div>
                     </Grid>
@@ -344,7 +343,7 @@ function LandingPage(props: any) {
                 </Box>
                 <Box className="mt-20 space-y-6">
                   <h2 className="font-semibold text-[32px] max-w-sm">
-                    Rekomendasi Produk Untuk Anda
+                    {t("section_recomendation.title")}
                   </h2>
                   <Tabs
                     value={tabVal}
@@ -383,7 +382,7 @@ function LandingPage(props: any) {
                 </Box>
                 <Box className="mt-20 space-y-16">
                   <h2 className="font-semibold text-[32px] max-w-sm text-center mx-auto">
-                    Happy Client
+                    {t("section_happy_client.title")}
                   </h2>
                   <div className="flex flex-col justify-center items-center gap-16">
                     <img
@@ -405,17 +404,16 @@ function LandingPage(props: any) {
                 </Box>
                 <Box className="mt-20 py-16 px-10 text-center space-y-4 bg-[#713F97] rounded-2xl text-white">
                   <h2 className="font-normal text-[32px] max-w-sm text-center mx-auto">
-                    Konsultasi Gratis
+                    {t("section_consultation.title")}
                   </h2>
                   <p className="leading-6">
-                    Dengan Klik button di samping anda akan mendapatkan
-                    konsultasi gratis dari kami
+                    {t("section_consultation.description")}
                   </p>
                   <Button
                     variant="contained"
                     className="text-[#713F97] bg-white capitalize"
                   >
-                    Konsultasi Sekarang
+                    {t("section_consultation.button")}
                   </Button>
                 </Box>
                 <Box className="mt-20">

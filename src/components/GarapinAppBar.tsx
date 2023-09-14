@@ -16,6 +16,8 @@ import {
   Menu,
   MenuItem,
   NativeSelect,
+  Tab,
+  Tabs,
   Typography,
 } from "@mui/material";
 import {
@@ -108,6 +110,15 @@ const GarapinAppBar = ({
   const fieldRef = useRef<HTMLInputElement>(null);
   const classes = useStyles();
   const [openMenu, setOpenMenu] = useState(false);
+  const secondNavbarRoutes = ["/transaction-list", "/address"];
+  const secondNavbar = secondNavbarRoutes.includes(router.pathname);
+  const [value, setValue] = React.useState(
+    secondNavbarRoutes.indexOf(router.pathname)
+  );
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {}, [auth]);
 
@@ -124,6 +135,7 @@ const GarapinAppBar = ({
     setAnchorEl(null);
     localStorage.setItem("redirect", router.asPath);
     await auth.signOut();
+    setOpenMenu(false);
   };
 
   const switchToLocale = useCallback(
@@ -168,6 +180,35 @@ const GarapinAppBar = ({
           <HamburgerIconSVG />
         </IconButton>
       </div>
+      {secondNavbar && (
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          variant="scrollable"
+          scrollButtons={false}
+        >
+          <Tab
+            className="py-6"
+            onClick={() => router.push("/transaction-list")}
+            label="Daftar Transaksi"
+          />
+          {/* <Tab
+            className="py-6"
+            onClick={() => router.push("/address")}
+            label="Alamat"
+          />
+          <Tab
+            className="py-6"
+            onClick={() => router.push("/customer-support")}
+            label="Layanan Pelanggan"
+          />
+          <Tab
+            className="py-6"
+            onClick={() => router.push("/profile")}
+            label="Profil Saya"
+          /> */}
+        </Tabs>
+      )}
       {openMenu && (
         <ClickAwayListener onClickAway={handleClick}>
           <Box className="absolute top-0 left-0 h-screen w-full bg-white shadow-md z-50 py-6">

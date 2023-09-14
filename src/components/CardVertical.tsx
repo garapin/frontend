@@ -19,6 +19,7 @@ export default function CardVertical({
   maxWidth = "100%",
   category,
   reviews = 4,
+  isWhiteBg = false,
 }: {
   imageUrl: string;
   productName: string;
@@ -28,12 +29,13 @@ export default function CardVertical({
   maxWidth?: string;
   category?: string;
   reviews?: number;
+  isWhiteBg?: boolean;
 }) {
   const router = useRouter();
   const [showDiscount, setShowDiscount] = React.useState(false);
   const [showRating, setShowRating] = React.useState(false);
   return (
-    <Box className="bg-[#F9FAFB] p-4 rounded-lg">
+    <Box className={`${isWhiteBg ? "bg-white" : "bg-slate-50"} p-4 rounded-lg`}>
       <div className="relative mb-2">
         <img
           src={imageUrl}

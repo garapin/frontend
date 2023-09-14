@@ -46,9 +46,22 @@
     }
   },
   "sectionJelajah": {
-    "header": "Jelajahi Produk di Garapin",
+    "header": "Jelajahi Berbagai Kemasan Unik Berdasarkan",
+    "category": "Kategori",
     "viewAllButton": "Lihat Semua",
-    "categoryHeader": "Jelajahi Berdasar Kategori"
+    "categoryHeader": "Jelajahi Berdasar Kategori",
+    "custom_packaging": {
+      "header": "Custom Packaging",
+      "desc": "Kustomisasi seluruh elemen kemasan dengan mengikuti kemauan anda."
+    },
+    "ready_to_buy": {
+      "header": "Ready To Buy",
+      "desc": "Kemasan yang dapat anda beli langsung, karena kemasan stok sudah tersedia."
+    },
+    "digital_packaging": {
+      "header": "Digital Packaging",
+      "desc": "Kustomisasi dengan mudah untuk kemasan yang anda sukai."
+    }
   },
   "section3": {
     "header": "Mengundang mitra baru untuk bergabung!",
@@ -63,5 +76,16 @@
     "content": "This is the content of section 5.",
     "email": "email@perusahaan-anda.co.id",
     "register": "Daftar Sekarang"
+  },
+  "section_recomendation": {
+    "title": "Rekomendasi Produk Untuk Anda"
+  },
+  "section_happy_client": {
+    "title": "Happy Client"
+  },
+  "section_consultation": {
+    "title": "Konsultasi Gratis",
+    "description": "Dengan Klik button di samping anda akan mendapatkan konsultasi gratis dari kami",
+    "button": "Konsultasi Sekarang"
   }
 }

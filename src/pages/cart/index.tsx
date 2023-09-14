@@ -195,7 +195,7 @@ function Cart() {
 
   return (
     <>
-      <main className="max-w-md mx-auto bg-slate-50 p-6">
+      <main className="max-w-md mx-auto bg-slate-50 p-4">
         <Box className="h-min-screen flex flex-col justify-center bg-white rounded-xl py-8">
           <Container maxWidth="xl" className="px-4 space-y-4">
             <Typography

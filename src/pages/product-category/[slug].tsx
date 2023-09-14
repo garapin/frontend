@@ -28,6 +28,7 @@ import { useRef } from "react";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { getCategoryLabel } from "@/tools/utils";
 import { SearchIconSVG } from "@/assets/icons/search-icon";
+import ImageSlider from "@/components/ImageSlider";
 
 const ProductCategoryPage = () => {
   const router = useRouter();
@@ -57,7 +58,7 @@ const ProductCategoryPage = () => {
 
   return (
     <Box>
-      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2">
+      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2 bg-white mb-4">
         <TextField
           placeholder="Cari produk anda..."
           fullWidth
@@ -96,22 +97,24 @@ const ProductCategoryPage = () => {
           <FilterIconSVG className="w-6 h-6 text-white" />
         </Button> */}
       </Box>
-      <Container className="max-w-md mx-auto">
+      <Container className="max-w-md mx-auto bg-slate-50 px-4">
+        <ImageSlider />
         <Box className="flex flex-col py-4">
           {slug !== undefined && (
             <Typography
-              className="px-10 md:px-0"
+              className="px-0 text-[22px] font-semibold"
               variant="h6"
               color="text.primary"
             >
-              {t("searchResult", {
-                result: products.length,
+              {t("show")}
+              <span className="text-[#713F97] px-1">{products.length}</span>
+              {t("results", {
                 searchTerm: slug ?? "",
               })}
             </Typography>
           )}
           <Grid
-            className="px-10 md:px-0 pt-4 md:pt-8"
+            className="px-0 pt-4 md:pt-8"
             container
             spacing={3}
             alignItems="stretch"
@@ -128,6 +131,7 @@ const ProductCategoryPage = () => {
                     price={getProductPrice(product)}
                     slug={product.slug?.toString() ?? product.sku}
                     category={getCategoryLabel(product.category)}
+                    isWhiteBg
                   />
                 </Grid>
               ))

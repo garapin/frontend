@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import CardVertical from "@/components/CardVertical";
 import { getFirestore } from "@/configs/firebase";
 import { useAppSelector } from "@/hooks/useAppRedux";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
-import { getAllProductNext, getAllProducts } from "@/store/modules/products";
+import {
+  getAllProductList,
+  getAllProductNext,
+  getAllProducts,
+} from "@/store/modules/products";
 import { Product } from "@/types/product";
 import {
   Box,
@@ -11,6 +15,8 @@ import {
   CircularProgress,
   Divider,
   Grid,
+  IconButton,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Container } from "@mui/system";
@@ -24,6 +30,7 @@ import { faker } from "@faker-js/faker";
 import Link from "next/link";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { getProductPrice } from "@/tools/rupiah";
+import { SearchIconSVG } from "@/assets/icons/search-icon";
 
 const TransactionListIndex = () => {
   const auth = useFirebaseAuth();
@@ -37,6 +44,7 @@ const TransactionListIndex = () => {
   } = useAppSelector((state) => state.product);
   const dispatch = useDispatch();
   const [isTab, setTab] = React.useState("cp");
+  const searchRef = useRef<HTMLFormElement | any>(null);
 
   useEffect(() => {
     dispatch<any>(getAllProducts());
@@ -47,115 +55,96 @@ const TransactionListIndex = () => {
   };
 
   return (
-    <div className="py-40 flex-grow flex-fill">
-      <Container>
-        <Typography variant="h5" fontWeight={600} marginBottom="10px">
-          Order List
-        </Typography>
-        <Box className="mb-8 flex items-center">
-          <Typography marginRight="30px">Product Category</Typography>
-          <div
-            onClick={() => handleChangeTabs("cp")}
-            className={`p-3 mr-5 rounded-md cursor-pointer text-white ${
-              isTab === "cp" ? "bg-[#713F97]" : "bg-[#bb86fc]"
-            }`}
+    <main className="max-w-md mx-auto bg-slate-50 p-4">
+      <Box className="h-min-screen flex flex-col justify-center bg-white rounded-xl py-8">
+        <Container maxWidth="xl" className="px-4 space-y-4">
+          <Typography
+            fontSize={32}
+            color="text.primary"
+            className="font-semibold"
           >
-            <Typography variant="body2">
-            Custom Packaging
-            </Typography>
-          </div>
-          <div
-            onClick={() => handleChangeTabs("dp")}
-            className={`p-3 mr-5 rounded-md cursor-pointer text-white ${
-              isTab === "dp" ? "bg-[#713F97]" : "bg-[#bb86fc]"
-            }`}
-          >
-            <Typography variant="body2">
-            Digital Packaging & Ready To Buy
-            </Typography>
-          </div>
-          {/* <div
-            onClick={() => handleChangeTabs("rtb")}
-            className={`p-3 mr-5 rounded-md cursor-pointer text-white ${
-              isTab === "rtb" ? "bg-[#713F97]" : "bg-[#bb86fc]"
-            }`}
-          >
-            Ready To Buy
-          </div> */}
-        </Box>
-        <Box>
-          <TransactionList currentTab={isTab} />
-        </Box>
-
-        {/* {auth?.authUser?.authTokenData?.claims?.["printing"]?.["customer"] && (
-          <Typography>Showing Customer DB</Typography>
-        )}
-        {auth?.authUser?.authTokenData?.claims?.["printing"]?.["partner"] && (
-          <Typography>Showing Partner DB</Typography>
-        )} */}
-
-        <Typography variant="h5" style={{ paddingTop: "40px" }}>
-          Categories:
-        </Typography>
-        <Divider />
-        {categories.map((category: any) => (
-          <p key={category.id}>
-            {category.id} {category.name} {category.slug} channel:{" "}
-            {category.channel}
-          </p>
-        ))}
-
-        <Typography variant="h5" style={{ paddingTop: "40px" }}>
-          Products {isProductLoading && <CircularProgress size={10} />}
-        </Typography>
-        <Divider />
-
-        <Grid
-          container
-          spacing={{
-            xs: 2,
-            sm: 4,
-          }}
-          paddingTop={4}
-        >
-          {!isProductLoading &&
-            products.map((product: any) => (
-              <Grid item sm={4} md={3} key={product.id}>
-                <Link
-                  href={`/product-detail/${encodeURIComponent(product.slug)}`}
+            Daftar Transaksi
+          </Typography>
+          <TextField
+            placeholder="Cari Produk Anda"
+            fullWidth
+            inputRef={searchRef}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                // fetch
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <IconButton
+                  onClick={(event) => {
+                    // fetch
+                  }}
                 >
-                  <CardVertical
-                    key={product.id}
-                    slug={product.id ?? ""}
-                    productName={product.productName}
-                    price={getProductPrice(product)}
-                    location="Jakarta"
-                    imageUrl={product.img[0] ?? imagePlaceholder}
-                  />
-                </Link>
-              </Grid>
-            ))}
-        </Grid>
-        {!allProductsLoaded && (
-          <Grid
-            item
-            xs={12}
-            alignItems="center"
-            display={"flex"}
-            justifyContent={"center"}
-            paddingTop={4}
-          >
-            <Button
-              variant="contained"
-              disabled={isFetchingNext}
-              onClick={() => dispatch<any>(getAllProductNext())}
-            >
-              Load more... {isFetchingNext && <CircularProgress size={10} />}
-            </Button>
-          </Grid>
-        )}
-      </Container>
-    </div>
+                  <SearchIconSVG className="w-6 h-6 text-black" />
+                </IconButton>
+              ),
+
+              style: {
+                padding: "0px 4px",
+              },
+            }}
+          />
+
+          <Box>
+            <div className="flex items-center justify-between">
+              <Typography variant="body1" className="text-base font-semibold">
+                Status
+              </Typography>
+              <Button
+                variant="text"
+                className="capitalize"
+                onClick={() => {
+                  searchRef.current.value = "";
+                  handleChangeTabs("cp");
+                }}
+              >
+                Reset Filter
+              </Button>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap mb-6">
+              <div
+                onClick={() => handleChangeTabs("cp")}
+                className={`px-3 py-2 rounded-md cursor-pointer ${
+                  isTab === "cp"
+                    ? "bg-[#713F97]/10 text-[#713F97]"
+                    : "bg-white text-slate-600"
+                }`}
+                style={{
+                  border:
+                    isTab === "cp" ? "1px solid #713F97" : "1px solid #696F79",
+                }}
+              >
+                <Typography variant="body2">Custom Packaging</Typography>
+              </div>
+              <div
+                onClick={() => handleChangeTabs("dp")}
+                className={`px-3 py-2 rounded-md cursor-pointer ${
+                  isTab === "dp"
+                    ? "bg-[#713F97]/10 text-[#713F97]"
+                    : "bg-white text-black"
+                }`}
+                style={{
+                  border:
+                    isTab === "dp" ? "1px solid #713F97" : "1px solid #696F79",
+                }}
+              >
+                <Typography variant="body2">
+                  Ready To Buy & Digital Packaging
+                </Typography>
+              </div>
+            </div>
+
+            <TransactionList currentTab={isTab} />
+          </Box>
+        </Container>
+      </Box>
+    </main>
   );
 };
 
