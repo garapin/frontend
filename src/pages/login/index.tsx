@@ -173,7 +173,7 @@ const LoginPage = () => {
                   {t("login.registerCopy.link")}
                 </Link>
               </Typography>
-              <div className="relative">
+              {/* <div className="relative">
                 <Divider className="my-6" />
                 <span className="absolute px-8 py-2 bg-white -top-4 left-1/2 -translate-x-1/2 font-sans">
                   Or
@@ -186,116 +186,12 @@ const LoginPage = () => {
                 <div className="p-4 rounded-lg shadow-lg cursor-pointer">
                   <FacebookIconSVG />
                 </div>
-              </div>
+              </div> */}
             </Box>
           </Box>
         </Box>
       </Paper>
     </Box>
-    // <Box className={classes.loginUi}>
-    //   <Paper>
-    //     <GarapinAppBar searchVariant />
-    //     <Box
-    //       className={`${classes.loginUi} flex flex-row flex-grow`}
-    //       style={{ marginTop: "64px" }}
-    //     >
-    //       <Box className="sm:w-0 md:w-2/3 sm:block hidden bg-gray-200 p-3">
-    //         <ImageCarousel
-    //           className={classes.carousel}
-    //           dataSource={imageSet}
-    //           maxWidth={2000}
-    //           withThumbnail={false}
-    //           rsProps={{ autoplay: true, autoplaySpeed: 5000, infinite: true }}
-    //           useMagnifier={false}
-    //           rimProps={{ className: classes.carousel }}
-    //         />
-    //       </Box>
-    //       <Box className="sm:w-full lg:w-1/3 w-full bg-gray-100">
-    //         <Box className="flex flex-col justify-center h-full">
-    //           <Box
-    //             className="flex flex-col justify-center items-center"
-    //             sx={{ pb: 4 }}
-    //           >
-    //             <Typography variant="h5">{t("login.title")}</Typography>
-    //             <Typography variant="subtitle1">
-    //               {t("login.subtitle")}
-    //             </Typography>
-    //           </Box>
-    //           <form onSubmit={formik.handleSubmit}>
-    //             <Box className="flex flex-col justify-center items-center">
-    //               <Box className="w-3/4 md:w-1/2 py-2">
-    //                 <TextField
-    //                   label={t("login.fields.email")}
-    //                   variant="outlined"
-    //                   name="email"
-    //                   fullWidth
-    //                   onChange={formik.handleChange}
-    //                   value={formik.values.email}
-    //                   error={
-    //                     formik.touched.email && Boolean(formik.errors.email)
-    //                   }
-    //                   helperText={formik.touched.email && formik.errors.email}
-    //                 />
-    //               </Box>
-    //               <Box className="w-3/4 md:w-1/2 py-2">
-    //                 <TextField
-    //                   label={t("login.fields.password")}
-    //                   type="password"
-    //                   name="password"
-    //                   variant="outlined"
-    //                   fullWidth
-    //                   onChange={formik.handleChange}
-    //                   value={formik.values.password}
-    //                   error={
-    //                     formik.touched.password &&
-    //                     Boolean(formik.errors.password)
-    //                   }
-    //                   helperText={
-    //                     formik.touched.password && formik.errors.password
-    //                   }
-    //                 />
-    //               </Box>
-    //               <Box className="w-3/4 md:w-1/2 py-2">
-    //                 <Button
-    //                   variant="contained"
-    //                   fullWidth
-    //                   color="garapinColor"
-    //                   style={{
-    //                     backgroundColor: "#713F97",
-    //                     color: "#ffffff",
-    //                   }}
-    //                   type="submit"
-    //                   disabled={formik.isSubmitting}
-    //                 >
-    //                   {t("login.button.submit")}{" "}
-    //                   {formik.isSubmitting && (
-    //                     <CircularProgress
-    //                       color="secondary"
-    //                       size={10}
-    //                       sx={{ ml: 2 }}
-    //                     />
-    //                   )}
-    //                 </Button>
-    //               </Box>
-    //             </Box>
-    //           </form>
-    //           <Box>
-    //             <Typography
-    //               variant="subtitle1"
-    //               className="text-center"
-    //               sx={{ pt: 4 }}
-    //             >
-    //               {t("login.registerCopy.title")}{" "}
-    //               <Link href="/register" className="text-[#713F97]">
-    //                 {t("login.registerCopy.link")}
-    //               </Link>
-    //             </Typography>
-    //           </Box>
-    //         </Box>
-    //       </Box>
-    //     </Box>
-    //   </Paper>
-    // </Box>
   );
 };
 
