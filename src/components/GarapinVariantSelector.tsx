@@ -19,7 +19,6 @@ import React, { useState } from "react";
 
 type CardExtended = CardTypeMap["props"] & {
   active: boolean;
-  imgSrc?: string;
   text: string;
   selectHandler: () => void;
 };
@@ -55,232 +54,83 @@ export default function GarapinVariantSelector({
     label: item.name,
   }));
 
-  // if (allowNotSure) {
-  //   options.push({
-  //     label: "Not Sure",
-  //     name: "Not Sure",
-  //     value: "not-sure",
-  //     price: 0,
-  //   });
-  // }
   const [tempValue, setTempValue] = useState<any>(
-    value ?? variant.canSelectMultiple
-      ? [
-          {
-            label: null,
-            name: null,
-            value: 0,
-            price: 0,
-          },
-        ]
-      : null
+    value ?? variant.canSelectMultiple ? [] : null
   );
 
   return (
     <>
       {variant.canSelectMultiple ? (
-        tempValue.map((item: any, index: number) => (
-          <div className="mt-2">
-            {options.length < 5 ? (
-              <>
-                <Grid container justifyContent={justifyContent} spacing={3}>
-                  {options.map((opt, i) => (
-                    <Grid item xs={6} md={3} lg={2} key={opt.value}>
-                      <CardItemsOption
-                        active={opt.value === item.value}
-                        imgSrc={opt.imgSrc}
-                        text={opt.name}
-                        selectHandler={() => {
-                          if (!variant.canSelectMultiple) {
-                            handleChange({ ...opt });
-                          } else {
-                            handleChange(
-                              tempValue.map((item: any, i: number) => {
-                                return i === index ? opt : item;
-                              })
-                            );
-                            setTempValue(
-                              tempValue.map((item: any, i: number) => {
-                                return i === index ? opt : item;
-                              })
-                            );
-                          }
-                        }}
-                      />
-                    </Grid>
-                  ))}
-                </Grid>
-                {index === tempValue.length - 1 && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => {
-                        if (tempValue.length === 1) return;
-                        setTempValue(
-                          tempValue.filter(
-                            (dat: any, i: number) => i !== index
-                          )
-                        );
-                        handleChange(
-                          tempValue.filter(
-                            (dat: any, i: number) => i !== index
-                          )
-                        );
-                      }}
-                      disabled={
-                        tempValue.length === 1 || index < tempValue.length - 1
-                      }
-                    >
-                      -
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={index !== tempValue.length - 1}
-                      onClick={() => {
-                        setTempValue([
-                          ...tempValue,
-                          {
-                            label: null,
-                            name: null,
-                            value: tempValue.length,
-                            price: 0,
-                          },
-                        ]);
-                      }}
-                    >
-                      +
-                    </Button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                <div className="flex items-stretch mt-4 gap-2" key={index}>
-                  <Autocomplete
-                    disablePortal
-                    fullWidth
-                    size="small"
-                    options={options}
-                    value={options.find((item) => item.value === value?.value)}
-                    onChange={(e, newVal) => {
-                      if(tempValue.find((item: any) => item.value === newVal?.value)) {
-                        return;
-                      }
-                      if (!variant.canSelectMultiple) {
-                        handleChange(newVal);
-                      } else {
-                        setTempValue(
-                          tempValue.map((item: any, i: number) => {
-                            return i === index ? newVal : item;
-                          })
-                        );
-                        handleChange(
-                          tempValue.map((item: any, i: number) => {
-                            return i === index ? newVal : item;
-                          })
-                        );
-                      }
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label={`Select${index > 0 ? " Another" : ""} ${
-                          variant.name
-                        }`}
-                        required={variant.required}
-                      />
-                    )}
-                    renderOption={(props: any, option: any) => {
-                      const selected = Boolean(
-                        value?.find((item: any, idx: number) => item.value === option.value && idx === index)
-                      );
-                      return (
-                        <Box
-                          component="li"
-                          sx={{
-                            "& > img": { mr: 2, flexShrink: 0 },
-                            backgroundColor: (theme) =>
-                              selected
-                                ? "rgba(235, 228, 240,0.4)"
-                                : theme.palette.background.paper,
-                          }}
-                          className="flex items-center gap-2 px-2 mb-2"
-                          {...props}
-                        >
-                          <img
-                            src={
-                              option.imgSrc ?? "https://via.placeholder.com/150"
-                            }
-                            alt={option.name}
-                            className="w-8 h-8 mr-2 rounded-sm"
-                          />
-                          <p>{option.name}</p>
-                        </Box>
-                      );
-                    }}
-                  />
-                  <Button
-                    variant="contained"
-                    color="error"
-                    style={{
-                      opacity: index !== tempValue.length - 1 ? 0 : 1,
-                    }}
-                    onClick={() => {
-                      if (tempValue.length === 1) return;
-                      // delete by index
-                      setTempValue(
-                        tempValue.filter(
-                          (dat: any, i: number) => i !== index
-                        )
-                      );
-                      handleChange(
-                        tempValue.filter(
-                          (dat: any, i: number) => i !== index
-                        )
-                      );
-                    }}
-                    disabled={
-                      tempValue.length === 1 || index < tempValue.length - 1
-                    }
-                  >
-                    -
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    disabled={index !== tempValue.length - 1}
-                    style={{
-                      opacity: index !== tempValue.length - 1 ? 0 : 1,
-                    }}
-                    onClick={() => {
-                      setTempValue([
-                        ...tempValue,
-                        {
-                          label: null,
-                          name: null,
-                          value: tempValue.length,
-                          price: 0,
-                        },
-                      ]);
-                    }}
-                  >
-                    +
-                  </Button>
-                </div>
-              </>
-            )}
-          </div>
-        ))
+        <Autocomplete
+          disablePortal
+          fullWidth
+          multiple
+          size="small"
+          className="mt-3"
+          options={options}
+          value={tempValue}
+          onChange={(e: any, newVal) => {
+            if (
+              tempValue.find((item: any) => item.label == e.target.innerText)
+            ) {
+              setTempValue(
+                tempValue.filter(
+                  (item: any) => item.label != e.target.innerText
+                )
+              );
+              handleChange(
+                tempValue.filter(
+                  (item: any) => item.label != e.target.innerText
+                )
+              );
+            } else {
+              setTempValue(newVal);
+              handleChange(newVal);
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              // label={`Select ${variant.name}`}
+              placeholder={`Select ${variant.name}`}
+              inputProps={{
+                ...params.inputProps,
+                style: {
+                  padding: "10px 4px",
+                },
+              }}
+              required={variant.required}
+            />
+          )}
+          renderOption={(props: any, option: any) => {
+            const selected = Boolean(
+              value?.find((item: any) => item.value === option.value)
+            );
+            return (
+              <Box
+                component="li"
+                sx={{
+                  "& > img": { mr: 2, flexShrink: 0 },
+                  backgroundColor: (theme) =>
+                    selected
+                      ? "rgba(235, 228, 240,0.4)"
+                      : theme.palette.background.paper,
+                }}
+                className="flex items-center gap-2 px-2 mb-2"
+                {...props}
+              >
+                <p>{option.name}</p>
+              </Box>
+            );
+          }}
+        />
       ) : (
         <div className="mt-2">
           <Grid container justifyContent={justifyContent} spacing={3}>
             {options.map((item) => (
-              <Grid item xs={6} md={3} lg={2} key={item.value}>
+              <Grid item xs={6} key={item.value}>
                 <CardItemsOption
                   active={item.value === value?.value}
-                  imgSrc={item.imgSrc}
                   text={item.name}
                   selectHandler={() => {
                     if (!variant.canSelectMultiple) {
@@ -301,27 +151,14 @@ export default function GarapinVariantSelector({
   );
 }
 function CardItemsOption(props: CardExtended) {
-  const { selectHandler, imgSrc, text, ...other } = props;
+  const { selectHandler, text, ...other } = props;
   return (
     <Card
       aria-selected={props.active}
       tabIndex={0}
-      variant="outlined"
-      sx={{
-        cursor: "pointer",
-        height: "100%",
-        boxShadow: (theme) =>
-          props.active
-            ? `inset 0px 0px 0px 2px ${theme.palette.primary.main}`
-            : `inset 0px 0px 1px ${theme.palette.grey[900]}`,
-        backgroundColor: (theme) =>
-          props.active
-            ? "rgba(235, 228, 240,0.4)"
-            : theme.palette.background.paper,
-
-        border: "none",
-        transition: "box-shadow 0.2s ease-in-out",
-      }}
+      className={`h-full shadow-none ${
+        props.active ? "bg-[#713F97] text-white" : "bg-slate-50"
+      }`}
       onClick={props.selectHandler}
       onKeyUp={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -342,18 +179,10 @@ function CardItemsOption(props: CardExtended) {
           height: "100%",
         }}
       >
-        {props.imgSrc !== undefined && (
-          <img
-            src={props.imgSrc}
-            style={{ borderRadius: "5px", width: "80px" }}
-          ></img>
-        )}
         <Typography
           variant="body1"
-          fontWeight={props.active ? 600 : 400}
           textAlign="center"
           sx={{
-            pt: 2,
             lineHeight: 1.0,
             transition: "font-weight 0.05s linear",
             transitionDelay: "font-weight 0.1s",

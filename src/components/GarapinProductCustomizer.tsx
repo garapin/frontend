@@ -54,24 +54,25 @@ export default function GarapinProductCustomizer({
   );
 
   return (
-    <div>
-      {options?.showTitle !== false && (
-        <Typography variant="h5" sx={{ pb: 1 }}>
-          {options?.title !== undefined
-            ? options.title
-            : "Customize your Product"}
-        </Typography>
-      )}
+    <div className="space-y-6">
       {selectedVariant.map((variant) => (
         <div key={variant.name}>
-          <Grid container sx={{ pt: 4 }}>
+          <Grid container>
             <Grid item xs={options?.showPriceCalculation !== false ? 8 : 12}>
-              <Grid container className="items-center" spacing={2}>
+              <Grid container className="items-center space-y-4" spacing={2}>
                 <Grid item md={12}>
-                  <Typography variant="h6" sx={{ lineHeight: 1 }}>
+                  <Typography
+                    variant="h6"
+                    sx={{ lineHeight: 1 }}
+                    className="text-base font-semibold text-slate-600"
+                  >
                     {variant.name}
                   </Typography>
-                  <Typography variant="body1" sx={{ pt: 1 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ pt: 1 }}
+                    className="text-base font-normal text-slate-600"
+                  >
                     {variant.description}
                   </Typography>
                 </Grid>
@@ -85,7 +86,7 @@ export default function GarapinProductCustomizer({
                     }}
                   >
                     <Grid container className="mb-2">
-                      <Grid item sm={3}>
+                      <Grid item sm={4}>
                         <TextField
                           fullWidth
                           label="Quantity"
@@ -132,13 +133,9 @@ export default function GarapinProductCustomizer({
                   variant.hasOwnDimensionL ||
                   variant.hasOwnDimensionH) && (
                   <Grid item md={12}>
-                    {/* <Typography className="mb-2">
-                      This option has its own dimension. Please specify it
-                      below.
-                    </Typography> */}
                     <Grid container className="mb-2" spacing={2}>
                       {variant.hasOwnDimensionW && (
-                        <Grid item sm={3}>
+                        <Grid item sm={4}>
                           <NumericFormat
                             fullWidth
                             allowLeadingZeros
@@ -170,11 +167,10 @@ export default function GarapinProductCustomizer({
                               const oldPt = variant.options.find(
                                 (optSingle: any) =>
                                   optSingle.value ===
-                                  (value[variant.id]?.selectedOption?.value ??
-                                    {
-                                      ...variant.options[0],
-                                      value: ''
-                                    })
+                                  (value[variant.id]?.selectedOption?.value ?? {
+                                    ...variant.options[0],
+                                    value: "",
+                                  })
                               );
                               const opt = { ...oldPt };
                               opt.ownWidth = parseInt(e.target.value ?? 1);
@@ -226,7 +222,7 @@ export default function GarapinProductCustomizer({
                         </Grid>
                       )}
                       {variant.hasOwnDimensionL && (
-                        <Grid item sm={3}>
+                        <Grid item sm={4}>
                           <NumericFormat
                             fullWidth
                             allowLeadingZeros
@@ -261,11 +257,10 @@ export default function GarapinProductCustomizer({
                               const oldPt = variant.options.find(
                                 (optSingle: any) =>
                                   optSingle.value ===
-                                  (value[variant.id]?.selectedOption?.value ??
-                                    {
-                                      ...variant.options[0],
-                                      value: ''
-                                    })
+                                  (value[variant.id]?.selectedOption?.value ?? {
+                                    ...variant.options[0],
+                                    value: "",
+                                  })
                               );
 
                               const opt = { ...oldPt };
@@ -318,7 +313,7 @@ export default function GarapinProductCustomizer({
                         </Grid>
                       )}
                       {variant.hasOwnDimensionH && (
-                        <Grid item sm={3}>
+                        <Grid item sm={4}>
                           <NumericFormat
                             fullWidth
                             allowLeadingZeros
@@ -353,11 +348,10 @@ export default function GarapinProductCustomizer({
                               const oldPt = variant.options.find(
                                 (optSingle: any) =>
                                   optSingle.value ===
-                                  (value[variant.id]?.selectedOption?.value ??
-                                    {
-                                      ...variant.options[0],
-                                      value: ''
-                                    })
+                                  (value[variant.id]?.selectedOption?.value ?? {
+                                    ...variant.options[0],
+                                    value: "",
+                                  })
                               );
 
                               const opt = { ...oldPt };
