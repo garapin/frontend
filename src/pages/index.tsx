@@ -79,9 +79,6 @@ const imageSet: CarouselImageSet[] = [
   },
 ];
 
-const dummyImg =
-  "https://images.unsplash.com/photo-1603695762547-fba8b88ac8ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2370&q=80";
-
 function LandingPage(props: any) {
   const { t } = useTranslation("landing");
   const { t: tCom } = useTranslation("common");
@@ -90,6 +87,9 @@ function LandingPage(props: any) {
   const fieldRef = React.useRef<HTMLFormElement>(null);
   const [checkVerified, setCheckVerified] = React.useState(false);
   const [tabVal, setTabVal] = React.useState(0);
+  const [productList, setProductList] = React.useState(
+    props?.product?.products
+  );
 
   const handleChangeTabVal = (
     event: React.SyntheticEvent,
@@ -97,19 +97,6 @@ function LandingPage(props: any) {
   ) => {
     setTabVal(newValue);
   };
-
-  const handleSubmit = (event: any) => {
-    router.push(
-      `search${
-        fieldRef?.current?.value !== undefined
-          ? `?q=${fieldRef?.current?.value}`
-          : ""
-      }`
-    );
-  };
-  const productList = props?.product?.products;
-  const categories = props?.product?.category;
-
   React.useEffect(() => {
     const vr = router.query.verified;
     if (
@@ -123,6 +110,30 @@ function LandingPage(props: any) {
     }
   }, [router.query.verified, auth.authUser, tCom, checkVerified]);
 
+  React.useEffect(() => {
+    if (tabVal == 1) {
+      setProductList(
+        props?.product?.products.filter(
+          (product: any) => product.category == "01"
+        )
+      );
+    } else if (tabVal == 2) {
+      setProductList(
+        props?.product?.products.filter(
+          (product: any) => product.category == "02"
+        )
+      );
+    } else if (tabVal == 3) {
+      setProductList(
+        props?.product?.products.filter(
+          (product: any) => product.category == "03"
+        )
+      );
+    } else {
+      setProductList(props?.product?.products);
+    }
+  }, [tabVal]);
+
   return (
     <>
       <Head>
@@ -134,7 +145,7 @@ function LandingPage(props: any) {
       <main>
         <Box className="flex flex-col pb-20 content-center max-w-md mx-auto">
           <Box className="h-min-screen flex flex-col justify-center bg-white space-y-4">
-            <ImageCarousel
+            {/* <ImageCarousel
               dataSource={imageSet}
               maxHeight={413}
               maxWidth={627}
@@ -146,7 +157,8 @@ function LandingPage(props: any) {
                 infinite: true,
               }}
               className="py-0 w-full h-1/3 object-cover"
-            />
+            /> */}
+            <img src={imageSet[0].srcUrl} alt="garapin" />
             <Container maxWidth="sm" className="px-4">
               <Box>
                 <Box className="space-y-4">
@@ -235,29 +247,6 @@ function LandingPage(props: any) {
                       </p>
                     </Grid>
                   </Grid>
-                  {/* <TextField
-                    placeholder={`${t("section1.searchbar")}`}
-                    fullWidth
-                    inputRef={fieldRef}
-                    onKeyUp={(event) => {
-                      if (event.key === "Enter") {
-                        handleSubmit(event);
-                      }
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <Button
-                            variant="contained"
-                            color="garapinColor"
-                            onClick={handleSubmit}
-                          >
-                            {t("section1.searchButton")}
-                          </Button>
-                        </InputAdornment>
-                      ),
-                    }}
-                  ></TextField> */}
                 </Box>
                 <Box className="mt-20 space-y-6">
                   <h2 className="font-semibold text-[32px] text-center max-w-sm">
@@ -412,6 +401,9 @@ function LandingPage(props: any) {
                   <Button
                     variant="contained"
                     className="text-[#713F97] bg-white capitalize"
+                    onClick={() => {
+                      window.open("https://wa.me/+6281380206100", "_blank");
+                    }}
                   >
                     {t("section_consultation.button")}
                   </Button>

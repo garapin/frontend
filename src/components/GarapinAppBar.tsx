@@ -101,6 +101,7 @@ const GarapinAppBar = ({
   onSearchSubmit?: FormEventHandler<HTMLDivElement>;
 }) => {
   const { i18n } = useTranslation();
+  const { t } = useTranslation("common");
   const { language: currentLanguage } = i18n;
   const router = useRouter();
   const locales = router.locales ?? [currentLanguage];
@@ -162,8 +163,6 @@ const GarapinAppBar = ({
       }`
     );
   };
-
-  const { t } = useTranslation("common");
   return (
     <Box className="max-w-md mx-auto pt-6 bg-white relative">
       <div className="flex items-center justify-between shadow-sm pb-6 px-4">

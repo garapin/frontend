@@ -59,7 +59,7 @@ export default function CardVertical({
         >
           {category}
         </Typography>
-        <Typography variant="h6" className="text-lg line-clamp-1">
+        <Typography variant="h6" className="text-lg line-clamp-2 min-h-[56px]">
           {productName}
         </Typography>
         {showRating && (

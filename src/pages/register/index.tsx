@@ -65,9 +65,9 @@ const LoginPage = () => {
     password: "",
     konfirmasiPassword: "",
     nomorHp: "",
-    // namaPerusahaan: "",
-    // liniBisnis: "",
-    // liniBisnisOtherVal: "",
+    namaPerusahaan: "",
+    liniBisnis: "",
+    liniBisnisOtherVal: "",
   };
 
   const liniBisnis = [
@@ -99,9 +99,9 @@ const LoginPage = () => {
         .required("Konfirmasi password harus diisi")
         .oneOf([Yup.ref("password"), ""], "Password harus sama"),
       nomorHp: Yup.string().required("Nomor HP harus diisi"),
-      // namaPerusahaan: Yup.string(),
-      // liniBisnis: Yup.string(),
-      // liniBisnisOtherVal: Yup.string(),
+      namaPerusahaan: Yup.string(),
+      liniBisnis: Yup.string(),
+      liniBisnisOtherVal: Yup.string(),
     }),
     onSubmit: async (values) => {
       try {
@@ -261,6 +261,92 @@ const LoginPage = () => {
                   }}
                 />
               </Box>
+              <Box className="w-full">
+                <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                  {t("register.fields.namaPerusahaan")}
+                </p>
+                <TextField
+                  placeholder="Masukan Nama Perusahaan Anda"
+                  variant="outlined"
+                  name="namaPerusahaan"
+                  fullWidth
+                  onChange={formik.handleChange}
+                  value={formik.values.namaPerusahaan}
+                  error={
+                    formik.touched.namaPerusahaan &&
+                    Boolean(formik.errors.namaPerusahaan)
+                  }
+                  helperText={
+                    formik.touched.namaPerusahaan &&
+                    formik.errors.namaPerusahaan
+                  }
+                  InputProps={{
+                    className: "rounded-lg p-2",
+                  }}
+                />
+              </Box>
+
+              <Box className="w-full">
+                <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                  {t("register.fields.liniBisnis")}
+                </p>
+                <FormControl fullWidth>
+                  <Select
+                    name="liniBisnis"
+                    fullWidth
+                    onChange={formik.handleChange}
+                    value={formik.values.liniBisnis}
+                    sx={{
+                      "& .MuiSelect-select": {
+                        borderRadius: "1rem",
+                        padding: "24px 22px",
+                      },
+                    }}
+                    error={
+                      formik.touched.liniBisnis &&
+                      Boolean(formik.errors.liniBisnis)
+                    }
+                  >
+                    {liniBisnis.map((businessLine) => (
+                      <MenuItem key={businessLine} value={businessLine}>
+                        {businessLine}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {formik.touched.liniBisnis &&
+                    Boolean(formik.errors.liniBisnis) && (
+                      <FormHelperText error>
+                        {formik.errors.liniBisnis}
+                      </FormHelperText>
+                    )}
+                </FormControl>
+              </Box>
+              {formik.values.liniBisnis === "Lainnya" && (
+                <Box className="w-full">
+                  <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                    {t("register.fields.liniBisnisOther")}
+                  </p>
+                  <TextField
+                    placeholder="Masukan Lainnya"
+                    variant="outlined"
+                    name="liniBisnisOtherVal"
+                    fullWidth
+                    onChange={formik.handleChange}
+                    value={formik.values.liniBisnisOtherVal}
+                    error={
+                      formik.touched.liniBisnisOtherVal &&
+                      Boolean(formik.errors.liniBisnisOtherVal)
+                    }
+                    helperText={
+                      formik.touched.liniBisnisOtherVal &&
+                      formik.errors.liniBisnisOtherVal
+                    }
+                    InputProps={{
+                      className: "rounded-lg p-2",
+                    }}
+                  />
+                </Box>
+              )}
               <Box className="w-full pt-2">
                 <Button
                   variant="contained"

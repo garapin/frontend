@@ -40,12 +40,6 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { getCategoryLabel } from "@/tools/utils";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 
-interface addressMap {
-  postalCode?: string;
-  completeAddress: string;
-  latLong?: { lat: string; lng: string };
-}
-
 function CheckoutPage() {
   const auth = useFirebaseAuth();
   const router = useRouter();
@@ -267,18 +261,6 @@ function CheckoutPage() {
                         </Button>
                       </>
                     )}
-                    <Button
-                      onClick={() =>
-                        setCheckoutData(
-                          checkoutData.filter((item: any) => item.id !== val.id)
-                        )
-                      }
-                      variant="outlined"
-                      className="capitalize"
-                      fullWidth
-                    >
-                      Delete
-                    </Button>
                     {val?.productCategoryId == 2 &&
                       cardDetail?.open &&
                       cardDetail?.data?.id == val?.id &&
