@@ -491,6 +491,25 @@ const index = () => {
                 }}
               />
             )}
+            <div className="space-y-4 py-2">
+              <p className="text-slate-600 font-semibold text-sm">
+                Upload File Logo
+              </p>
+              <Button
+                variant="contained"
+                className="capitalize"
+                onClick={handleButtonClick}
+              >
+                Upload Image
+              </Button>
+              {selectedFile && <p>{selectedFile?.name}</p>}
+              <input
+                id="file-input"
+                type="file"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+              />
+            </div>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Typography
@@ -692,25 +711,6 @@ const index = () => {
                 </div>
               </Box>
 
-              <div className="space-y-4 py-2">
-                <p className="text-slate-600 font-semibold text-sm">
-                  Upload File Logo
-                </p>
-                <Button
-                  variant="contained"
-                  className="capitalize"
-                  onClick={handleButtonClick}
-                >
-                  Upload Image
-                </Button>
-                {selectedFile && <p>{selectedFile?.name}</p>}
-                <input
-                  id="file-input"
-                  type="file"
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                />
-              </div>
               {singleProduct?.category == "02" && (
                 <>
                   <Box>
