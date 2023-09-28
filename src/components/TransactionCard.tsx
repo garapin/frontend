@@ -104,7 +104,7 @@ const TransactionCard = ({
 
           {val.status === "checkout" && (
             <>
-              <Typography variant="body2">
+              <Typography variant="body2" className="pt-3 pb-2">
                 Selesaikan pembayaran sebelum
               </Typography>
               <Typography variant="body2" className="font-bold">

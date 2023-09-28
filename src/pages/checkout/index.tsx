@@ -50,8 +50,9 @@ function CheckoutPage() {
     .map((val: { totalPrice: number }) => val.totalPrice)
     ?.reduce((acc: any, curr: any) => acc + curr);
   const totalWeight = checkoutData
-    .map((val: { product: { unitWeight: number } }) => val.product?.unitWeight)
+    .map((val: { weight: { totalWeight: number } }) => val.weight?.totalWeight)
     ?.reduce((acc: any, curr: any) => acc + curr);
+
   const [shipment, setShipment] = useState([]);
   const { shippingCompanies } = useAppSelector((state) => state.product);
   const [shippingLoading, setShippingLoading] = useState(false);
