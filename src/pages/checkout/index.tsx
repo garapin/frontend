@@ -182,7 +182,10 @@ function CheckoutPage() {
         setShipment(response.data);
       })
       .catch((error) => {
-        console.error(error);
+        toast.error(
+          "Pengiriman menggunakan kurir ini tidak tersedia, mohon pilih kurir lainnya"
+        );
+        setShipment([]);
       })
       .finally(() => {
         setShippingLoading(false);

@@ -175,7 +175,10 @@ const index = () => {
           ? Yup.number()
               .required("Quantity is required")
               .min(singleProduct.moq, `Minimum order is ${singleProduct.moq}`)
-          : Yup.number().required("Quantity is required")
+              .typeError("Quantity must be a number")
+          : Yup.number()
+              .required("Quantity is required")
+              .typeError("Quantity must be a number")
       ),
       contactName: Yup.lazy((_val: any) =>
         singleProduct?.category !== "02"
@@ -658,7 +661,12 @@ const index = () => {
                       allowLeadingZeros
                       className="w-20 flex-1 py-2 text-center border-none outline-none text-lg"
                       thousandSeparator=","
-                      onChange={formik.handleChange}
+                      onChange={(e) => {
+                        formik.setFieldValue(
+                          "quantity",
+                          parseInt(e.target.value.replace(/[^0-9]/g, "") ?? 0)
+                        );
+                      }}
                       onBlur={formik.handleBlur}
                       name={"quantity"}
                     />
