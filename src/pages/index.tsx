@@ -180,7 +180,17 @@ function LandingPage(props: any) {
                   >
                     <Trans>{t("section1.content")}</Trans>
                   </Typography>
-                  <Button variant="contained" className="py-3">
+                  <Button
+                    variant="contained"
+                    className="py-3"
+                    onClick={() => {
+                      // scroll to recomendation-product
+                      const element = document.getElementById(
+                        "recomendation-product"
+                      );
+                      element?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                  >
                     Buat Kemasan
                   </Button>
                   <div className="arrows">
@@ -329,7 +339,7 @@ function LandingPage(props: any) {
                     </Grid>
                   </Grid>
                 </Box>
-                <Box className="mt-20 space-y-6">
+                <Box className="mt-20 space-y-6" id="recomendation-product">
                   <h2 className="font-semibold text-[32px] max-w-sm">
                     {t("section_recomendation.title")}
                   </h2>
