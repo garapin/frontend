@@ -1,295 +1,295 @@
 /* eslint-disable @next/next/no-img-element */
-import { invoiceStatus, invoiceStatusColor } from '@/const/status';
-import { useAppDispatch, useAppSelector } from '@/hooks/useAppRedux';
-import { setInvoice, setInvoiceModalOpen } from '@/store/modules/admin';
-import { getAllCategories, getShippingCompany } from '@/store/modules/products';
-import { toDate } from '@/tools/firebaseDate';
-import { rupiah } from '@/tools/rupiah';
-import { formatDateTime } from '@/tools/utils';
-import { Close } from '@mui/icons-material';
-import { Chip, Dialog, DialogContent, DialogTitle, Grid, TableCell, Table, TableRow, Typography, tableCellClasses, TableContainer, Paper, TableHead, TableBody, Box, Divider, Button, IconButton } from '@mui/material'
-import React from 'react'
+import { AddressIconSVG } from "@/assets/icons/address-icon";
+import { InvoiceIconSVG } from "@/assets/icons/invoice-icon";
+import { OrderDateIconSVG } from "@/assets/icons/order-date-icon";
+import { PhoneIconSVG } from "@/assets/icons/phone-icon";
+import { StatusIconSVG } from "@/assets/icons/status-icon";
+import { invoiceStatus, invoiceStatusColor } from "@/const/status";
+import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
+import { setInvoice, setInvoiceModalOpen } from "@/store/modules/admin";
+import { getShippingCompany } from "@/store/modules/products";
+import { toDate } from "@/tools/firebaseDate";
+import { rupiah } from "@/tools/rupiah";
+import { formatDateTime, getCategoryLabel } from "@/tools/utils";
+import { Close } from "@mui/icons-material";
+import {
+  Chip,
+  Dialog,
+  DialogContent,
+  Typography,
+  Box,
+  Divider,
+  IconButton,
+} from "@mui/material";
+import React from "react";
+import { imagePlaceholder } from "../ProductList/ProductList";
 
 export default function OrderDetailModal() {
-    const {invoice, invoiceModalOpen} = useAppSelector(state => state.admin);
-    const {shippingCompanies, category} = useAppSelector(state => state.product);
-    const dispatch = useAppDispatch();
+  const { invoice, invoiceModalOpen } = useAppSelector((state) => state.admin);
+  const { shippingCompanies, category } = useAppSelector(
+    (state) => state.product
+  );
+  const dispatch = useAppDispatch();
 
-    const handleClose = () => {
-        dispatch(setInvoiceModalOpen(false));
-        dispatch(setInvoice({}));
-    }
+  const handleClose = () => {
+    dispatch(setInvoiceModalOpen(false));
+    dispatch(setInvoice({}));
+  };
 
-    const getCourierByCode = (courierCode: string | any) => {
-        shippingCompanies.length === 0 && dispatch(getShippingCompany());
-        const courier: any = shippingCompanies.find(
-          (val: any) => val.code === courierCode
-        );
-        return courier;
-      };
+  const getCourierByCode = (courierCode: string | any) => {
+    shippingCompanies.length === 0 && dispatch(getShippingCompany());
+    const courier: any = shippingCompanies.find(
+      (val: any) => val.code === courierCode
+    );
+    return courier;
+  };
 
-    const getCategoryById = (id: string | any) => {
-        category.length === 0 && dispatch(getAllCategories());
-        return category.find((val: any) => val.id === id)
-    }
-
-    const priceItem = invoice.products?.map((val: { totalPrice: number }) => val.totalPrice)
+  const priceItem = invoice.products
+    ?.map((val: { totalPrice: number }) => val.totalPrice)
     ?.reduce((acc: any, curr: any) => acc + curr);
-  return (
-    <Dialog fullWidth maxWidth='lg'
-        open={invoiceModalOpen}
-        onClose={() => handleClose()}
-        >
-        <DialogTitle>
-            <Box display='flex' alignItems='center' gap={2}>
-                Detail Order
-                <IconButton className='ml-auto' onClick={() => handleClose()}><Close /></IconButton>
-            </Box>
-                </DialogTitle>
-        <DialogContent>
-            <Grid container>
-                <Grid item xs={12} sm={6}>
-                    <Table size='small' sx={{
-                        [`& .${tableCellClasses.root}`]: {
-                        borderBottom: "none"
-                        }
-                    }}>
-                        <TableRow>
-                            <TableCell>
-                                Invoice Number
-                            </TableCell>
-                            <TableCell>
-                                {invoice.invoiceNumber}
-                            </TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Order Date</TableCell>
-                            <TableCell>{formatDateTime(toDate(invoice.createdAt))}</TableCell>
-                        </TableRow>
-                        { invoice.paidAt &&
-                            <TableRow>
-                                <TableCell>Payment Date</TableCell>
-                                <TableCell>{formatDateTime(toDate(invoice.paidAt))}</TableCell>
-                            </TableRow> 
-                        }
-                        { invoice.processedAt &&
-                            <TableRow>
-                                <TableCell>Processing Date</TableCell>
-                                <TableCell>{formatDateTime(toDate(invoice.processedAt))}</TableCell>
-                            </TableRow> 
-                        }
-                        <TableRow>
-                            <TableCell>Status</TableCell>
-                            <TableCell><Chip color={invoiceStatusColor(invoice.status)} 
-                                label={invoiceStatus.find(data => data.status === invoice.status)?.label}
-                                />
-                            </TableCell>
-                        </TableRow>
-                        { invoice.status === 'shipped' && invoice.shippedAt && invoice.shippingOrderData.courier.waybill_id && 
-                        <TableRow>
-                            <TableCell>Waybill/Resi ID</TableCell>
-                            <TableCell sx={{fontWeight: 'bold'}}>{invoice.shippingOrderData.courier.waybill_id}</TableCell>
-                        </TableRow>
-                        }
-                    </Table>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <Table size='small' sx={{
-                        [`& .${tableCellClasses.root}`]: {
-                        borderBottom: "none"
-                        }
-                    }}>
-                        <TableRow>
-                            <TableCell>Customer</TableCell>
-                            <TableCell>{invoice.shippingDetails?.fullName}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Phone</TableCell>
-                            <TableCell>{invoice.shippingDetails?.phoneNumber}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Address</TableCell>
-                            <TableCell>{invoice.shippingDetails?.address}<br />{invoice.shippingDetails?.addressNote}</TableCell>
-                        </TableRow>
-                    </Table>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography className="text-xl font-bold mt-6" variant='body2'>
-                        Order Summary
-                    </Typography>
-                    <TableContainer component={Paper} elevation={0}>
-                        <Table>
-                        <TableHead>
-                            <TableRow>
-                            <TableCell className="font-bold uppercase text-gray-500">
-                                Product
-                            </TableCell>
-                            <TableCell
-                                className="font-bold uppercase text-gray-500"
-                                align="right"
-                            >
-                                Qty
-                            </TableCell>
-                            <TableCell
-                                className="font-bold uppercase text-gray-500"
-                                align="right"
-                            >
-                                Category
-                            </TableCell>
-                            <TableCell
-                                className="font-bold uppercase text-gray-500"
-                                align="right"
-                            >
-                                Price
-                            </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {invoice.products?.map(
-                            (
-                                val: {
-                                product: {
-                                    img: (string | undefined)[];
-                                    productName: string;
-                                    channel: string;
-                                    sku: string;
-                                    category: string;
-                                };
-                                qty: string|number;
-                                unitPrice: number;
-                                totalPrice: number;
-                                },
-                                i: number
-                            ) => (
-                                <TableRow key={i} className="border-none bg-slate-50">
-                                <TableCell
-                                    className={
-                                    i !== invoice.products?.length - 1 ? "border-none" : ""
-                                    }
-                                    component="th"
-                                    scope="row"
-                                >
-                                    <Box className="flex items-center">
-                                    <img
-                                        width={70}
-                                        className="object-contain mr-3 rounded-md"
-                                        height={70}
-                                        src={val?.product?.img?.[0]}
-                                        alt=""
-                                    />
-                                    <Box>
-                                        <Typography className="font-bold line-clamp-1">
-                                        {val?.product?.productName}
-                                        </Typography>
-                                        <Typography>SKU: {val.product?.sku}</Typography>
-                                    </Box>
-                                    </Box>
-                                </TableCell>
-                                <TableCell
-                                    className={
-                                    i !== invoice.products?.length - 1 ? "border-none" : ""
-                                    }
-                                    align="right"
-                                >
-                                    {val.qty}
-                                </TableCell>
-                                <TableCell
-                                    className={
-                                    i !== invoice.products?.length - 1 ? "border-none" : ""
-                                    }
-                                    align="right"
-                                >
-                                    {getCategoryById(val.product.category)?.name}
-                                </TableCell>
-                                <TableCell
-                                    className={
-                                    i !== invoice.products?.length - 1 ? "border-none" : ""
-                                    }
-                                    align="right"
-                                >
-                                    {rupiah(val.totalPrice)}
-                                </TableCell>
-                                </TableRow>
-                            )
-                            )}
-                            <TableRow>
-                            <TableCell className="border-none " scope="row" colSpan={7}>
-                                <Grid container>
-                                <Grid item md={6}>
-                                    <Typography>
-                                    Subtotal ({invoice.products?.length} Items)
-                                    </Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography className="float-right">
-                                    {rupiah(priceItem)}
-                                    </Typography>
-                                </Grid>
-                                </Grid>
-                                {invoice.shippingMethod && (
-                                <>
-                                    <Grid container>
-                                    <Grid item md={6}>
-                                        <Typography>Shipping Cost</Typography>
-                                        <Typography className="flex items-center">
-                                        {getCourierByCode(invoice.shippingMethod.courierCode)?.img && (
-                                            <img
-                                            src={getCourierByCode(invoice.shippingMethod.courierCode)?.img}
-                                            alt="kurir"
-                                            className="w-10 max-h-7 mr-1"
-                                            />
-                                        )}
-                                        {invoice.shippingMethod.courierName} - {invoice.shippingMethod.serviceName}&nbsp; ({invoice.shippingDetails?.totalWeight} grams)
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <Typography className="float-right">
-                                        {rupiah(invoice.shippingMethod.price)}
-                                        </Typography>
-                                    </Grid>
-                                    </Grid>
-                                    <Grid container>
-                                    <Grid item md={6}>
-                                        <Typography>Insurance</Typography>
-                                    </Grid>
-                                    <Grid item md={6}>
-                                        <Typography className="float-right">
-                                        {rupiah(invoice.shippingMethod.insuranceFee)}
-                                        </Typography>
-                                    </Grid>
-                                    </Grid>
-                                </>
-                                )}
-                                <Grid container>
-                                <Grid item md={6}>
-                                    <Typography>VAT (11%)</Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography className="float-right">
-                                    {rupiah(priceItem * 0.11)}
-                                    </Typography>
-                                </Grid>
-                                </Grid>
-                                <Divider className="my-3" />
-                                <Grid container>
-                                <Grid item md={6}>
-                                    <Typography className="font-bold">Total</Typography>
-                                </Grid>
-                                <Grid item md={6}>
-                                    <Typography className="float-right font-bold">
-                                    {rupiah(priceItem + (invoice.shippingMethod?.price??0) + (invoice.shippingMethod?.insuranceFee??0) + priceItem * 0.11)}
-                                    </Typography>
-                                </Grid>
-                                </Grid>
-                            </TableCell>
-                            </TableRow>
-                        </TableBody>
-                        </Table>
-                    </TableContainer>
-                    </Grid>
-            </Grid>
-        </DialogContent>
 
+  const InfoList = ({ title, value, icon }: any) => {
+    return (
+      <Box className="space-y-2">
+        <div className="flex items-center gap-2">
+          {icon}
+          <Typography className="font-normal text-slate-500">
+            {title}
+          </Typography>
+        </div>
+        <Typography className="font-normal break-words">{value}</Typography>
+      </Box>
+    );
+  };
+  return (
+    <Dialog
+      fullWidth
+      className="max-w-lg mx-auto"
+      open={invoiceModalOpen}
+      onClose={() => handleClose()}
+    >
+      <DialogContent className="bg-slate-50 space-y-6 p-4">
+        <Box className="bg-white rounded-xl p-4">
+          <Box display="flex" alignItems="center" gap={2} className="mb-4">
+            <h2 className="text-[32px] font-semibold">Detail Order</h2>
+            <IconButton className="ml-auto" onClick={() => handleClose()}>
+              <Close />
+            </IconButton>
+          </Box>
+          <Box className="space-y-4">
+            <InfoList
+              title="Invoice Number"
+              value={invoice.invoiceNumber}
+              icon={<InvoiceIconSVG />}
+            />
+            <Divider />
+            <InfoList
+              title="Order Date"
+              value={formatDateTime(toDate(invoice.createdAt))}
+              icon={<OrderDateIconSVG />}
+            />
+            <Divider />
+            <InfoList
+              title="Status"
+              value={
+                <Chip
+                  color={invoiceStatusColor(invoice.status)}
+                  label={
+                    invoiceStatus.find((data) => data.status === invoice.status)
+                      ?.label
+                  }
+                />
+              }
+              icon={<StatusIconSVG />}
+            />
+            <Divider />
+            <InfoList
+              title="Customer"
+              value={invoice.shippingDetails?.fullName}
+              icon={<StatusIconSVG />}
+            />
+            <Divider />
+            {invoice.paidAt && (
+              <>
+                <InfoList
+                  title="Payment Date"
+                  value={formatDateTime(toDate(invoice.paidAt))}
+                  icon={<OrderDateIconSVG />}
+                />
+                <Divider />
+              </>
+            )}
+            {invoice.processedAt && (
+              <>
+                <InfoList
+                  title="Payment Date"
+                  value={formatDateTime(toDate(invoice.processedAt))}
+                  icon={<OrderDateIconSVG />}
+                />
+                <Divider />
+              </>
+            )}
+            {invoice.status === "shipped" &&
+              invoice.shippedAt &&
+              invoice.shippingOrderData.courier.waybill_id && (
+                <>
+                  <InfoList
+                    title="Waybill/Resi ID"
+                    value={invoice.shippingOrderData.courier.waybill_id}
+                    icon={<InvoiceIconSVG />}
+                  />
+                  <Divider />
+                </>
+              )}
+
+            <InfoList
+              title="Phone"
+              value={invoice.shippingDetails?.phoneNumber}
+              icon={<PhoneIconSVG />}
+            />
+            <InfoList
+              title="Address"
+              value={
+                <div>
+                  {invoice.shippingDetails?.address}
+                  <br />
+                  {invoice.shippingDetails?.addressNote}
+                </div>
+              }
+              icon={<AddressIconSVG />}
+            />
+          </Box>
+        </Box>
+        <Box className="bg-white rounded-xl p-6">
+          <Box className="space-y-4">
+            <h2 className="text-[32px] font-semibold">Order Saya</h2>
+            <Box className="space-y-4">
+              {invoice.products?.map((val: any) => (
+                <Box>
+                  <div className="flex items-start gap-2">
+                    <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1">
+                      <img
+                        style={{ borderRadius: "20%" }}
+                        className="rounded-lg object-cover w-full aspect-video"
+                        src={val?.product?.img?.[0] || imagePlaceholder}
+                        alt="image"
+                      />
+                      <Typography
+                        className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                        fontSize={14}
+                        fontWeight={400}
+                      >
+                        {getCategoryLabel(val?.productCategoryId)}
+                      </Typography>
+                      <Typography
+                        fontSize={17}
+                        fontWeight={400}
+                        color="text.primary"
+                        className="font-semibold"
+                      >
+                        {val?.product?.productName}
+                      </Typography>
+                      <Typography
+                        fontSize={15}
+                        className="font-normal text-slate-500"
+                      >
+                        SKU: {val.product?.sku}
+                      </Typography>
+                      <div className="flex items-center gap-2">
+                        <Typography className="text-sm text-slate-600">
+                          {rupiah(val.totalPrice)}
+                        </Typography>
+                        <p>|</p>
+                        <Typography className="text-sm text-slate-600">
+                          {val.qty} Pcs
+                        </Typography>
+                      </div>
+                    </div>
+                  </div>
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+
+        <Box className="bg-white rounded-xl p-6">
+          <Box className="space-y-4">
+            <h2 className="text-[32px] font-semibold">Order Summary</h2>
+
+            <Box className="flex items-center justify-between">
+              <Typography className="font-semibold text-lg text-slate-600">
+                Subtotal ({invoice.products?.length} Items)
+              </Typography>
+              <Typography className="font-medium text-lg">
+                {rupiah(priceItem)}
+              </Typography>
+            </Box>
+            {invoice.shippingMethod && (
+              <>
+                <Box className="flex items-center gap-4 justify-between">
+                  <Box>
+                    <Typography className="font-semibold text-lg text-slate-600">
+                      Delivery
+                    </Typography>
+                    <Typography className="flex items-center">
+                      {getCourierByCode(invoice.shippingMethod.courierCode)
+                        ?.img && (
+                        <img
+                          src={
+                            getCourierByCode(invoice.shippingMethod.courierCode)
+                              ?.img
+                          }
+                          alt="kurir"
+                          className="w-10 max-h-7 mr-1"
+                        />
+                      )}
+                      {invoice.shippingMethod.courierName} -{" "}
+                      {invoice.shippingMethod.serviceName}&nbsp; (
+                      {invoice.shippingDetails?.totalWeight} grams)
+                    </Typography>
+                  </Box>
+                  <Typography className="font-medium text-lg">
+                    {rupiah(invoice.shippingMethod.price)}
+                  </Typography>
+                </Box>
+                <Box className="flex items-center gap-4 justify-between">
+                  <Typography className="font-semibold text-lg text-slate-600">
+                    Insurance
+                  </Typography>
+
+                  <Typography className="font-medium text-lg">
+                    {rupiah(invoice.shippingMethod.insuranceFee)}
+                  </Typography>
+                </Box>
+              </>
+            )}
+            <Box className="flex items-center gap-4 justify-between">
+              <Typography className="font-semibold text-lg text-slate-600">
+                Tax (11%)
+              </Typography>
+
+              <Typography className="font-medium text-lg">
+                {rupiah(priceItem * 0.11)}
+              </Typography>
+            </Box>
+            <Divider />
+            <Box className="flex items-center gap-4 justify-between">
+              <Typography className="font-semibold text-lg">
+                Sub Total
+              </Typography>
+
+              <Typography className="font-medium text-lg">
+                {rupiah(
+                  priceItem +
+                    (invoice.shippingMethod?.price ?? 0) +
+                    (invoice.shippingMethod?.insuranceFee ?? 0) +
+                    priceItem * 0.11
+                )}
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -13,6 +13,7 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -37,8 +38,15 @@ import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
-import { capitalizeString, numberFormat } from "@/tools/utils";
+import {
+  capitalizeString,
+  getCategoryLabel,
+  numberFormat,
+} from "@/tools/utils";
 import { Product } from "@/types/product";
+import { Close } from "@mui/icons-material";
+import CardVertical from "./CardVertical";
+import { imagePlaceholder } from "./ProductList/ProductList";
 
 const ModalInquiry = ({ modal, setModal }: any) => {
   const { open, data } = modal;
@@ -251,6 +259,15 @@ const ModalInquiry = ({ modal, setModal }: any) => {
     return courier;
   };
 
+  const InfoList = ({ title, value }: any) => {
+    return (
+      <Box className="space-y-2">
+        <Typography className="font-normal text-slate-500">{title}</Typography>
+        <Typography className="font-normal break-words">{value}</Typography>
+      </Box>
+    );
+  };
+
   return (
     <>
       <Dialog
@@ -262,146 +279,154 @@ const ModalInquiry = ({ modal, setModal }: any) => {
         slots={{ backdrop: Backdrop }}
         scroll={"paper"}
         maxWidth={"md"}
+        // remove margin modal
+        PaperProps={{
+          sx: {
+            m: 0,
+            p: 0,
+            borderRadius: "0px",
+          },
+        }}
+        className="max-w-lg mx-auto"
         fullWidth
       >
-        <DialogTitle>
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Typography
-              id="transition-modal-title"
-              variant="h5"
-              marginBottom="10px"
-              fontWeight={600}
-              component="h2"
-            >
-              Custom Packaging Inquiry
-            </Typography>
-            <Box style={{ cursor: "pointer" }} onClick={() => handleClose()}>
-              <CloseIcon />
+        <DialogContent className="bg-slate-50 space-y-6 p-4">
+          <Box className="bg-white rounded-xl p-4 space-y-6">
+            <Box display="flex" alignItems="center" gap={2}>
+              <h2 className="text-[32px] font-semibold">Inquiry Details</h2>
+              <IconButton className="ml-auto" onClick={() => handleClose()}>
+                <Close />
+              </IconButton>
             </Box>
-          </Box>
-        </DialogTitle>
-        <DialogContent dividers>
-          <Typography
-            id="transition-modal-description"
-            fontWeight={600}
-            marginBottom="10px"
-            sx={{ mt: 2 }}
-            className="text-xl uppercase"
-          >
-            Inquiry Details
-          </Typography>
-          <CardHorizontal
-            imageUrl={data?.product?.img?.[0]}
-            productName={data?.product?.productName}
-            price={
-              getProductPrice(data?.product as Product)
-            }
-            location="Jakarta"
-            slug={data?.product?.slug}
-          />
-          <Box className="mt-4">
-            <Grid container className="mb-2">
-              <Grid item md={4}>
-                <Typography variant="body1" className="font-semibold">
-                  Quantity
-                </Typography>
-              </Grid>
-              <Grid item md={8}>
-                <Typography variant="body1">
-                  {numberFormat(data?.quantity)}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid container className="mb-2">
-              <Grid item md={4}>
-                <Typography variant="body1" className="font-semibold">
-                  Attached File
-                </Typography>
-              </Grid>
-              <Grid item md={8}>
-                <Typography variant="body1">
-                  {data?.files?.map((val: any, i: number) => (
-                    <a href={val.url} target="_blank" className="line-clamp-1">
-                      {i + 1}. <span className="text-blue-500">{val.url}</span>
-                    </a>
-                  ))}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-          <Box sx={{ marginTop: "10px" }} className="mb-6">
-            <Typography variant="body1" className="font-semibold mb-2">
-              Product Customization:
-            </Typography>
-            <Grid container spacing={2} alignItems="stretch">
-              {data &&
-                Object?.keys(data?.selectedOptions).map((key: any, i) => {
-                  const selected: any =
-                    data?.selectedOptions[`${key as number}`];
-                  const keyName = key
-                    .split("-")
-                    .map(
-                      (val: any) => val.charAt(0).toUpperCase() + val.slice(1)
-                    )
-                    .join(" ");
+            <Box>
+              <div className="flex items-start gap-2">
+                <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1">
+                  <img
+                    style={{ borderRadius: "20%" }}
+                    className="rounded-lg object-cover w-full aspect-video"
+                    src={data?.product?.img?.[0] || imagePlaceholder}
+                    alt="image"
+                  />
+                  <Typography
+                    className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                    fontSize={14}
+                    fontWeight={400}
+                  >
+                    {getCategoryLabel(data?.productCategoryId)}
+                  </Typography>
+                  <Typography
+                    fontSize={17}
+                    fontWeight={400}
+                    color="text.primary"
+                    className="font-semibold"
+                  >
+                    {data?.product?.productName}
+                  </Typography>
+                  <Typography
+                    fontSize={15}
+                    className="font-normal text-slate-500"
+                  >
+                    SKU: {data?.product?.sku}
+                  </Typography>
+                </div>
+              </div>
+            </Box>
+            <Box className="space-y-4">
+              <InfoList title="Quantity" value={numberFormat(data?.quantity)} />
+              <Divider />
+              <InfoList
+                title="Attached File"
+                value={data?.files?.map((val: any, i: number) => (
+                  <a
+                    href={val.url}
+                    target="_blank"
+                    className="break-words line-clamp-3"
+                  >
+                    <span className="text-blue-500">{val.url}</span>
+                  </a>
+                ))}
+              />
+              <Divider />
+            </Box>
+            <Box>
+              <Typography
+                variant="body1"
+                className="font-semibold mb-2 text-slate-600"
+              >
+                Product Customization:
+              </Typography>
+              <Grid
+                container
+                spacing={2}
+                alignItems="stretch"
+                className="space-y-4"
+              >
+                {data &&
+                  Object?.keys(data?.selectedOptions).map((key: any, i) => {
+                    const selected: any =
+                      data?.selectedOptions[`${key as number}`];
+                    const keyName = key
+                      .split("-")
+                      .map(
+                        (val: any) => val.charAt(0).toUpperCase() + val.slice(1)
+                      )
+                      .join(" ");
 
-                  let selectedOptionName;
+                    let selectedOptionName;
 
-                  if (!Array.isArray(selected.selectedOption)) {
-                    selectedOptionName = selected.selectedOption.name;
-                  } else {
-                    selectedOptionName = selected.selectedOption
-                      .map((val: any) => val.name)
-                      .join(", ");
-                  }
-                  return (
-                    <Grid item md={6} key={i} className="w-full">
-                      <Box className="p-4 h-full shadow-md rounded-md">
-                        <Typography className="font-semibold">
-                          {keyName}
-                        </Typography>
-                        <Typography>{selected.variant.description}</Typography>
-                        <Box style={{ display: "flex", alignItems: "center" }}>
-                          {selected.selectedOption.imgSrc && (
-                            <img
-                              src={selected.selectedOption.imgSrc}
-                              alt={key}
-                              className="w-14 h-14 rounded-sm mr-2"
-                            />
-                          )}
-                          <Typography>
-                            Selected:{" "}
-                            <span
-                              style={{
-                                fontWeight: 600,
-                              }}
-                            >
-                              {selectedOptionName}
-                            </span>
+                    if (!Array.isArray(selected.selectedOption)) {
+                      selectedOptionName = selected.selectedOption.name;
+                    } else {
+                      selectedOptionName = selected.selectedOption
+                        .map((val: any) => val.name)
+                        .join(", ");
+                    }
+                    return (
+                      <Grid item md={12} key={i} className="w-full">
+                        <Box className="h-full rounded-md shadow-sm p-4 bg-slate-50">
+                          <Typography className="font-semibold">
+                            {keyName}
                           </Typography>
+                          <Typography>
+                            {selected.variant.description}
+                          </Typography>
+                          <Box
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            {selected.selectedOption.imgSrc && (
+                              <img
+                                src={selected.selectedOption.imgSrc}
+                                alt={key}
+                                className="w-14 h-14 rounded-sm mr-2"
+                              />
+                            )}
+                            <Typography>
+                              Selected:{" "}
+                              <span
+                                style={{
+                                  fontWeight: 600,
+                                }}
+                              >
+                                {selectedOptionName}
+                              </span>
+                            </Typography>
+                          </Box>
                         </Box>
-                      </Box>
-                    </Grid>
-                  );
-                })}
-            </Grid>
+                      </Grid>
+                    );
+                  })}
+              </Grid>
+            </Box>
           </Box>
 
           {detailQuotation?.length > 0 && (
             <>
-              <Divider />
               <Typography
                 id="transition-modal-description"
                 fontWeight={600}
                 marginBottom="10px"
                 sx={{ mt: 3 }}
-                className="text-xl uppercase"
+                className="text-[28px] font-semibold"
               >
                 QUOTATIONS
               </Typography>
@@ -534,12 +559,12 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                 colSpan={7}
                               >
                                 <Grid container>
-                                  <Grid item md={6}>
+                                  <Grid item xs={6}>
                                     <Typography>
                                       Subtotal ({quotation.items?.length} Items)
                                     </Typography>
                                   </Grid>
-                                  <Grid item md={6}>
+                                  <Grid item xs={6}>
                                     <Typography className="float-right">
                                       {rupiah(
                                         quotation.items.reduce(
@@ -551,10 +576,10 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                   </Grid>
                                 </Grid>
                                 <Grid container>
-                                  <Grid item md={6}>
+                                  <Grid item xs={6}>
                                     <Typography>Shipping Cost</Typography>
                                   </Grid>
-                                  <Grid item md={6}>
+                                  <Grid item xs={6}>
                                     <Typography className="float-right">
                                       {rupiah(quotation.shipping.cost)}
                                     </Typography>
@@ -577,7 +602,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                         className="w-10 max-h-7 mr-1"
                                       />
                                     )}
-                                    <Typography>
+                                    <Typography className="break-words">
                                       {`${capitalizeString(
                                         quotation.shipping.courier
                                       )}-${capitalizeString(
@@ -588,10 +613,10 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                 </Grid>
                                 {quotation.vat.enabled && (
                                   <Grid container>
-                                    <Grid item md={6}>
+                                    <Grid item xs={6}>
                                       <Typography>PPN (11%)</Typography>
                                     </Grid>
-                                    <Grid item md={6}>
+                                    <Grid item xs={6}>
                                       <Typography className="float-right">
                                         {rupiah(quotation.vat.cost)}
                                       </Typography>
@@ -599,12 +624,12 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                                   </Grid>
                                 )}
                                 <Grid container>
-                                  <Grid item md={6}>
+                                  <Grid item xs={6}>
                                     <Typography className="font-bold">
                                       Total
                                     </Typography>
                                   </Grid>
-                                  <Grid item md={6}>
+                                  <Grid item xs={6}>
                                     <Typography className="float-right font-bold">
                                       {rupiah(
                                         quotation.items.reduce(
