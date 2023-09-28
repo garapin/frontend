@@ -70,8 +70,7 @@ makeStyles({
 
 const imageSet: CarouselImageSet[] = [
   {
-    srcUrl:
-      "https://images.pexels.com/photos/13258585/pexels-photo-13258585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    srcUrl: "/assets/slider-1.png",
   },
   {
     srcUrl:
