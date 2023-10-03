@@ -266,7 +266,7 @@ const LoginPage = () => {
                   {t("register.fields.namaPerusahaan")}
                 </p>
                 <TextField
-                  placeholder="Masukan Nama Perusahaan Anda"
+                  placeholder="Masukan Nama Usaha/Perusahaan Anda"
                   variant="outlined"
                   name="namaPerusahaan"
                   fullWidth
