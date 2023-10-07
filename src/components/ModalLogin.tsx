@@ -19,7 +19,6 @@ const ModalLogin = ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: 400,
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 4,
@@ -54,11 +53,14 @@ const ModalLogin = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style} className="space-y-6 px-10 py-16">
+      <Box
+        sx={style}
+        className="space-y-6 px-10 py-16 md:w-[500px] lg:w-[700px]"
+      >
         <h2 className="text-[40px] text-center max-w-xs font-medium pb-4">
           Ingin Memesan?
         </h2>
-        <p className="text-slate-600 text-center max-w-xs pb-2 leading-5">
+        <p className="text-slate-600 text-center max-w-xs lg:max-w-none pb-2 leading-5">
           Anda diharuskan untuk login/register terlebih dahulu jika ingin
           memesan produk kami
         </p>

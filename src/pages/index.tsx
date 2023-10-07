@@ -11,7 +11,6 @@ import Button from "@mui/material/Button";
 import { i18n, Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { makeStyles } from "@mui/styles";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Accordion,
   AccordionDetails,
@@ -39,6 +38,8 @@ import { ArrowBack, East, KeyboardBackspace } from "@mui/icons-material";
 import { SearchPackageIconSVG } from "@/assets/icons/search-package-icon";
 import { OrderPackageIconSVG } from "@/assets/icons/order-package-icon";
 import { ShippingPackageIconSVG } from "@/assets/icons/shipping-package-icon";
+import Consultation from "@/components/Consultation";
+import GarapinFAQ from "@/components/GarapinFAQ";
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "#713F97",
@@ -133,6 +134,26 @@ function LandingPage(props: any) {
     }
   }, [tabVal]);
 
+  const jelajahMenus = [
+    {
+      img: "/assets/custom-packaging-cover.png",
+      header: t("sectionJelajah.custom_packaging.header"),
+      desc: t("sectionJelajah.custom_packaging.desc"),
+      link: "/product-category/custom-packaging",
+    },
+    {
+      img: "/assets/ready-to-buy-cover.png",
+      header: t("sectionJelajah.ready_to_buy.header"),
+      desc: t("sectionJelajah.ready_to_buy.desc"),
+      link: "/product-category/ready-to-buy",
+    },
+    {
+      img: "/assets/digital-packaging-cover.png",
+      header: t("sectionJelajah.digital_packaging.header"),
+      desc: t("sectionJelajah.digital_packaging.desc"),
+      link: "/product-category/digital-packaging",
+    },
+  ];
   return (
     <>
       <Head>
@@ -142,41 +163,34 @@ function LandingPage(props: any) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box className="flex flex-col pb-20 content-center max-w-md mx-auto">
+        <Box className="flex flex-col pb-20 content-center max-w-screen-2xl mx-auto">
           <Box className="h-min-screen flex flex-col justify-center bg-white space-y-4">
-            {/* <ImageCarousel
-              dataSource={imageSet}
-              maxHeight={413}
-              maxWidth={627}
-              withThumbnail={false}
-              useMagnifier={false}
-              rsProps={{
-                autoplay: true,
-                autoplaySpeed: 4000,
-                infinite: true,
-              }}
-              className="py-0 w-full h-1/3 object-cover"
-            /> */}
-            <img src={imageSet[0].srcUrl} alt="garapin" />
-            <Container maxWidth="sm" className="px-4">
-              <Box>
-                <Box className="space-y-4">
+            <div className="grid grid-cols-12">
+              <div className="col-span-12 lg:col-span-6 lg:order-2">
+                <img
+                  src={imageSet[0].srcUrl}
+                  alt="garapin"
+                  className="w-full"
+                />
+              </div>
+              <div className="col-span-12 lg:col-span-6 lg:order-1 lg:flex lg:items-center">
+                <Box className="space-y-4 px-4">
                   <Typography
                     variant="body1"
                     color="primary"
-                    className="text-[#344289] text-lg font-bold max-w-xs"
+                    className="text-[#344289] text-lg font-bold max-w-xs lg:max-w-xl"
                   >
                     <Trans>{t("section1.tagline")}</Trans>
                   </Typography>
                   <Typography
                     variant="h2"
-                    className="text-[32px] font-semibold max-w-xs"
+                    className="text-[32px] lg:text-[60px] font-semibold max-w-xs lg:max-w-xl"
                   >
                     <Trans>{t("section1.header")}</Trans>
                   </Typography>
                   <Typography
                     variant="body1"
-                    className="text-md text-slate-600"
+                    className="text-md text-slate-600 lg:max-w-xl"
                   >
                     <Trans>{t("section1.content")}</Trans>
                   </Typography>
@@ -202,19 +216,22 @@ function LandingPage(props: any) {
                     </IconButton>
                   </div>
                 </Box>
-                <Box className="max-w-xl mt-20 mb-20 space-y-6" columnGap={2}>
-                  <p className="text-[32px] font-semibold text-center max-w-xs mx-auto">
+              </div>
+            </div>
+            <Container className="px-4 max-w-screen-2xl">
+              <Box>
+                <Box
+                  className="max-w-screen-2xl mt-20 mb-20 space-y-6"
+                  columnGap={2}
+                >
+                  <p className="text-[32px] font-semibold text-center lg:text-start max-w-xs mx-auto md:max-w-md md:mx-0">
                     {t("section1.order_guide")}{" "}
                     <span className="text-[#713F97]">
                       {t("section1.order_guide_tagline")}
                     </span>
                   </p>
-                  <Grid container>
-                    <Grid
-                      item
-                      xs={12}
-                      className="bg-slate-50 w-full space-y-6 rounded-lg px-4 py-6 mb-4"
-                    >
+                  <div className="grid grid-cols-12 gap-4 md:gap-8 lg:gap-16">
+                    <div className="bg-slate-50 w-full space-y-6 rounded-lg px-4 py-6 mb-4 col-span-12 md:col-span-6 lg:col-span-4">
                       <IconButton color="primary" className="bg-[#00C198]">
                         <SearchPackageIconSVG className="text-white" />
                       </IconButton>
@@ -224,12 +241,8 @@ function LandingPage(props: any) {
                       <p className="text-slate-600 leading-6">
                         {t("section2.grid.grid1.description")}
                       </p>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      className="bg-slate-50 w-full space-y-6 rounded-lg px-4 py-6 mb-4"
-                    >
+                    </div>
+                    <div className="bg-slate-50 w-full space-y-6 rounded-lg px-4 py-6 mb-4 col-span-12 md:col-span-6 lg:col-span-4">
                       <IconButton color="primary" className="bg-[#01959C]">
                         <OrderPackageIconSVG className="text-white" />
                       </IconButton>
@@ -239,12 +252,8 @@ function LandingPage(props: any) {
                       <p className="text-slate-600 leading-6">
                         {t("section2.grid.grid2.description")}
                       </p>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      className="bg-slate-50 w-full space-y-6 rounded-lg px-4 py-6"
-                    >
+                    </div>
+                    <div className="bg-slate-50 w-full space-y-6 rounded-lg px-4 py-6 mb-4 col-span-12 md:col-span-6 lg:col-span-4">
                       <IconButton color="primary" className="bg-[#11788F]">
                         <ShippingPackageIconSVG className="text-white" />
                       </IconButton>
@@ -254,95 +263,113 @@ function LandingPage(props: any) {
                       <p className="text-slate-600 leading-6">
                         {t("section2.grid.grid3.description")}
                       </p>
-                    </Grid>
-                  </Grid>
+                    </div>
+                  </div>
                 </Box>
                 <Box className="mt-20 space-y-6">
-                  <h2 className="font-semibold text-[32px] text-center max-w-sm">
+                  <h2 className="font-semibold text-[32px] text-center max-w-sm mx-auto md:max-w-xl md:leading-10">
                     {t("sectionJelajah.header")}{" "}
                     <span className="text-[#713F97]">
                       {t("sectionJelajah.category")}
                     </span>
                   </h2>
-                  <Grid container>
-                    <Grid
-                      item
-                      xs={12}
-                      className="mb-2 relative group hover:cursor-pointer overflow-hidden"
-                      onClick={() =>
-                        router.push("/product-category/custom-packaging")
-                      }
-                    >
-                      <Image
-                        src="/assets/custom-packaging-cover.png"
-                        alt="custom packaging"
-                        width={600}
-                        height={600}
-                        className="w-full h-full object-contain group-hover:transform group-hover:scale-105 transition-all duration-500"
-                      />
-                      <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
-                        <p className="uppercase font-bold text-2xl">
-                          {t("sectionJelajah.custom_packaging.header")}
-                        </p>
-                        <p className="font-light leading-5">
-                          {t("sectionJelajah.custom_packaging.desc")}
-                        </p>
-                      </div>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      className="mb-2 relative group hover:cursor-pointer overflow-hidden"
-                      onClick={() =>
-                        router.push("/product-category/ready-to-buy")
-                      }
-                    >
-                      <Image
-                        src="/assets/ready-to-buy-cover.png"
-                        alt="ready-to-buy"
-                        width={600}
-                        height={600}
-                        className="w-full h-full object-contain group-hover:transform group-hover:scale-105 transition-all duration-500"
-                      />
-                      <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
-                        <p className="uppercase font-bold text-2xl">
-                          {t("sectionJelajah.ready_to_buy.header")}
-                        </p>
-                        <p className="font-light leading-5">
-                          {t("sectionJelajah.ready_to_buy.desc")}
-                        </p>
-                      </div>
-                    </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      className="relative group hover:cursor-pointer overflow-hidden"
-                      onClick={() =>
-                        router.push("/product-category/digital-packaging")
-                      }
-                    >
-                      <Image
-                        src="/assets/digital-packaging-cover.png"
-                        alt="digital packaging"
-                        width={600}
-                        height={600}
-                        className="w-full h-full object-contain group-hover:transform group-hover:scale-105 transition-all duration-500"
-                      />
-                      <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
-                        <p className="uppercase font-bold text-2xl">
-                          {t("sectionJelajah.digital_packaging.header")}
-                        </p>
-                        <p className="font-light leading-5">
-                          {t("sectionJelajah.digital_packaging.desc")}
-                        </p>
-                      </div>
-                    </Grid>
+                  <Grid container className="lg:hidden">
+                    {jelajahMenus.map((menu, index) => (
+                      <Grid
+                        item
+                        key={index}
+                        xs={12}
+                        className="mb-2 relative group hover:cursor-pointer overflow-hidden"
+                        onClick={() => router.push(menu.link)}
+                      >
+                        <Image
+                          src={menu.img}
+                          alt={menu.header}
+                          width={600}
+                          height={600}
+                          className="w-full h-full object-contain group-hover:transform group-hover:scale-105 transition-all duration-500"
+                        />
+                        <div className="absolute bottom-6 left-4 pr-4 text-white space-y-2">
+                          <p className="uppercase font-bold text-2xl">
+                            {menu.header}
+                          </p>
+                          <p className="font-light leading-5">{menu.desc}</p>
+                        </div>
+                      </Grid>
+                    ))}
                   </Grid>
+                  <div className="hidden lg:grid grid-cols-12 gap-4 w-full">
+                    <div
+                      className="col-span-6 relative cursor-pointer"
+                      onClick={() => router.push(jelajahMenus[0].link)}
+                    >
+                      <img
+                        src={"assets/cp-cat.png"}
+                        alt={jelajahMenus[0].header}
+                        className="flex-1 h-full w-full"
+                      />
+                      <div className="absolute bottom-12 left-12 pr-4 max-w-xs text-white space-y-2">
+                        <p className="uppercase font-bold text-2xl">
+                          {jelajahMenus[0].header}
+                        </p>
+                        <p className="font-light leading-5">
+                          {jelajahMenus[0].desc}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="col-span-6 space-y-4">
+                      <div
+                        className="relative cursor-pointer"
+                        onClick={() => router.push(jelajahMenus[1].link)}
+                      >
+                        <img
+                          src={"assets/rtb-cat.png"}
+                          alt={jelajahMenus[1].header}
+                          className="w-full object-cover"
+                        />
+                        <div className="absolute bottom-8 left-8 pr-4 max-w-xs text-white space-y-2">
+                          <p className="uppercase font-bold text-2xl">
+                            {jelajahMenus[1].header}
+                          </p>
+                          <p className="font-light leading-5">
+                            {jelajahMenus[1].desc}
+                          </p>
+                        </div>
+                      </div>
+                      <div
+                        className="relative cursor-pointer"
+                        onClick={() => router.push(jelajahMenus[2].link)}
+                      >
+                        <img
+                          src={"assets/dp-cat.png"}
+                          alt={jelajahMenus[2].header}
+                          className="w-full object-cover"
+                        />
+                        <div className="absolute bottom-8 left-8 pr-4 max-w-xs text-white space-y-2">
+                          <p className="uppercase font-bold text-2xl">
+                            {jelajahMenus[2].header}
+                          </p>
+                          <p className="font-light leading-5">
+                            {jelajahMenus[2].desc}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </Box>
                 <Box className="mt-20 space-y-6" id="recomendation-product">
-                  <h2 className="font-semibold text-[32px] max-w-sm">
-                    {t("section_recomendation.title")}
-                  </h2>
+                  <div className="lg:flex items-center justify-between">
+                    <h2 className="font-semibold text-[32px] max-w-sm lg:max-w-xl">
+                      {t("section_recomendation.title")}
+                    </h2>
+                    <Button
+                      variant="text"
+                      className="max-w-fit capitalize text-lg font-medium hidden lg:block"
+                      onClick={() => router.push("/product-list")}
+                    >
+                      {t("sectionJelajah.viewAllButton")}
+                    </Button>
+                  </div>
                   <Tabs
                     value={tabVal}
                     onChange={handleChangeTabVal}
@@ -367,7 +394,7 @@ function LandingPage(props: any) {
                   <Grid container spacing={3}>
                     <ProductList productList={productList} />
                   </Grid>
-                  <div className="flex items-center justify-center pt-4">
+                  <div className="flex items-center justify-center pt-4 lg:hidden">
                     <Button
                       variant="text"
                       className="max-w-fit capitalize text-lg font-medium"
@@ -382,7 +409,7 @@ function LandingPage(props: any) {
                   <h2 className="font-semibold text-[32px] max-w-sm text-center mx-auto">
                     {t("section_happy_client.title")}
                   </h2>
-                  <div className="flex flex-col justify-center items-center gap-16">
+                  <div className="flex flex-col lg:flex-row justify-center items-center gap-16 lg:gap-28">
                     <img
                       src="/assets/bca-logo.png"
                       alt="bca"
@@ -400,49 +427,8 @@ function LandingPage(props: any) {
                     />
                   </div>
                 </Box>
-                <Box className="mt-20 py-16 px-10 text-center space-y-4 bg-[#713F97] rounded-2xl text-white">
-                  <h2 className="font-normal text-[32px] max-w-sm text-center mx-auto">
-                    {t("section_consultation.title")}
-                  </h2>
-                  <p className="leading-6">
-                    {t("section_consultation.description")}
-                  </p>
-                  <Button
-                    variant="contained"
-                    className="text-[#713F97] bg-white capitalize"
-                    onClick={() => {
-                      window.open("https://wa.me/+6281380206100", "_blank");
-                    }}
-                  >
-                    {t("section_consultation.button")}
-                  </Button>
-                </Box>
-                <Box className="mt-20">
-                  <Accordion className="shadow-lg p-4">
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1a-content"
-                      id="panel1a-header"
-                    >
-                      <Typography className="text-lg font-medium max-w-xs">
-                        Garapin, Pembuatan Packaging Terpercaya Di Indonesia
-                      </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                      <Typography>
-                        Lorem ipsum dolor sit amet consectetur. In enim
-                        elementum tellus adipiscing lorem. At enim eget sit
-                        donec. Pellentesque lorem in viverra amet aliquam
-                        potenti nullam porta. Cras neque condimentum fringilla
-                        sit purus vitae. Tellus convallis tristique purus mattis
-                        purus purus sagittis egestas. Augue enim dis lectus
-                        tempor praesent. Ultrices in nunc mi egestas adipiscing
-                        est viverra. Dignissim duis orci sagittis et. Porttitor
-                        sed neque tincidunt euismod.
-                      </Typography>
-                    </AccordionDetails>
-                  </Accordion>
-                </Box>
+                <Consultation className="mt-20" />
+                <GarapinFAQ className="mt-20" />
               </Box>
             </Container>
           </Box>

@@ -321,104 +321,179 @@ const index = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-slate-50">
-      <div className="bg-white rounded-t-xl pt-8 px-6 space-y-6">
-        <h2 className="text-[32px] font-semibold">
-          {getCategoryLabel(singleProduct?.category)}
-        </h2>
-        <p className="text-slate-700">
-          Anda mengajukan penawaran untuk produk berikut :
-        </p>
-        <div className="bg-slate-50 rounded-xl p-4 space-y-3">
-          <img
-            src={singleProduct?.img[0] ?? imagePlaceholder}
-            alt={singleProduct?.name}
-            className="rounded-xl w-full aspect-auto object-contain"
-          />
-          <p className="text-[#713F97] font-semibold text-sm">
+    <div className="bg-slate-50">
+      <div className="max-w-[940px] mx-auto p-6 md:py-8">
+        <div className="bg-white rounded-t-xl pt-8 px-6 space-y-6">
+          <h2 className="text-[32px] font-semibold">
             {getCategoryLabel(singleProduct?.category)}
+          </h2>
+          <p className="text-slate-700">
+            Anda mengajukan penawaran untuk produk berikut :
           </p>
-          <p className="font-semibold">{singleProduct?.productName}</p>
-          <div className="flex items-center gap-2 text-slate-700 font-light">
-            {singleProduct?.category == 1 ? (
-              <p className="font-semibold border-r-2 border-slate-700 text-sm">
-                {templatePrice?.unitPrice?.toFixed(2)}
+          <div className="bg-slate-50 rounded-xl p-4 space-y-3 lg:flex lg:items-center lg:gap-4">
+            <img
+              src={singleProduct?.img[0] ?? imagePlaceholder}
+              alt={singleProduct?.name}
+              className="rounded-xl w-full aspect-auto object-contain lg:w-44 lg:h-44"
+            />
+            <div className="space-y-3">
+              <p className="text-[#713F97] font-semibold text-sm">
+                {getCategoryLabel(singleProduct?.category)}
               </p>
-            ) : (
-              <p className="font-semibold border-r-2 border-slate-700 text-sm">
-                {getProductPrice(singleProduct)}
-              </p>
-            )}
-            {singleProduct?.category == 1 && (
-              <>
-                <p className="font-semibold border-slate-700 text-sm">|</p>
-                <p className="font-semibold border-slate-700 text-sm">
-                  {itemQty} pcs
-                </p>
-              </>
-            )}
-          </div>
-        </div>
-        <Divider />
-      </div>
-      {singleProduct?.category == 1 ? (
-        <form onSubmit={formikRTB.handleSubmit}>
-          <div className="bg-white p-6 space-y-6">
-            <div className="space-y-4">
-              <p className="text-slate-600 font-semibold text-sm">
-                Detail Produk
-              </p>
-              <TextField
-                placeholder="Masukan Deskripsi Produk Anda"
-                multiline
-                rows={10}
-                fullWidth
-                error={
-                  formikRTB.touched.orderDescription &&
-                  Boolean(formikRTB.errors.orderDescription)
-                }
-                helperText={
-                  Boolean(formikRTB.touched.orderDescription) &&
-                  formikRTB.errors.orderDescription
-                }
-                value={formikRTB.values.orderDescription}
-                name={"orderDescription"}
-                onBlur={formikRTB.handleBlur}
-                onChange={formikRTB.handleChange}
-              />
+              <p className="font-semibold">{singleProduct?.productName}</p>
+              <div className="flex items-center gap-2 text-slate-700 font-light">
+                {singleProduct?.category == 1 ? (
+                  <p className="font-semibold border-r-2 border-slate-700 text-sm">
+                    {templatePrice?.unitPrice?.toFixed(2)}
+                  </p>
+                ) : (
+                  <p className="font-semibold border-r-2 border-slate-700 text-sm">
+                    {getProductPrice(singleProduct)}
+                  </p>
+                )}
+                {singleProduct?.category == 1 && (
+                  <>
+                    <p className="font-semibold border-slate-700 text-sm">|</p>
+                    <p className="font-semibold border-slate-700 text-sm">
+                      {itemQty} pcs
+                    </p>
+                  </>
+                )}
+              </div>
             </div>
-            <div className="space-y-4">
-              <p className="text-slate-600 font-semibold text-sm">
-                Kuantitas Produk
-              </p>
-              <Box className="flex items-center my-10 gap-2">
-                <Button
-                  disabled={itemQty == 0}
-                  onClick={() => descButton(itemQty)}
-                  variant="contained"
-                  className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
-                >
-                  <RemoveIcon />
-                </Button>
-                <NumericFormat
-                  value={itemQty}
-                  allowLeadingZeros
-                  className="w-20 flex-1 py-2 text-center border-none outline-none text-lg"
-                  thousandSeparator=","
-                  onChange={(e) => {
-                    setItemQty(e.target.value);
-                    debounceCalculatePrice(e.target.value, singleProduct);
+          </div>
+          <Divider />
+        </div>
+        {singleProduct?.category == 1 ? (
+          <form onSubmit={formikRTB.handleSubmit}>
+            <div className="bg-white p-6 space-y-6">
+              <div className="space-y-4">
+                <p className="text-slate-600 font-semibold text-sm">
+                  Detail Produk
+                </p>
+                <TextField
+                  placeholder="Masukan Deskripsi Produk Anda"
+                  multiline
+                  rows={10}
+                  fullWidth
+                  error={
+                    formikRTB.touched.orderDescription &&
+                    Boolean(formikRTB.errors.orderDescription)
+                  }
+                  helperText={
+                    Boolean(formikRTB.touched.orderDescription) &&
+                    formikRTB.errors.orderDescription
+                  }
+                  value={formikRTB.values.orderDescription}
+                  name={"orderDescription"}
+                  onBlur={formikRTB.handleBlur}
+                  onChange={formikRTB.handleChange}
+                />
+              </div>
+              <div className="space-y-4">
+                <p className="text-slate-600 font-semibold text-sm">
+                  Kuantitas Produk
+                </p>
+                <Box className="flex items-center my-10 gap-2 md:max-w-[200px]">
+                  <Button
+                    disabled={itemQty == 0}
+                    onClick={() => descButton(itemQty)}
+                    variant="contained"
+                    className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
+                  >
+                    <RemoveIcon />
+                  </Button>
+                  <NumericFormat
+                    value={itemQty}
+                    allowLeadingZeros
+                    className="w-20 flex-1 py-2 text-center border-none outline-none text-lg"
+                    thousandSeparator=","
+                    onChange={(e) => {
+                      setItemQty(e.target.value);
+                      debounceCalculatePrice(e.target.value, singleProduct);
+                    }}
+                  />
+                  <Button
+                    disabled={itemQty === singleProduct?.stock}
+                    onClick={() => addButton(itemQty)}
+                    variant="contained"
+                    className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
+                  >
+                    <AddIcon />
+                  </Button>
+                </Box>
+                <div className="space-y-4 py-2">
+                  <p className="text-slate-600 font-semibold text-sm">
+                    Upload File Logo
+                  </p>
+                  <Button
+                    variant="contained"
+                    className="capitalize"
+                    onClick={handleButtonClick}
+                  >
+                    Upload Image
+                  </Button>
+                  {selectedFile && <p>{selectedFile?.name}</p>}
+                  <input
+                    id="file-input"
+                    type="file"
+                    onChange={handleFileChange}
+                    style={{ display: "none" }}
+                  />
+                </div>
+              </div>
+            </div>
+            <Divider />
+            <div className="bg-white px-6 pt-6 pb-8 flex items-center gap-4 rounded-b-xl">
+              <Button
+                variant="outlined"
+                className="capitalize py-2 lg:py-4 text-lg"
+                fullWidth
+                onClick={() => {
+                  router.back();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                className="capitalize py-2 lg:py-4 text-lg"
+                fullWidth
+                disabled={fetchingPrice}
+                onClick={handleBuyRTB}
+              >
+                Beli
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <form onSubmit={formik.handleSubmit}>
+            <div className="bg-white p-6 space-y-6">
+              {errors !== undefined && <Alert severity="error">{errors}</Alert>}
+              {(productTemplate == undefined || isTemplateLoading) && (
+                <CircularProgress />
+              )}
+              {productTemplate && !isTemplateLoading && (
+                <GarapinProductCustomizer
+                  template={productTemplate}
+                  value={variantSelectorValue}
+                  handleChange={(variant, selected) => {
+                    if (selected !== undefined) {
+                      setVariantSelectorValue({
+                        ...variantSelectorValue,
+                        [variant.id]: {
+                          variant,
+                          selectedOption: selected,
+                        },
+                      });
+                    }
+                  }}
+                  options={{
+                    alignVariantOptions: "left",
+                    showPriceCalculation: false,
                   }}
                 />
-                <Button
-                  disabled={itemQty === singleProduct?.stock}
-                  onClick={() => addButton(itemQty)}
-                  variant="contained"
-                  className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
-                >
-                  <AddIcon />
-                </Button>
-              </Box>
+              )}
               <div className="space-y-4 py-2">
                 <p className="text-slate-600 font-semibold text-sm">
                   Upload File Logo
@@ -438,323 +513,270 @@ const index = () => {
                   style={{ display: "none" }}
                 />
               </div>
-            </div>
-          </div>
-          <Divider />
-          <div className="bg-white px-6 pt-6 pb-8 flex items-center gap-4 rounded-b-xl">
-            <Button
-              variant="outlined"
-              className="capitalize py-2 text-lg"
-              fullWidth
-              onClick={() => {
-                router.back();
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              className="capitalize py-2 text-lg"
-              fullWidth
-              disabled={fetchingPrice}
-              onClick={handleBuyRTB}
-            >
-              Beli
-            </Button>
-          </div>
-        </form>
-      ) : (
-        <form onSubmit={formik.handleSubmit}>
-          <div className="bg-white p-6 space-y-6">
-            {errors !== undefined && <Alert severity="error">{errors}</Alert>}
-            {(productTemplate == undefined || isTemplateLoading) && (
-              <CircularProgress />
-            )}
-            {productTemplate && !isTemplateLoading && (
-              <GarapinProductCustomizer
-                template={productTemplate}
-                value={variantSelectorValue}
-                handleChange={(variant, selected) => {
-                  if (selected !== undefined) {
-                    setVariantSelectorValue({
-                      ...variantSelectorValue,
-                      [variant.id]: {
-                        variant,
-                        selectedOption: selected,
-                      },
-                    });
-                  }
-                }}
-                options={{
-                  alignVariantOptions: "left",
-                  showPriceCalculation: false,
-                }}
-              />
-            )}
-            <div className="space-y-4 py-2">
-              <p className="text-slate-600 font-semibold text-sm">
-                Upload File Logo
-              </p>
-              <Button
-                variant="contained"
-                className="capitalize"
-                onClick={handleButtonClick}
-              >
-                Upload Image
-              </Button>
-              {selectedFile && <p>{selectedFile?.name}</p>}
-              <input
-                id="file-input"
-                type="file"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-              />
-            </div>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Typography
-                  variant="body1"
-                  className="font-medium text-base text-slate-600"
-                >
-                  Detail Produk
-                </Typography>
-                <Typography
-                  variant="body2"
-                  className="font-normal text-base text-slate-600"
-                >
-                  Masukkan informasi seputar kebutuhan anda atau pertanyaan
-                  terkait produk ini
-                </Typography>
-              </div>
-              <TextField
-                fullWidth
-                // label="Order description"
-                required
-                error={
-                  formik.touched.orderDescription &&
-                  Boolean(formik.errors.orderDescription)
-                }
-                helperText={
-                  Boolean(formik.touched.orderDescription) &&
-                  formik.errors.orderDescription
-                }
-                value={formik.values.orderDescription}
-                name={"orderDescription"}
-                multiline
-                rows={6}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-              <Box
-                sx={{
-                  mt: 3,
-                }}
-                className="space-y-4"
-              >
-                <img
-                  src="/assets/dimension.png"
-                  alt="dimension"
-                  className="w-full"
-                />
-                <Box className="w-full">
-                  <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                    Width (cm)
-                  </p>
-                  <NumericFormat
-                    value={formik.values.dimension?.width}
-                    allowLeadingZeros
-                    fullWidth
-                    allowedDecimalSeparators={[",", "."]}
-                    decimalSeparator="."
-                    customInput={TextField}
-                    variant="outlined"
-                    name={"width"}
-                    required
-                    InputProps={{
-                      className: "rounded-lg",
-                    }}
-                    InputLabelProps={{
-                      style: {
-                        fontSize: "14px",
-                      },
-                    }}
-                    error={Boolean(formik.errors.dimension?.width)}
-                    helperText={
-                      Boolean(formik.errors) && formik.errors.dimension?.width
-                    }
-                    onBlur={formik.handleBlur}
-                    onChange={(e) => {
-                      formik.setFieldValue("dimension.width", e.target.value);
-                    }}
-                  />
-                </Box>
-                <Box className="w-full">
-                  <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                    Length (cm)
-                  </p>
-                  <NumericFormat
-                    value={formik.values.dimension?.length}
-                    allowLeadingZeros
-                    fullWidth
-                    allowedDecimalSeparators={[",", "."]}
-                    decimalSeparator="."
-                    customInput={TextField}
-                    variant="outlined"
-                    name={"length"}
-                    required
-                    InputProps={{
-                      className: "rounded-lg",
-                    }}
-                    InputLabelProps={{
-                      style: {
-                        fontSize: "14px",
-                      },
-                    }}
-                    error={Boolean(formik.errors.dimension?.length)}
-                    helperText={
-                      Boolean(formik.errors) && formik.errors.dimension?.length
-                    }
-                    onBlur={formik.handleBlur}
-                    onChange={(e) => {
-                      formik.setFieldValue("dimension.length", e.target.value);
-                    }}
-                  />
-                </Box>
-                <Box className="w-full">
-                  <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                    Height (cm)
-                  </p>
-                  <NumericFormat
-                    value={formik.values.dimension?.height}
-                    allowLeadingZeros
-                    fullWidth
-                    allowedDecimalSeparators={[",", "."]}
-                    decimalSeparator="."
-                    customInput={TextField}
-                    variant="outlined"
-                    name={"height"}
-                    required
-                    InputProps={{
-                      className: "rounded-lg",
-                    }}
-                    InputLabelProps={{
-                      style: {
-                        fontSize: "14px",
-                      },
-                    }}
-                    error={Boolean(formik.errors.dimension?.height)}
-                    helperText={
-                      Boolean(formik.errors) && formik.errors.dimension?.height
-                    }
-                    onBlur={formik.handleBlur}
-                    onChange={(e) => {
-                      formik.setFieldValue("dimension.height", e.target.value);
-                    }}
-                  />
-                </Box>
-
-                <Typography
-                  variant="h6"
-                  sx={{ lineHeight: 1 }}
-                  className="text-base font-semibold text-slate-600"
-                >
-                  {`Kuantitas ( Min ${singleProduct?.moq ?? 0} pcs )`}
-                </Typography>
-                <div>
-                  <Box className="flex items-center gap-2">
-                    <Button
-                      disabled={formik.values.quantity == 0}
-                      onClick={() =>
-                        formik.setFieldValue(
-                          "quantity",
-                          formik.values.quantity - 1
-                        )
-                      }
-                      variant="contained"
-                      className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
-                    >
-                      <RemoveIcon />
-                    </Button>
-                    <NumericFormat
-                      value={formik.values.quantity}
-                      allowLeadingZeros
-                      className="w-20 flex-1 py-2 text-center border-none outline-none text-lg"
-                      thousandSeparator=","
-                      onChange={(e) => {
-                        formik.setFieldValue(
-                          "quantity",
-                          parseInt(e.target.value.replace(/[^0-9]/g, "") ?? 0)
-                        );
-                      }}
-                      onBlur={formik.handleBlur}
-                      name={"quantity"}
-                    />
-                    <Button
-                      disabled={itemQty === singleProduct?.stock}
-                      onClick={() =>
-                        formik.setFieldValue(
-                          "quantity",
-                          formik.values.quantity + 1
-                        )
-                      }
-                      variant="contained"
-                      className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
-                    >
-                      <AddIcon />
-                    </Button>
-                  </Box>
-                  {formik.errors.quantity && (
-                    <p className="text-sm text-red-600">
-                      {formik.errors.quantity}
-                    </p>
-                  )}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Typography
+                    variant="body1"
+                    className="font-medium text-base text-slate-600"
+                  >
+                    Detail Produk
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className="font-normal text-base text-slate-600"
+                  >
+                    Masukkan informasi seputar kebutuhan anda atau pertanyaan
+                    terkait produk ini
+                  </Typography>
                 </div>
-              </Box>
-
-              {singleProduct?.category == "02" && (
-                <>
-                  <Box>
-                    <Button
-                      variant="contained"
-                      color="garapinColor"
-                      fullWidth
-                      className="rounded-lg py-4 capitalize"
-                      disabled={Boolean(calculationLoading)}
-                      onClick={() =>
-                        dispatch(
-                          getProductTemplatePrice({
-                            product: singleProduct,
-                            selectedOptions: variantSelectorValue,
-                            dimension: formik.values.dimension,
-                            quantity: formik.values.quantity,
-                            idempotencyKey: productTemplateIdempotencyKey,
-                          })
-                        )
-                      }
-                    >
-                      Hitung Harga{" "}
-                      {calculationLoading && (
-                        <CircularProgress
-                          size={18}
-                          sx={{
-                            marginLeft: "0.5rem",
+                <TextField
+                  fullWidth
+                  // label="Order description"
+                  required
+                  error={
+                    formik.touched.orderDescription &&
+                    Boolean(formik.errors.orderDescription)
+                  }
+                  helperText={
+                    Boolean(formik.touched.orderDescription) &&
+                    formik.errors.orderDescription
+                  }
+                  value={formik.values.orderDescription}
+                  name={"orderDescription"}
+                  multiline
+                  rows={6}
+                  onBlur={formik.handleBlur}
+                  onChange={formik.handleChange}
+                />
+                <Box
+                  sx={{
+                    mt: 3,
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="md:grid md:grid-cols-12 md:gap-4 space-y-4">
+                    <div className="md:col-span-6 w-full md:order-2">
+                      <img
+                        src="/assets/dimension.png"
+                        alt="dimension"
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="space-y-4 md:col-span-6 md:order-1">
+                      <Box className="w-full">
+                        <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                          Width (cm)
+                        </p>
+                        <NumericFormat
+                          value={formik.values.dimension?.width}
+                          allowLeadingZeros
+                          fullWidth
+                          allowedDecimalSeparators={[",", "."]}
+                          decimalSeparator="."
+                          customInput={TextField}
+                          variant="outlined"
+                          name={"width"}
+                          required
+                          InputProps={{
+                            className: "rounded-lg",
                           }}
-                          color="inherit"
+                          InputLabelProps={{
+                            style: {
+                              fontSize: "14px",
+                            },
+                          }}
+                          error={Boolean(formik.errors.dimension?.width)}
+                          helperText={
+                            Boolean(formik.errors) &&
+                            formik.errors.dimension?.width
+                          }
+                          onBlur={formik.handleBlur}
+                          onChange={(e) => {
+                            formik.setFieldValue(
+                              "dimension.width",
+                              e.target.value
+                            );
+                          }}
                         />
-                      )}
-                    </Button>
-                    {calculateTemplatePrice && (
-                      <>
-                        <Box>
-                          <Typography
-                            variant="h3"
-                            className="text-3xl my-6 font-semibold"
-                          >
-                            Hasil Hitung
-                          </Typography>
-                          <div className="space-y-4">
-                            {Object.values(calculateTemplatePrice.options).map(
-                              (option: any, idx) => (
+                      </Box>
+                      <Box className="w-full">
+                        <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                          Length (cm)
+                        </p>
+                        <NumericFormat
+                          value={formik.values.dimension?.length}
+                          allowLeadingZeros
+                          fullWidth
+                          allowedDecimalSeparators={[",", "."]}
+                          decimalSeparator="."
+                          customInput={TextField}
+                          variant="outlined"
+                          name={"length"}
+                          required
+                          InputProps={{
+                            className: "rounded-lg",
+                          }}
+                          InputLabelProps={{
+                            style: {
+                              fontSize: "14px",
+                            },
+                          }}
+                          error={Boolean(formik.errors.dimension?.length)}
+                          helperText={
+                            Boolean(formik.errors) &&
+                            formik.errors.dimension?.length
+                          }
+                          onBlur={formik.handleBlur}
+                          onChange={(e) => {
+                            formik.setFieldValue(
+                              "dimension.length",
+                              e.target.value
+                            );
+                          }}
+                        />
+                      </Box>
+                      <Box className="w-full">
+                        <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                          Height (cm)
+                        </p>
+                        <NumericFormat
+                          value={formik.values.dimension?.height}
+                          allowLeadingZeros
+                          fullWidth
+                          allowedDecimalSeparators={[",", "."]}
+                          decimalSeparator="."
+                          customInput={TextField}
+                          variant="outlined"
+                          name={"height"}
+                          required
+                          InputProps={{
+                            className: "rounded-lg",
+                          }}
+                          InputLabelProps={{
+                            style: {
+                              fontSize: "14px",
+                            },
+                          }}
+                          error={Boolean(formik.errors.dimension?.height)}
+                          helperText={
+                            Boolean(formik.errors) &&
+                            formik.errors.dimension?.height
+                          }
+                          onBlur={formik.handleBlur}
+                          onChange={(e) => {
+                            formik.setFieldValue(
+                              "dimension.height",
+                              e.target.value
+                            );
+                          }}
+                        />
+                      </Box>
+                    </div>
+                  </div>
+
+                  <Typography
+                    variant="h6"
+                    sx={{ lineHeight: 1 }}
+                    className="text-base font-semibold text-slate-600"
+                  >
+                    {`Kuantitas ( Min ${singleProduct?.moq ?? 0} pcs )`}
+                  </Typography>
+                  <div className="lg:max-w-[200px]">
+                    <Box className="flex items-center gap-2">
+                      <Button
+                        disabled={formik.values.quantity == 0}
+                        onClick={() =>
+                          formik.setFieldValue(
+                            "quantity",
+                            formik.values.quantity - 1
+                          )
+                        }
+                        variant="contained"
+                        className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
+                      >
+                        <RemoveIcon />
+                      </Button>
+                      <NumericFormat
+                        value={formik.values.quantity}
+                        allowLeadingZeros
+                        className="w-20 flex-1 py-2 text-center border-none outline-none text-lg"
+                        thousandSeparator=","
+                        onChange={(e) => {
+                          formik.setFieldValue(
+                            "quantity",
+                            parseInt(e.target.value.replace(/[^0-9]/g, "") ?? 0)
+                          );
+                        }}
+                        onBlur={formik.handleBlur}
+                        name={"quantity"}
+                      />
+                      <Button
+                        disabled={itemQty === singleProduct?.stock}
+                        onClick={() =>
+                          formik.setFieldValue(
+                            "quantity",
+                            formik.values.quantity + 1
+                          )
+                        }
+                        variant="contained"
+                        className="rounded-md p-2 max-w-[40px] h-[40px] min-w-fit"
+                      >
+                        <AddIcon />
+                      </Button>
+                    </Box>
+                    {formik.errors.quantity && (
+                      <p className="text-sm text-red-600">
+                        {formik.errors.quantity}
+                      </p>
+                    )}
+                  </div>
+                </Box>
+
+                {singleProduct?.category == "02" && (
+                  <>
+                    <Box>
+                      <Button
+                        variant="contained"
+                        color="garapinColor"
+                        fullWidth
+                        className="rounded-lg py-4 capitalize"
+                        disabled={Boolean(calculationLoading)}
+                        onClick={() =>
+                          dispatch(
+                            getProductTemplatePrice({
+                              product: singleProduct,
+                              selectedOptions: variantSelectorValue,
+                              dimension: formik.values.dimension,
+                              quantity: formik.values.quantity,
+                              idempotencyKey: productTemplateIdempotencyKey,
+                            })
+                          )
+                        }
+                      >
+                        Hitung Harga{" "}
+                        {calculationLoading && (
+                          <CircularProgress
+                            size={18}
+                            sx={{
+                              marginLeft: "0.5rem",
+                            }}
+                            color="inherit"
+                          />
+                        )}
+                      </Button>
+                      {calculateTemplatePrice && (
+                        <>
+                          <Box>
+                            <Typography
+                              variant="h3"
+                              className="text-3xl my-6 font-semibold"
+                            >
+                              Hasil Hitung
+                            </Typography>
+                            <div className="space-y-4">
+                              {Object.values(
+                                calculateTemplatePrice.options
+                              ).map((option: any, idx) => (
                                 <Grid
                                   container
                                   sx={{
@@ -782,253 +804,253 @@ const index = () => {
                                     </Typography>
                                   </Grid>
                                 </Grid>
-                              )
-                            )}
-                            <Grid container sx={{ marginTop: ".5rem" }}>
-                              <Grid item md={8}>
-                                <Typography variant="body1">
-                                  Kuantitas
-                                </Typography>
+                              ))}
+                              <Grid container sx={{ marginTop: ".5rem" }}>
+                                <Grid item md={8}>
+                                  <Typography variant="body1">
+                                    Kuantitas
+                                  </Typography>
+                                </Grid>
+                                <Grid item md={4} sx={{ textAlign: "right" }}>
+                                  <Typography variant="body1">
+                                    {numberFormat(
+                                      calculateTemplatePrice?.quantity
+                                    )}
+                                  </Typography>
+                                </Grid>
                               </Grid>
-                              <Grid item md={4} sx={{ textAlign: "right" }}>
-                                <Typography variant="body1">
-                                  {numberFormat(
-                                    calculateTemplatePrice?.quantity
-                                  )}
-                                </Typography>
+                              <Grid container sx={{ marginTop: ".5rem" }}>
+                                <Grid item md={8}>
+                                  <Typography
+                                    variant="body1"
+                                    className="text-slate-700 font-semibold text-sm"
+                                  >
+                                    Harga Satuan
+                                  </Typography>
+                                </Grid>
+                                <Grid item md={4} sx={{ textAlign: "right" }}>
+                                  <Typography
+                                    variant="body1"
+                                    className="text-slate-700 font-semibold text-sm"
+                                  >
+                                    {rupiah(
+                                      parseFloat(
+                                        (calculateTemplatePrice?.unitPrice as string) ??
+                                          "0"
+                                      )
+                                    )}
+                                  </Typography>
+                                </Grid>
                               </Grid>
-                            </Grid>
-                            <Grid container sx={{ marginTop: ".5rem" }}>
-                              <Grid item md={8}>
-                                <Typography
-                                  variant="body1"
-                                  className="text-slate-700 font-semibold text-sm"
-                                >
-                                  Harga Satuan
-                                </Typography>
+                              <Divider />
+                              <Grid container sx={{ marginTop: ".5rem" }}>
+                                <Grid item md={8}>
+                                  <Typography
+                                    variant="body1"
+                                    className="font-semibold text-sm"
+                                  >
+                                    Harga Total
+                                  </Typography>
+                                </Grid>
+                                <Grid item md={4} sx={{ textAlign: "right" }}>
+                                  <Typography
+                                    variant="body1"
+                                    className="font-semibold text-sm"
+                                  >
+                                    {rupiah(
+                                      parseFloat(
+                                        (calculateTemplatePrice?.totalPrice as string) ??
+                                          "0"
+                                      )
+                                    )}
+                                  </Typography>
+                                </Grid>
                               </Grid>
-                              <Grid item md={4} sx={{ textAlign: "right" }}>
-                                <Typography
-                                  variant="body1"
-                                  className="text-slate-700 font-semibold text-sm"
-                                >
-                                  {rupiah(
-                                    parseFloat(
-                                      (calculateTemplatePrice?.unitPrice as string) ??
-                                        "0"
-                                    )
-                                  )}
-                                </Typography>
-                              </Grid>
-                            </Grid>
-                            <Divider />
-                            <Grid container sx={{ marginTop: ".5rem" }}>
-                              <Grid item md={8}>
-                                <Typography
-                                  variant="body1"
-                                  className="font-semibold text-sm"
-                                >
-                                  Harga Total
-                                </Typography>
-                              </Grid>
-                              <Grid item md={4} sx={{ textAlign: "right" }}>
-                                <Typography
-                                  variant="body1"
-                                  className="font-semibold text-sm"
-                                >
-                                  {rupiah(
-                                    parseFloat(
-                                      (calculateTemplatePrice?.totalPrice as string) ??
-                                        "0"
-                                    )
-                                  )}
-                                </Typography>
-                              </Grid>
-                            </Grid>
-                          </div>
-                        </Box>
-                      </>
-                    )}
-                  </Box>
-                  <br />
-                </>
-              )}
-              {singleProduct?.category !== "02" && (
-                <>
-                  <div className="space-y-2">
-                    <Typography
-                      variant="body1"
-                      className="text-3xl my-6 font-semibold"
-                    >
-                      Data Pribadi
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      className="font-normal text-base text-slate-600"
-                    >
-                      Mohon berikan kontak yang dapat dihubungi. Kami akan
-                      menindaklanjuti permintaan Anda melalui kontak berikut.
-                    </Typography>
-                  </div>
-                  <Box className="w-full">
-                    <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                      Nama Kontak
-                    </p>
-                    <TextField
-                      fullWidth
-                      placeholder="Masukkan Nama Kontak Anda"
-                      error={
-                        formik.touched.contactName &&
-                        Boolean(formik.errors.contactName)
-                      }
-                      helperText={
-                        Boolean(formik.touched.contactName) &&
-                        formik.errors.contactName
-                      }
-                      value={formik.values.contactName}
-                      name={"contactName"}
-                      InputProps={{
-                        className: "rounded-lg",
-                      }}
-                      required
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                    />
-                  </Box>
-                  <Box className="w-full">
-                    <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                      Alamat Perusahaan
-                    </p>
-                    <AddressPicker
-                      onLocationSelect={(place) => {
-                        const postalCode = place.address_components?.find(
-                          (component: any) => {
-                            return component.types.includes("postal_code");
-                          }
-                        )?.long_name;
-                        const completeAddress = place.formatted_address;
-                        const geometry = place?.geometry?.location;
-                        let latLong = {
-                          lat: "",
-                          lng: "",
-                        };
-                        if (geometry != undefined) {
-                          latLong = {
-                            lat: geometry.lat().toString(),
-                            lng: geometry.lng().toString(),
-                          };
+                            </div>
+                          </Box>
+                        </>
+                      )}
+                    </Box>
+                    <br />
+                  </>
+                )}
+                {singleProduct?.category !== "02" && (
+                  <>
+                    <div className="space-y-2">
+                      <Typography
+                        variant="body1"
+                        className="text-3xl my-6 font-semibold"
+                      >
+                        Data Pribadi
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        className="font-normal text-base text-slate-600"
+                      >
+                        Mohon berikan kontak yang dapat dihubungi. Kami akan
+                        menindaklanjuti permintaan Anda melalui kontak berikut.
+                      </Typography>
+                    </div>
+                    <Box className="w-full">
+                      <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                        Nama Kontak
+                      </p>
+                      <TextField
+                        fullWidth
+                        placeholder="Masukkan Nama Kontak Anda"
+                        error={
+                          formik.touched.contactName &&
+                          Boolean(formik.errors.contactName)
                         }
-                        const objAddress: any = {
-                          completeAddress,
-                          postalCode,
-                          latLong,
-                        };
+                        helperText={
+                          Boolean(formik.touched.contactName) &&
+                          formik.errors.contactName
+                        }
+                        value={formik.values.contactName}
+                        name={"contactName"}
+                        InputProps={{
+                          className: "rounded-lg",
+                        }}
+                        required
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                      />
+                    </Box>
+                    <Box className="w-full">
+                      <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                        Alamat Perusahaan
+                      </p>
+                      <AddressPicker
+                        onLocationSelect={(place) => {
+                          const postalCode = place.address_components?.find(
+                            (component: any) => {
+                              return component.types.includes("postal_code");
+                            }
+                          )?.long_name;
+                          const completeAddress = place.formatted_address;
+                          const geometry = place?.geometry?.location;
+                          let latLong = {
+                            lat: "",
+                            lng: "",
+                          };
+                          if (geometry != undefined) {
+                            latLong = {
+                              lat: geometry.lat().toString(),
+                              lng: geometry.lng().toString(),
+                            };
+                          }
+                          const objAddress: any = {
+                            completeAddress,
+                            postalCode,
+                            latLong,
+                          };
 
-                        setAddressMap(objAddress);
-                        formik.setFieldValue("postalCode", postalCode);
-                      }}
-                    />
-                  </Box>
-                  <Box className="w-full">
-                    <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                      Keterangan Alamat
-                    </p>
-                    <TextField
-                      fullWidth
-                      placeholder="Masukkan Keterangan Alamat Anda"
-                      value={formik.values.addressNote}
-                      error={
-                        formik.touched.addressNote &&
-                        Boolean(formik.errors.addressNote)
-                      }
-                      helperText={
-                        Boolean(formik.errors) && formik.errors.addressNote
-                      }
-                      InputProps={{
-                        className: "rounded-lg",
-                      }}
-                      name={"addressNote"}
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                    />
-                  </Box>
-                  <Box className="w-full">
-                    <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                      Nomor Telepon
-                    </p>
-                    <TextField
-                      fullWidth
-                      placeholder="081234567890"
-                      value={formik.values.phoneNumber}
-                      error={
-                        formik.touched.phoneNumber &&
-                        Boolean(formik.errors.phoneNumber)
-                      }
-                      InputProps={{
-                        className: "rounded-lg",
-                      }}
-                      helperText={
-                        Boolean(formik.errors) && formik.errors.phoneNumber
-                      }
-                      name={"phoneNumber"}
-                      onBlur={formik.handleBlur}
-                      onChange={formik.handleChange}
-                    />
-                  </Box>
-                  <Box className="w-full">
-                    <p className="font-medium text-base text-slate-600 font-sans pb-2">
-                      Alamat Email
-                    </p>
-                    <TextField
-                      fullWidth
-                      placeholder="emailanda@nama-perusahaan.co.id"
-                      required
-                      error={
-                        formik.touched.email && Boolean(formik.errors.email)
-                      }
-                      helperText={
-                        Boolean(formik.touched.email) && formik.errors.email
-                      }
-                      value={formik.values.email}
-                      name={"email"}
-                      onBlur={formik.handleBlur}
-                      disabled
-                      onChange={formik.handleChange}
-                    />
-                  </Box>
-                </>
-              )}
+                          setAddressMap(objAddress);
+                          formik.setFieldValue("postalCode", postalCode);
+                        }}
+                      />
+                    </Box>
+                    <Box className="w-full">
+                      <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                        Keterangan Alamat
+                      </p>
+                      <TextField
+                        fullWidth
+                        placeholder="Masukkan Keterangan Alamat Anda"
+                        value={formik.values.addressNote}
+                        error={
+                          formik.touched.addressNote &&
+                          Boolean(formik.errors.addressNote)
+                        }
+                        helperText={
+                          Boolean(formik.errors) && formik.errors.addressNote
+                        }
+                        InputProps={{
+                          className: "rounded-lg",
+                        }}
+                        name={"addressNote"}
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                      />
+                    </Box>
+                    <Box className="w-full">
+                      <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                        Nomor Telepon
+                      </p>
+                      <TextField
+                        fullWidth
+                        placeholder="081234567890"
+                        value={formik.values.phoneNumber}
+                        error={
+                          formik.touched.phoneNumber &&
+                          Boolean(formik.errors.phoneNumber)
+                        }
+                        InputProps={{
+                          className: "rounded-lg",
+                        }}
+                        helperText={
+                          Boolean(formik.errors) && formik.errors.phoneNumber
+                        }
+                        name={"phoneNumber"}
+                        onBlur={formik.handleBlur}
+                        onChange={formik.handleChange}
+                      />
+                    </Box>
+                    <Box className="w-full">
+                      <p className="font-medium text-base text-slate-600 font-sans pb-2">
+                        Alamat Email
+                      </p>
+                      <TextField
+                        fullWidth
+                        placeholder="emailanda@nama-perusahaan.co.id"
+                        required
+                        error={
+                          formik.touched.email && Boolean(formik.errors.email)
+                        }
+                        helperText={
+                          Boolean(formik.touched.email) && formik.errors.email
+                        }
+                        value={formik.values.email}
+                        name={"email"}
+                        onBlur={formik.handleBlur}
+                        disabled
+                        onChange={formik.handleChange}
+                      />
+                    </Box>
+                  </>
+                )}
+              </div>
+              <Divider />
+              <div className="space-y-4 md:space-y-0 md:flex md:gap-4 items-center">
+                <Button
+                  variant="contained"
+                  className={`capitalize md:order-2 py-4 ${
+                    singleProduct?.category == "03" ? "text-base" : "text-lg"
+                  }`}
+                  fullWidth
+                  disabled={formik.isSubmitting || !formik.isValid}
+                  onClick={formik.submitForm}
+                >
+                  {singleProduct?.category == "03" ? "Minta Penawaran" : "Beli"}
+                  {formik.isSubmitting && <CircularProgress size={10} />}
+                </Button>
+                <Button
+                  variant="outlined"
+                  className={`capitalize md:order-1 py-4 ${
+                    singleProduct?.category == "03" ? "text-base" : "text-lg"
+                  }`}
+                  fullWidth
+                  onClick={() => {
+                    router.back();
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
-            <Divider />
-            <div className="space-y-4">
-              <Button
-                variant="contained"
-                className={`capitalize py-4 ${
-                  singleProduct?.category == "03" ? "text-base" : "text-lg"
-                }`}
-                fullWidth
-                disabled={formik.isSubmitting || !formik.isValid}
-                onClick={formik.submitForm}
-              >
-                {singleProduct?.category == "03" ? "Minta Penawaran" : "Beli"}
-                {formik.isSubmitting && <CircularProgress size={10} />}
-              </Button>
-              <Button
-                variant="outlined"
-                className={`capitalize py-4 ${
-                  singleProduct?.category == "03" ? "text-base" : "text-lg"
-                }`}
-                fullWidth
-                onClick={() => {
-                  router.back();
-                }}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </form>
-      )}
+          </form>
+        )}
+      </div>
     </div>
   );
 };

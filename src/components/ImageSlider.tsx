@@ -40,10 +40,10 @@ const ImageSlider = () => {
           <div>
             <Image
               src="/assets/slider.png"
-              width={500}
-              height={250}
+              width={800}
+              height={800}
               alt="image"
-              className="aspect-auto w-full"
+              className="aspect-[3/4] h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] xl:h-[650px] 2xl:h-[750px] w-full"
             />
           </div>
         ))}

@@ -128,7 +128,7 @@ export default function GarapinVariantSelector({
         <div className="mt-2">
           <Grid container justifyContent={justifyContent} spacing={3}>
             {options.map((item) => (
-              <Grid item xs={6} key={item.value}>
+              <Grid item xs={6} md={4} lg={3} key={item.value}>
                 <CardItemsOption
                   active={item.value === value?.value}
                   text={item.name}

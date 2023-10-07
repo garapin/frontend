@@ -31,45 +31,49 @@ function PaymentComplete() {
   const PaymentStatusComp = ({ status }: any) => {
     if (status === "PAID") {
       return (
-        <div className={`space-y-4`}>
-          <div className="text-center">
+        <div
+          className={`space-y-4 md:space-y-0 md:grid md:grid-cols-12 md:gap-4`}
+        >
+          <div className="text-center md:col-span-6">
             <img
               src="/assets/thankyou.png"
               alt="success"
-              className="w-1/2 mx-auto"
+              className="w-1/2 mx-auto md:w-3/4"
             />
           </div>
-          <Typography
-            variant="h4"
-            className="text-2xl font-semibold text-center"
-          >
-            Terimakasih Telah Berbelanja
-          </Typography>
-          <Typography className="text-gray-600 text-base leading-6">
-            Terima kasih telah memilih Garapin sebagai pilihan Anda untuk
-            memenuhi kebutuhan packaging. Kami sangat menghargai kepercayaan
-            Anda dan berharap produk-produk kami dapat memberikan manfaat dan
-            kepuasan dalam penggunaannya. Kami akan terus berkomitmen untuk
-            memberikan layanan terbaik dan kualitas produk yang terbaik bagi
-            pelanggan setia seperti Anda. Sampai jumpa di pembelian selanjutnya
-            di website Garapin!
-          </Typography>
-          <Button
-            variant="contained"
-            className="capitalize text-lg py-4"
-            fullWidth
-            onClick={() => router.push("/product-list")}
-          >
-            Lihat Produk Lainnya
-          </Button>
-          <Button
-            variant="outlined"
-            className="capitalize text-lg py-4"
-            fullWidth
-            onClick={() => router.push("/")}
-          >
-            Kembali Ke Beranda
-          </Button>
+          <div className="space-y-4 md:col-span-6 md:py-14">
+            <Typography
+              variant="h4"
+              className="text-2xl font-semibold text-center md:text-left"
+            >
+              Terimakasih Telah Berbelanja
+            </Typography>
+            <Typography className="text-gray-600 text-base leading-6">
+              Terima kasih telah memilih Garapin sebagai pilihan Anda untuk
+              memenuhi kebutuhan packaging. Kami sangat menghargai kepercayaan
+              Anda dan berharap produk-produk kami dapat memberikan manfaat dan
+              kepuasan dalam penggunaannya. Kami akan terus berkomitmen untuk
+              memberikan layanan terbaik dan kualitas produk yang terbaik bagi
+              pelanggan setia seperti Anda. Sampai jumpa di pembelian
+              selanjutnya di website Garapin!
+            </Typography>
+            <Button
+              variant="contained"
+              className="capitalize text-lg py-4"
+              fullWidth
+              onClick={() => router.push("/product-list")}
+            >
+              Lihat Produk Lainnya
+            </Button>
+            <Button
+              variant="outlined"
+              className="capitalize text-lg py-4"
+              fullWidth
+              onClick={() => router.push("/")}
+            >
+              Kembali Ke Beranda
+            </Button>
+          </div>
         </div>
       );
     } else if (status === "PENDING") {
@@ -123,7 +127,7 @@ function PaymentComplete() {
   };
 
   return (
-    <Container className="max-w-md mx-auto py-6">
+    <Container className="max-w-screen-2xl mx-auto py-6 md:h-[60vh] md:flex md:items-center">
       <Box>
         {!paymentStatus ? (
           <Box className="w-full mx-auto">
@@ -131,7 +135,7 @@ function PaymentComplete() {
               variant="rectangular"
               width={200}
               height={160}
-              className="mb-10 mx-auto"
+              className="mb-10 mx-auto md:w-full"
             />
             <Skeleton
               variant="rectangular"

@@ -11,7 +11,7 @@ const ProductList = ({ productList }: { productList: [] }) => {
   return (
     <>
       {productList.map((product: any) => (
-        <Grid key={product.id} item xs={6}>
+        <Grid key={product.id} item xs={6} md={4} lg={3}>
           <CardVertical
             key={product.id}
             imageUrl={product.img[0] ?? imagePlaceholder}

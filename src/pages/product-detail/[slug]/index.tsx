@@ -15,6 +15,9 @@ import { TimeIconSVG } from "@/assets/icons/time-icon";
 import { TruckIconSVG } from "@/assets/icons/truck-icon";
 import ModalLogin from "@/components/ModalLogin";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
+import SocialShare from "@/components/SocialShare";
+import Consultation from "@/components/Consultation";
+import GarapinFAQ from "@/components/GarapinFAQ";
 interface addressMap {
   postalCode?: string;
   completeAddress: string;
@@ -29,7 +32,7 @@ const ProductDetailPage = () => {
     (state) => state.product
   );
   const auth = useFirebaseAuth();
-  const [showRating, setShowRating] = React.useState(false);
+  const [showRating, setShowRating] = React.useState(true);
   const [openLogin, setOpenLogin] = React.useState(false);
   const handleOpenLogin = () => setOpenLogin(true);
   const handleCloseLogin = () => setOpenLogin(false);
@@ -45,18 +48,19 @@ const ProductDetailPage = () => {
   } else {
     return (
       <>
-        <Box className="items-center">
+        <Box className="items-center lg:py-10">
           <Grid
             maxWidth="lg"
             container
-            className="max-w-md mx-auto justify-between px-4"
+            className="max-w-screen-2xl mx-auto justify-between px-4"
           >
             <Grid
               item
-              lg={12}
+              xs={12}
+              lg={6}
               alignItems="center"
               justifyContent="center"
-              className="w-full"
+              className="w-full lg:pr-6 lg:space-y-2"
             >
               <ImageCarousel
                 dataSource={
@@ -67,8 +71,9 @@ const ProductDetailPage = () => {
                   }) ?? []
                 }
               />
+              <SocialShare />
             </Grid>
-            <Grid item lg={12} className="w-full space-y-4">
+            <Grid item xs={12} lg={6} className="w-full space-y-4 lg:pl-6">
               <Typography
                 className="text-[#713F97] text-sm font-semibold"
                 variant="body1"
@@ -79,7 +84,7 @@ const ProductDetailPage = () => {
                 {singleProduct?.productName}
               </Typography>
               {showRating && (
-                <>
+                <div className="lg:flex lg:items-center lg:gap-10">
                   <div className="flex items-center gap-1">
                     <span className="text-yellow-500 text-xl">
                       {singleProduct?.reviews ?? 0}
@@ -108,7 +113,7 @@ const ProductDetailPage = () => {
                   >
                     2789 Sold
                   </Typography>
-                </>
+                </div>
               )}
               {singleProduct?.category === "01" ? (
                 <Typography
@@ -150,7 +155,7 @@ const ProductDetailPage = () => {
                 <Typography className="font-semibold text-2xl" variant="h2">
                   Info Pemesanan
                 </Typography>
-                <Box className="space-y-4">
+                <Box className="space-y-4 lg:space-y-0 lg:flex lg:items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShoppingBagIconSVG />
                     <Typography
@@ -167,7 +172,7 @@ const ProductDetailPage = () => {
                     {singleProduct?.moq?.toLocaleString("id-ID")} pcs
                   </Typography>
                 </Box>
-                <Box className="space-y-4">
+                <Box className="space-y-4 lg:space-y-0 lg:flex lg:items-center justify-between">
                   <div className="flex items-center gap-2">
                     <TimeIconSVG />
                     <Typography
@@ -218,6 +223,10 @@ const ProductDetailPage = () => {
               </Box>
             </Grid>
           </Grid>
+          <div className="max-w-screen-2xl mx-auto">
+            <Consultation className="mt-10" />
+            <GarapinFAQ className="my-16" />
+          </div>
         </Box>
         <ModalLogin openLogin={openLogin} handleCloseLogin={handleCloseLogin} />
       </>
@@ -236,7 +245,11 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
   }
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["products", "common"])),
+      ...(await serverSideTranslations(locale, [
+        "products",
+        "common",
+        "landing",
+      ])),
     },
   };
 };

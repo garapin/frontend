@@ -107,13 +107,15 @@ const GarapinApp = (props: ExtendedAppProps) => {
   }, []);
   const router = useRouter();
   const isRouteAdmin = router.pathname.startsWith("/admin");
+  const noFooterRoutes = ["/login", "/register", "/admin"];
 
   const authGuard = Component.authGuard ?? false; // TODO: Add guard automatically for admin page
   const adminGuard = Component.adminGuard ?? false; // TODO: Add guard automatically for admin page
 
   const guestGuard = Component.guestGuard ?? false;
 
-  const showFooter = Component.showFooter ?? isRouteAdmin ? false : true;
+  const showFooter =
+    Component.showFooter ?? !noFooterRoutes.includes(router.pathname);
   const showAppBar = Component.showAppBar ?? true;
 
   return (

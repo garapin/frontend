@@ -11,6 +11,7 @@ import { TiktokSocialIconSVG } from "@/assets/icons/tiktok-social-icon";
 import { FacebookSocialIconSVG } from "@/assets/icons/facebook-social-icon";
 import { InstagramSocialIconSVG } from "@/assets/icons/instagram-social-icon";
 import { YoutubeSocialIconSVG } from "@/assets/icons/youtube-social-icon";
+import { MailOutline, WhatsApp } from "@mui/icons-material";
 
 interface Props extends WithTranslation {}
 const GarapinFooter: React.FC<Props> = ({ t }) => {
@@ -25,68 +26,98 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
     [router]
   );
   return (
-    <Box className="max-w-md mx-auto bg-[#713F97] py-10 space-y-6 px-4 font-sans text-slate-100">
-      <div className="flex items-center justify-center">
-        <Image
-          src="/garapin_logo_white.svg"
-          alt="Garapin Logo"
-          width={400}
-          height={100}
-        />
-      </div>
-      <p className="font-light leading-7">
-        Garapin is a mobile application or digital platform that assists
-        producers and contract manufacturers in obtaining customers who wish to
-        manufacture a product through reliable factories and producers with
-        quantities that are affordable for the customer.
-      </p>
-      <div className="flex items-center gap-4">
-        <TiktokSocialIconSVG className="w-6 h-6 cursor-pointer" />
-        <FacebookSocialIconSVG
-          className="w-6 h-6 cursor-pointer"
-          onClick={() => {
-            window.open("https://www.facebook.com/GarapInSemuaBisa/", "_blank");
-          }}
-        />
-        <InstagramSocialIconSVG
-          className="w-6 h-6 cursor-pointer"
-          onClick={() => {
-            window.open("https://www.instagram.com/garap_in/?hl=en", "_blank");
-          }}
-        />
-        <YoutubeSocialIconSVG
-          className="w-8 h-8 cursor-pointer"
-          onClick={() => {
-            window.open(
-              "https://www.youtube.com/channel/UCrKjYi-_c7HEJvppHKYfsTw",
-              "_blank"
-            );
-          }}
-        />
-      </div>
-      <Grid container>
-        <Grid item xs={6} className="space-y-4">
-          <h2 className="font-normal text-lg">{t("footer.our_menu.header")}</h2>
-          <ul className="list-none font-light space-y-4 text-sm">
-            <li className="cursor-pointer">{t("footer.our_menu.home")}</li>
-            <li className="cursor-pointer">{t("footer.our_menu.product")}</li>
-            <li className="cursor-pointer">{t("footer.our_menu.about_us")}</li>
-            <li className="cursor-pointer">
-              {t("footer.our_menu.our_contact")}
-            </li>
-          </ul>
+    <Box className="bg-[#713F97] pt-10 pb-5 space-y-6 px-4 lg:pt-16 font-sans text-slate-100">
+      <div className="max-w-screen-2xl mx-auto">
+        <Grid container>
+          <Grid item lg={5} xs={12} className="space-y-4">
+            <div className="flex items-center lg:items-start justify-center lg:justify-start">
+              <Image
+                src="/garapin_logo_white.svg"
+                alt="Garapin Logo"
+                width={100}
+                height={100}
+                className="w-[350px] h-[100px]"
+              />
+            </div>
+            <p className="font-light leading-7 max-w-[450px]">
+              Garapin is a mobile application or digital platform that assists
+              producers and contract manufacturers in obtaining customers who
+              wish to manufacture a product through reliable factories and
+              producers with quantities that are affordable for the customer.
+            </p>
+            <div className="flex items-center gap-4">
+              <TiktokSocialIconSVG className="w-6 h-6 cursor-pointer" />
+              <FacebookSocialIconSVG
+                className="w-6 h-6 cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    "https://www.facebook.com/GarapInSemuaBisa/",
+                    "_blank"
+                  );
+                }}
+              />
+              <InstagramSocialIconSVG
+                className="w-6 h-6 cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    "https://www.instagram.com/garap_in/?hl=en",
+                    "_blank"
+                  );
+                }}
+              />
+              <YoutubeSocialIconSVG
+                className="w-8 h-8 cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    "https://www.youtube.com/channel/UCrKjYi-_c7HEJvppHKYfsTw",
+                    "_blank"
+                  );
+                }}
+              />
+            </div>
+          </Grid>
+          <Grid item lg={3} xs={12} className="space-y-4 pt-8 lg:pt-2">
+            <h2 className="font-normal text-lg md:text-3xl">
+              {t("footer.our_menu.header")}
+            </h2>
+            <ul className="list-none font-light space-y-4 text-sm">
+              <li className="cursor-pointer">{t("footer.our_menu.home")}</li>
+              <li className="cursor-pointer">{t("footer.our_menu.product")}</li>
+              <li className="cursor-pointer">
+                {t("footer.our_menu.about_us")}
+              </li>
+              <li className="cursor-pointer">
+                {t("footer.our_menu.our_contact")}
+              </li>
+            </ul>
+          </Grid>
+          <Grid item lg={4} xs={12} className="space-y-4 pt-8 lg:pt-2">
+            <h2 className="font-normal text-lg md:text-3xl">
+              {t("footer.get_in_touch.header")}
+            </h2>
+            <ul className="list-none font-light space-y-4 text-sm">
+              <li className="cursor-pointer">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center mb-2 text-purple-900">
+                  <WhatsApp />
+                </div>
+                <p>0821-3758-5330 (Mitra)</p>
+              </li>
+              <li className="cursor-pointer">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center mb-2 text-purple-900">
+                  <WhatsApp />
+                </div>
+                <p>0813-8020-6100 (Customer)</p>
+              </li>
+              <li className="cursor-pointer">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center mb-2 text-purple-900">
+                  <MailOutline />
+                </div>
+                <p>contact@garap.in</p>
+              </li>
+            </ul>
+          </Grid>
         </Grid>
-        <Grid item xs={6} className="space-y-4">
-          <h2 className="font-normal text-lg">
-            {t("footer.get_in_touch.header")}
-          </h2>
-          <ul className="list-none font-light space-y-4 text-sm">
-            <li className="cursor-pointer">0821-3758-5330 (Mitra)</li>
-            <li className="cursor-pointer">0813-8020-6100 (Customer)</li>
-            <li className="cursor-pointer">contact@garap.in</li>
-          </ul>
-        </Grid>
-      </Grid>
+      </div>
       <Divider className="border-white" />
       <div className="text-center font-bold">
         Copyright © {new Date().getFullYear()} garap.in All Rights Reserved

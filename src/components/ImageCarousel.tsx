@@ -75,7 +75,7 @@ export default function ImageCarousel({
           {dataSource.map((_, index) => (
             <div
               key={index}
-              className="min-w-[4rem] w-28 h-20 min-h-[4rem] mr-2 cursor-pointer"
+              className="min-w-[4rem] w-28 md:w-40 h-20 md:h-36 min-h-[4rem] mr-2 cursor-pointer"
               onClick={(e) => slider?.slickGoTo(index)}
               style={{
                 backgroundImage: `url(${dataSource[index].srcUrl})`,

@@ -200,10 +200,10 @@ function Cart() {
   };
 
   return (
-    <>
-      <main className="max-w-md mx-auto bg-slate-50 p-4">
+    <main className="bg-slate-50">
+      <div className="max-w-[940px] mx-auto p-4 md:py-8">
         <Box className="h-min-screen flex flex-col justify-center bg-white rounded-xl py-8">
-          <Container maxWidth="xl" className="px-4 space-y-4">
+          <Container maxWidth="xl" className="px-4 md:px-6 space-y-4">
             <Typography
               fontSize={32}
               color="text.primary"
@@ -413,8 +413,8 @@ function Cart() {
             </Box>
           </Container>
         </Box>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
 
@@ -429,7 +429,7 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
   }
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["products", "common"])),
+      ...(await serverSideTranslations(locale, ["landing", "common"])),
     },
   };
 };

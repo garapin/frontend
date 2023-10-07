@@ -40,6 +40,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { TransactionIconSVG } from "@/assets/icons/transaction-icon";
 import { CartIconSVG } from "@/assets/icons/cart-icon";
 import { BagIconSVG } from "@/assets/icons/bag-icon";
+import { WhatsApp } from "@mui/icons-material";
 
 const useStyles = makeStyles({
   menuAppBar: {
@@ -163,35 +164,122 @@ const GarapinAppBar = ({
       }`
     );
   };
+
+  const menus = [
+    {
+      label: "Home",
+      link: "/",
+    },
+    {
+      label: "Tentang Kami",
+      link: "/",
+    },
+    {
+      label: "Produk",
+      link: "/",
+    },
+    {
+      label: "Kontak Kami",
+      link: "/",
+    },
+  ];
   return (
-    <Box className="max-w-md mx-auto pt-6 bg-white relative">
-      <div className="flex items-center justify-between shadow-sm pb-6 px-4">
-        <Link href="/">
-          <Image
-            src="/garapin-logo-colored.png"
-            alt="login-bg"
-            width={300}
-            height={100}
-            className="w-[132px] h-[38px]"
-          />
-        </Link>
-        <IconButton aria-label="menu" size="small" onClick={handleClick}>
-          <HamburgerIconSVG />
-        </IconButton>
-      </div>
-      {secondNavbar && (
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant="scrollable"
-          scrollButtons={false}
-        >
-          <Tab
-            className="py-6"
-            onClick={() => router.push("/transaction-list")}
-            label="Daftar Transaksi"
-          />
-          {/* <Tab
+    <Box className="pt-6 bg-white relative shadow-sm">
+      <div className="max-w-screen-2xl mx-auto lg:relative">
+        <div className="flex items-center justify-between shadow-sm lg:shadow-none pb-6 px-4">
+          <Link href="/">
+            <Image
+              src="/garapin-logo-colored.png"
+              alt="login-bg"
+              width={300}
+              height={100}
+              className="w-[132px] h-[38px]"
+            />
+          </Link>
+          <div className="hidden lg:flex items-center gap-4 justify-between min-w-[435px]">
+            {menus.map((menu, index) => (
+              <Link href={menu.link} key={index}>
+                <Typography
+                  variant="body1"
+                  className="cursor-pointer hover:text-[#713F97]"
+                >
+                  {menu.label}
+                </Typography>
+              </Link>
+            ))}
+          </div>
+          <div className="hidden lg:flex items-center gap-4">
+            <Box className="hidden items-center md:flex">
+              <LanguageSelector>
+                <Box>
+                  <FormControl fullWidth>
+                    <NativeSelect
+                      disableUnderline={true}
+                      value={i18n.resolvedLanguage}
+                      inputProps={{
+                        name: "age",
+                        id: "uncontrolled-native",
+                      }}
+                      onChange={(e) => switchToLocale(e.target.value as string)}
+                    >
+                      <option
+                        value={"id"}
+                        disabled={i18n.resolvedLanguage === "id"}
+                      >
+                        ID
+                      </option>
+                      <option
+                        value={"en"}
+                        disabled={i18n.resolvedLanguage === "en"}
+                      >
+                        EN
+                      </option>
+                    </NativeSelect>
+                  </FormControl>
+                </Box>
+              </LanguageSelector>
+            </Box>
+            <Button
+              variant="contained"
+              className="capitalize py-3"
+              startIcon={<WhatsApp />}
+              onClick={() => {
+                window.open("https://wa.me/+6281380206100", "_blank");
+              }}
+            >
+              Konsultasi Gratis
+            </Button>
+            <IconButton
+              className="hidden lg:block"
+              aria-label="menu"
+              size="small"
+              onClick={handleClick}
+            >
+              <HamburgerIconSVG />
+            </IconButton>
+          </div>
+          <IconButton
+            className="lg:hidden"
+            aria-label="menu"
+            size="small"
+            onClick={handleClick}
+          >
+            <HamburgerIconSVG />
+          </IconButton>
+        </div>
+        {secondNavbar && (
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons={false}
+          >
+            <Tab
+              className="py-6"
+              onClick={() => router.push("/transaction-list")}
+              label="Daftar Transaksi"
+            />
+            {/* <Tab
             className="py-6"
             onClick={() => router.push("/address")}
             label="Alamat"
@@ -206,109 +294,110 @@ const GarapinAppBar = ({
             onClick={() => router.push("/profile")}
             label="Profil Saya"
           /> */}
-        </Tabs>
-      )}
-      {openMenu && (
-        <ClickAwayListener onClickAway={handleClick}>
-          <Box className="absolute top-0 left-0 h-screen w-full bg-white shadow-md z-50 py-6">
-            <div className="flex items-center justify-between shadow-sm px-4 pb-6">
-              <Link href="/">
-                <Image
-                  src="/garapin-logo-colored.png"
-                  alt="login-bg"
-                  width={300}
-                  height={100}
-                  className="w-[132px] h-[38px]"
-                />
-              </Link>
-              <IconButton
-                aria-label="menu"
-                size="small"
-                onClick={() => setOpenMenu(false)}
-              >
-                <CloseIcon />
-              </IconButton>
-            </div>
-            <div className="p-4">
-              {!auth.loading &&
-                auth.authUser == null &&
-                router.pathname !== "/login" && (
-                  <Link
-                    href="/login"
-                    style={{ paddingTop: "4px", paddingBottom: "4px" }}
-                  >
-                    <Button variant="contained" fullWidth>
-                      {t("appBar.loginButton")}
-                    </Button>{" "}
-                  </Link>
-                )}
-              {!auth.loading && auth.authUser !== null && (
-                <Box className="space-y-4">
-                  <div className="flex gap-4 text-black items-center">
-                    <Avatar sx={{ ml: 2 }} className="w-16 h-16" />
-                    <Typography
-                      className="text-base font-semibold"
-                      variant="body1"
+          </Tabs>
+        )}
+        {openMenu && (
+          <ClickAwayListener onClickAway={handleClick}>
+            <Box className="absolute top-0 left-0 h-screen w-full bg-white shadow-md z-50 py-6 lg:right-0 lg:w-96 lg:ml-auto lg:top-12 lg:h-fit">
+              <div className="flex items-center justify-between shadow-sm px-4 pb-6">
+                <Link href="/">
+                  <Image
+                    src="/garapin-logo-colored.png"
+                    alt="login-bg"
+                    width={300}
+                    height={100}
+                    className="w-[132px] h-[38px]"
+                  />
+                </Link>
+                <IconButton
+                  aria-label="menu"
+                  size="small"
+                  onClick={() => setOpenMenu(false)}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </div>
+              <div className="p-4">
+                {!auth.loading &&
+                  auth.authUser == null &&
+                  router.pathname !== "/login" && (
+                    <Link
+                      href="/login"
+                      style={{ paddingTop: "4px", paddingBottom: "4px" }}
                     >
-                      {auth.authUser.displayName ?? auth.authUser.email}
-                    </Typography>
-                  </div>
-                  <IsAdmin>
+                      <Button variant="contained" fullWidth>
+                        {t("appBar.loginButton")}
+                      </Button>{" "}
+                    </Link>
+                  )}
+                {!auth.loading && auth.authUser !== null && (
+                  <Box className="space-y-4">
+                    <div className="flex gap-4 text-black items-center">
+                      <Avatar sx={{ ml: 2 }} className="w-16 h-16" />
+                      <Typography
+                        className="text-base font-semibold"
+                        variant="body1"
+                      >
+                        {auth.authUser.displayName ?? auth.authUser.email}
+                      </Typography>
+                    </div>
+                    <IsAdmin>
+                      <MenuItem
+                        className="py-4 rounded-lg hover:bg-[#713F97] hover:text-white"
+                        onClick={() => {
+                          router.push("/admin/orders");
+                          setOpenMenu(false);
+                        }}
+                      >
+                        <Box>Manage Orders</Box>
+                      </MenuItem>
+                    </IsAdmin>
                     <MenuItem
-                      className="py-4 rounded-lg hover:bg-[#713F97] hover:text-white"
+                      className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white"
                       onClick={() => {
-                        router.push("/admin/orders");
+                        router.push("/transaction-list");
                         setOpenMenu(false);
                       }}
                     >
-                      <Box>Manage Orders</Box>
+                      <Box className="flex items-center gap-4">
+                        <TransactionIconSVG className="fill-[#8692A6] group-hover:fill-[#fff]" />
+                        {t("appBar.menu.totalTransaction")}
+                      </Box>
                     </MenuItem>
-                  </IsAdmin>
-                  <MenuItem
-                    className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white"
-                    onClick={() => {
-                      router.push("/transaction-list");
-                      setOpenMenu(false);
-                    }}
-                  >
-                    <Box className="flex items-center gap-4">
-                      <TransactionIconSVG className="fill-[#8692A6] group-hover:fill-[#fff]" />
-                      {t("appBar.menu.totalTransaction")}
-                    </Box>
-                  </MenuItem>
-                  <MenuItem
-                    className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white"
-                    onClick={() => {
-                      router.push("/cart");
-                      setOpenMenu(false);
-                    }}
-                  >
-                    <Box className="flex items-center gap-4">
-                      <CartIconSVG />
-                      {t("appBar.menu.totalShop")}
-                    </Box>
-                  </MenuItem>
-                  {/* <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
+                    <MenuItem
+                      className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white"
+                      onClick={() => {
+                        router.push("/cart");
+                        setOpenMenu(false);
+                      }}
+                    >
+                      <Box className="flex items-center gap-4">
+                        <CartIconSVG />
+                        {t("appBar.menu.totalShop")}
+                      </Box>
+                    </MenuItem>
+                    {/* <MenuItem className="py-4 rounded-lg group hover:bg-[#713F97] hover:text-white">
                     <Link href="#" className="flex items-center gap-4">
                       <BagIconSVG className="stroke-green-700" />
                       {t("appBar.menu.shopPoint")}
                     </Link>
                   </MenuItem> */}
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleLogOut}
-                    className="py-4 rounded-lg capitalize text-base font-bold"
-                    fullWidth
-                  >
-                    {t("appBar.menu.logout")}
-                  </Button>
-                </Box>
-              )}
-            </div>
-          </Box>
-        </ClickAwayListener>
-      )}
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      onClick={handleLogOut}
+                      className="py-4 rounded-lg capitalize text-base font-bold"
+                      fullWidth
+                    >
+                      {t("appBar.menu.logout")}
+                    </Button>
+                  </Box>
+                )}
+              </div>
+            </Box>
+          </ClickAwayListener>
+        )}
+      </div>
     </Box>
     // <Container maxWidth="xl">
     //   <AppBar position="fixed" style={{ zIndex: 1300 }}>

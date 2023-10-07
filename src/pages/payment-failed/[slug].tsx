@@ -10,7 +10,7 @@ function PaymentComplete() {
   const router = useRouter();
 
   return (
-    <Container className="max-w-md mx-auto py-16">
+    <Container className="max-w-md md:max-w-2xl mx-auto py-16 md:h-[80vh] md:flex md:items-center md:justify-center">
       <Box>
         <Box className="flex justify-center flex-col items-center">
           <div className={`space-y-4`}>
@@ -23,7 +23,7 @@ function PaymentComplete() {
             </div>
             <Typography
               variant="h4"
-              className="text-2xl font-semibold text-center max-w-sm"
+              className="text-2xl font-semibold text-center max-w-sm md:max-w-none"
             >
               Terjadi Kesalahan Pada Pembayaran
             </Typography>
@@ -31,14 +31,16 @@ function PaymentComplete() {
               Anda dapat melakukan pemesanan ulang namun jika masih tidak bisa,
               anda dapat menghubungi tim kami agar kami dapat membantu anda
             </Typography>
-            <Button
-              variant="contained"
-              className="capitalize text-lg py-4"
-              fullWidth
-              startIcon={<HeadsetIcon />}
-            >
-              Hubungi Tim Support
-            </Button>
+            <div className="lg:max-w-md md:mx-auto">
+              <Button
+                variant="contained"
+                className="capitalize text-lg py-4"
+                fullWidth
+                startIcon={<HeadsetIcon />}
+              >
+                Hubungi Tim Support
+              </Button>
+            </div>
           </div>
         </Box>
       </Box>
