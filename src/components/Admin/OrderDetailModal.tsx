@@ -65,231 +65,242 @@ export default function OrderDetailModal() {
   return (
     <Dialog
       fullWidth
-      className="max-w-lg mx-auto"
+      maxWidth="lg"
       open={invoiceModalOpen}
       onClose={() => handleClose()}
     >
-      <DialogContent className="bg-slate-50 space-y-6 p-4">
-        <Box className="bg-white rounded-xl p-4">
-          <Box display="flex" alignItems="center" gap={2} className="mb-4">
-            <h2 className="text-[32px] font-semibold">Detail Order</h2>
-            <IconButton className="ml-auto" onClick={() => handleClose()}>
-              <Close />
-            </IconButton>
-          </Box>
-          <Box className="space-y-4">
-            <InfoList
-              title="Invoice Number"
-              value={invoice.invoiceNumber}
-              icon={<InvoiceIconSVG />}
-            />
-            <Divider />
-            <InfoList
-              title="Order Date"
-              value={formatDateTime(toDate(invoice.createdAt))}
-              icon={<OrderDateIconSVG />}
-            />
-            <Divider />
-            <InfoList
-              title="Status"
-              value={
-                <Chip
-                  color={invoiceStatusColor(invoice.status)}
-                  label={
-                    invoiceStatus.find((data) => data.status === invoice.status)
-                      ?.label
+      <DialogContent className="bg-slate-50 space-y-6 lg:space-y-0 p-4 w-full lg:p-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-4 space-y-6 lg:space-y-0">
+          <div className="space-y-6 lg:overflow-y-scroll lg:col-span-8">
+            <Box className="bg-white rounded-xl p-4">
+              <Box display="flex" alignItems="center" gap={2} className="mb-4">
+                <h2 className="text-[32px] font-semibold">Detail Order</h2>
+                <IconButton
+                  className="ml-auto lg:hidden"
+                  onClick={() => handleClose()}
+                >
+                  <Close />
+                </IconButton>
+              </Box>
+              <Box className="space-y-4">
+                <InfoList
+                  title="Invoice Number"
+                  value={invoice.invoiceNumber}
+                  icon={<InvoiceIconSVG />}
+                />
+                <Divider />
+                <InfoList
+                  title="Order Date"
+                  value={formatDateTime(toDate(invoice.createdAt))}
+                  icon={<OrderDateIconSVG />}
+                />
+                <Divider />
+                <InfoList
+                  title="Status"
+                  value={
+                    <Chip
+                      color={invoiceStatusColor(invoice.status)}
+                      label={
+                        invoiceStatus.find(
+                          (data) => data.status === invoice.status
+                        )?.label
+                      }
+                    />
                   }
-                />
-              }
-              icon={<StatusIconSVG />}
-            />
-            <Divider />
-            <InfoList
-              title="Customer"
-              value={invoice.shippingDetails?.fullName}
-              icon={<StatusIconSVG />}
-            />
-            <Divider />
-            {invoice.paidAt && (
-              <>
-                <InfoList
-                  title="Payment Date"
-                  value={formatDateTime(toDate(invoice.paidAt))}
-                  icon={<OrderDateIconSVG />}
+                  icon={<StatusIconSVG />}
                 />
                 <Divider />
-              </>
-            )}
-            {invoice.processedAt && (
-              <>
                 <InfoList
-                  title="Payment Date"
-                  value={formatDateTime(toDate(invoice.processedAt))}
-                  icon={<OrderDateIconSVG />}
+                  title="Customer"
+                  value={invoice.shippingDetails?.fullName}
+                  icon={<StatusIconSVG />}
                 />
                 <Divider />
-              </>
-            )}
-            {invoice.status === "shipped" &&
-              invoice.shippedAt &&
-              invoice.shippingOrderData.courier.waybill_id && (
-                <>
-                  <InfoList
-                    title="Waybill/Resi ID"
-                    value={invoice.shippingOrderData.courier.waybill_id}
-                    icon={<InvoiceIconSVG />}
-                  />
-                  <Divider />
-                </>
-              )}
-
-            <InfoList
-              title="Phone"
-              value={invoice.shippingDetails?.phoneNumber}
-              icon={<PhoneIconSVG />}
-            />
-            <InfoList
-              title="Address"
-              value={
-                <div>
-                  {invoice.shippingDetails?.address}
-                  <br />
-                  {invoice.shippingDetails?.addressNote}
-                </div>
-              }
-              icon={<AddressIconSVG />}
-            />
-          </Box>
-        </Box>
-        <Box className="bg-white rounded-xl p-6">
-          <Box className="space-y-4">
-            <h2 className="text-[32px] font-semibold">Order Saya</h2>
-            <Box className="space-y-4">
-              {invoice.products?.map((val: any) => (
-                <Box>
-                  <div className="flex items-start gap-2">
-                    <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1">
-                      <img
-                        style={{ borderRadius: "20%" }}
-                        className="rounded-lg object-cover w-full aspect-video"
-                        src={val?.product?.img?.[0] || imagePlaceholder}
-                        alt="image"
+                {invoice.paidAt && (
+                  <>
+                    <InfoList
+                      title="Payment Date"
+                      value={formatDateTime(toDate(invoice.paidAt))}
+                      icon={<OrderDateIconSVG />}
+                    />
+                    <Divider />
+                  </>
+                )}
+                {invoice.processedAt && (
+                  <>
+                    <InfoList
+                      title="Payment Date"
+                      value={formatDateTime(toDate(invoice.processedAt))}
+                      icon={<OrderDateIconSVG />}
+                    />
+                    <Divider />
+                  </>
+                )}
+                {invoice.status === "shipped" &&
+                  invoice.shippedAt &&
+                  invoice.shippingOrderData.courier.waybill_id && (
+                    <>
+                      <InfoList
+                        title="Waybill/Resi ID"
+                        value={invoice.shippingOrderData.courier.waybill_id}
+                        icon={<InvoiceIconSVG />}
                       />
-                      <Typography
-                        className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
-                        fontSize={14}
-                        fontWeight={400}
-                      >
-                        {getCategoryLabel(val?.productCategoryId)}
-                      </Typography>
-                      <Typography
-                        fontSize={17}
-                        fontWeight={400}
-                        color="text.primary"
-                        className="font-semibold"
-                      >
-                        {val?.product?.productName}
-                      </Typography>
-                      <Typography
-                        fontSize={15}
-                        className="font-normal text-slate-500"
-                      >
-                        SKU: {val.product?.sku}
-                      </Typography>
-                      <div className="flex items-center gap-2">
-                        <Typography className="text-sm text-slate-600">
-                          {rupiah(val.totalPrice)}
-                        </Typography>
-                        <p>|</p>
-                        <Typography className="text-sm text-slate-600">
-                          {val.qty} Pcs
-                        </Typography>
-                      </div>
+                      <Divider />
+                    </>
+                  )}
+
+                <InfoList
+                  title="Phone"
+                  value={invoice.shippingDetails?.phoneNumber}
+                  icon={<PhoneIconSVG />}
+                />
+                <InfoList
+                  title="Address"
+                  value={
+                    <div>
+                      {invoice.shippingDetails?.address}
+                      <br />
+                      {invoice.shippingDetails?.addressNote}
                     </div>
-                  </div>
+                  }
+                  icon={<AddressIconSVG />}
+                />
+              </Box>
+            </Box>
+            <Box className="bg-white rounded-xl p-6">
+              <Box className="space-y-4">
+                <h2 className="text-[32px] font-semibold">Order Saya</h2>
+                <Box className="space-y-4">
+                  {invoice.products?.map((val: any) => (
+                    <Box>
+                      <div className="flex items-start gap-2">
+                        <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1 md:flex md:items-center md:gap-4">
+                          <img
+                            style={{ borderRadius: "20%" }}
+                            className="rounded-lg object-cover w-full aspect-video md:w-44 md:h-44"
+                            src={val?.product?.img?.[0] || imagePlaceholder}
+                            alt="image"
+                          />
+                          <div className="space-y-1">
+                            <Typography
+                              className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                              fontSize={14}
+                              fontWeight={400}
+                            >
+                              {getCategoryLabel(val?.productCategoryId)}
+                            </Typography>
+                            <Typography
+                              fontSize={17}
+                              fontWeight={400}
+                              color="text.primary"
+                              className="font-semibold"
+                            >
+                              {val?.product?.productName}
+                            </Typography>
+                            <Typography
+                              fontSize={15}
+                              className="font-normal text-slate-500"
+                            >
+                              SKU: {val.product?.sku}
+                            </Typography>
+                            <div className="flex items-center gap-2">
+                              <Typography className="text-sm text-slate-600">
+                                {rupiah(val.totalPrice)}
+                              </Typography>
+                              <p>|</p>
+                              <Typography className="text-sm text-slate-600">
+                                {val.qty} Pcs
+                              </Typography>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Box>
+                  ))}
                 </Box>
-              ))}
+              </Box>
             </Box>
-          </Box>
-        </Box>
+          </div>
 
-        <Box className="bg-white rounded-xl p-6">
-          <Box className="space-y-4">
-            <h2 className="text-[32px] font-semibold">Order Summary</h2>
+          <Box className="bg-white rounded-xl p-6 lg:w-full lg:col-span-4">
+            <Box className="space-y-4">
+              <h2 className="text-[32px] font-semibold">Order Summary</h2>
 
-            <Box className="flex items-center justify-between">
-              <Typography className="font-semibold text-lg text-slate-600">
-                Subtotal ({invoice.products?.length} Items)
-              </Typography>
-              <Typography className="font-medium text-lg">
-                {rupiah(priceItem)}
-              </Typography>
-            </Box>
-            {invoice.shippingMethod && (
-              <>
-                <Box className="flex items-center gap-4 justify-between">
-                  <Box>
-                    <Typography className="font-semibold text-lg text-slate-600">
-                      Delivery
-                    </Typography>
-                    <Typography className="flex items-center">
-                      {getCourierByCode(invoice.shippingMethod.courierCode)
-                        ?.img && (
-                        <img
-                          src={
-                            getCourierByCode(invoice.shippingMethod.courierCode)
-                              ?.img
-                          }
-                          alt="kurir"
-                          className="w-10 max-h-7 mr-1"
-                        />
-                      )}
-                      {invoice.shippingMethod.courierName} -{" "}
-                      {invoice.shippingMethod.serviceName}&nbsp; (
-                      {invoice.shippingDetails?.totalWeight} grams)
+              <Box className="flex items-center justify-between">
+                <Typography className="font-semibold text-lg text-slate-600">
+                  Subtotal ({invoice.products?.length} Items)
+                </Typography>
+                <Typography className="font-medium text-lg">
+                  {rupiah(priceItem)}
+                </Typography>
+              </Box>
+              {invoice.shippingMethod && (
+                <>
+                  <Box className="flex items-center gap-4 justify-between">
+                    <Box>
+                      <Typography className="font-semibold text-lg text-slate-600">
+                        Delivery
+                      </Typography>
+                      <Typography className="flex items-center">
+                        {getCourierByCode(invoice.shippingMethod.courierCode)
+                          ?.img && (
+                          <img
+                            src={
+                              getCourierByCode(
+                                invoice.shippingMethod.courierCode
+                              )?.img
+                            }
+                            alt="kurir"
+                            className="w-10 max-h-7 mr-1"
+                          />
+                        )}
+                        {invoice.shippingMethod.courierName} -{" "}
+                        {invoice.shippingMethod.serviceName}&nbsp; (
+                        {invoice.shippingDetails?.totalWeight} grams)
+                      </Typography>
+                    </Box>
+                    <Typography className="font-medium text-lg">
+                      {rupiah(invoice.shippingMethod.price)}
                     </Typography>
                   </Box>
-                  <Typography className="font-medium text-lg">
-                    {rupiah(invoice.shippingMethod.price)}
-                  </Typography>
-                </Box>
-                <Box className="flex items-center gap-4 justify-between">
-                  <Typography className="font-semibold text-lg text-slate-600">
-                    Insurance
-                  </Typography>
+                  <Box className="flex items-center gap-4 justify-between">
+                    <Typography className="font-semibold text-lg text-slate-600">
+                      Insurance
+                    </Typography>
 
-                  <Typography className="font-medium text-lg">
-                    {rupiah(invoice.shippingMethod.insuranceFee)}
-                  </Typography>
-                </Box>
-              </>
-            )}
-            <Box className="flex items-center gap-4 justify-between">
-              <Typography className="font-semibold text-lg text-slate-600">
-                Tax (11%)
-              </Typography>
+                    <Typography className="font-medium text-lg">
+                      {rupiah(invoice.shippingMethod.insuranceFee)}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+              <Box className="flex items-center gap-4 justify-between">
+                <Typography className="font-semibold text-lg text-slate-600">
+                  Tax (11%)
+                </Typography>
 
-              <Typography className="font-medium text-lg">
-                {rupiah(priceItem * 0.11)}
-              </Typography>
-            </Box>
-            <Divider />
-            <Box className="flex items-center gap-4 justify-between">
-              <Typography className="font-semibold text-lg">
-                Sub Total
-              </Typography>
+                <Typography className="font-medium text-lg">
+                  {rupiah(priceItem * 0.11)}
+                </Typography>
+              </Box>
+              <Divider />
+              <Box className="flex items-center gap-4 justify-between">
+                <Typography className="font-semibold text-lg">
+                  Sub Total
+                </Typography>
 
-              <Typography className="font-medium text-lg">
-                {rupiah(
-                  priceItem +
-                    (invoice.shippingMethod?.price ?? 0) +
-                    (invoice.shippingMethod?.insuranceFee ?? 0) +
-                    priceItem * 0.11
-                )}
-              </Typography>
+                <Typography className="font-medium text-lg">
+                  {rupiah(
+                    priceItem +
+                      (invoice.shippingMethod?.price ?? 0) +
+                      (invoice.shippingMethod?.insuranceFee ?? 0) +
+                      priceItem * 0.11
+                  )}
+                </Typography>
+              </Box>
             </Box>
           </Box>
-        </Box>
+        </div>
       </DialogContent>
     </Dialog>
   );

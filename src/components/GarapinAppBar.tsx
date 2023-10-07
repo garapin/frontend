@@ -272,6 +272,7 @@ const GarapinAppBar = ({
             value={value}
             onChange={handleChange}
             variant="scrollable"
+            className="md:hidden"
             scrollButtons={false}
           >
             <Tab

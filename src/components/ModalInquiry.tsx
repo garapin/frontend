@@ -278,7 +278,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         scroll={"paper"}
-        maxWidth={"md"}
+        maxWidth="lg"
         // remove margin modal
         PaperProps={{
           sx: {
@@ -287,7 +287,6 @@ const ModalInquiry = ({ modal, setModal }: any) => {
             borderRadius: "0px",
           },
         }}
-        className="max-w-lg mx-auto"
         fullWidth
       >
         <DialogContent className="bg-slate-50 space-y-6 p-4">
@@ -300,34 +299,36 @@ const ModalInquiry = ({ modal, setModal }: any) => {
             </Box>
             <Box>
               <div className="flex items-start gap-2">
-                <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1">
+                <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1 md:flex md:items-center md:gap-4 md:space-y-0 md:max-w-3xl">
                   <img
                     style={{ borderRadius: "20%" }}
-                    className="rounded-lg object-cover w-full aspect-video"
+                    className="rounded-lg object-cover w-full aspect-video md:w-44 md:h-44"
                     src={data?.product?.img?.[0] || imagePlaceholder}
                     alt="image"
                   />
-                  <Typography
-                    className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
-                    fontSize={14}
-                    fontWeight={400}
-                  >
-                    {getCategoryLabel(data?.productCategoryId)}
-                  </Typography>
-                  <Typography
-                    fontSize={17}
-                    fontWeight={400}
-                    color="text.primary"
-                    className="font-semibold"
-                  >
-                    {data?.product?.productName}
-                  </Typography>
-                  <Typography
-                    fontSize={15}
-                    className="font-normal text-slate-500"
-                  >
-                    SKU: {data?.product?.sku}
-                  </Typography>
+                  <div className="space-y-1">
+                    <Typography
+                      className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                      fontSize={14}
+                      fontWeight={400}
+                    >
+                      {getCategoryLabel(data?.productCategoryId)}
+                    </Typography>
+                    <Typography
+                      fontSize={17}
+                      fontWeight={400}
+                      color="text.primary"
+                      className="font-semibold"
+                    >
+                      {data?.product?.productName}
+                    </Typography>
+                    <Typography
+                      fontSize={15}
+                      className="font-normal text-slate-500"
+                    >
+                      SKU: {data?.product?.sku}
+                    </Typography>
+                  </div>
                 </div>
               </div>
             </Box>
@@ -357,9 +358,12 @@ const ModalInquiry = ({ modal, setModal }: any) => {
               </Typography>
               <Grid
                 container
-                spacing={2}
+                spacing={{
+                  xs: 2,
+                  md: 3,
+                }}
                 alignItems="stretch"
-                className="space-y-4"
+                className="space-y-4 md:space-y-0"
               >
                 {data &&
                   Object?.keys(data?.selectedOptions).map((key: any, i) => {
@@ -382,7 +386,7 @@ const ModalInquiry = ({ modal, setModal }: any) => {
                         .join(", ");
                     }
                     return (
-                      <Grid item md={12} key={i} className="w-full">
+                      <Grid item md={6} lg={4} key={i} className="w-full">
                         <Box className="h-full rounded-md shadow-sm p-4 bg-slate-50">
                           <Typography className="font-semibold">
                             {keyName}

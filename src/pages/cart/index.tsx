@@ -7,6 +7,8 @@ import {
   Divider,
   Fade,
   Grid,
+  IconButton,
+  Tooltip,
   Typography,
   debounce,
 } from "@mui/material";
@@ -28,6 +30,8 @@ import { toast } from "react-toastify";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { NumericFormat } from "react-number-format";
 import { changeCurrency, getCategoryLabel } from "@/tools/utils";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface Product {
   id: number;
@@ -221,177 +225,308 @@ function Cart() {
                           checked={selectedProducts.includes(val.id)}
                           onChange={() => toggleProductSelection(val.id)}
                         />
-                        <div className="w-full bg-slate-50 p-4 rounded-lg space-y-2">
-                          <img
-                            style={{ borderRadius: "20%" }}
-                            className="rounded-lg object-contain w-full"
-                            src={val?.product?.img?.[0] || imagePlaceholder}
-                            alt="image"
-                          />
-                          <Typography
-                            className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
-                            fontSize={14}
-                            fontWeight={400}
+                        <div className="w-full bg-slate-50 p-4 rounded-lg space-y-2 md:space-y-0">
+                          <div
+                            className="
+                          md:flex md:items-center md:gap-4"
                           >
-                            {getCategoryLabel(val?.productCategoryId)}
-                          </Typography>
-                          <Typography
-                            fontSize={17}
-                            fontWeight={400}
-                            color="text.primary"
-                            className="font-semibold"
-                          >
-                            {val?.product?.productName}
-                          </Typography>
-                          <Typography className="text-sm text-slate-600">
-                            {rupiah(val.totalPrice)}
-                          </Typography>
-                          <Box className="space-y-4">
-                            <Box className="flex items-center">
-                              <Button
-                                disabled={val.qty === 1}
-                                onClick={() => {
-                                  if (val.qty > val.product?.moq) {
-                                    adjustProductQuantity(val.id, val.qty - 1);
-                                  }
-                                  debounceCalculatePrice(
-                                    val.qty - 1,
-                                    val.productId,
-                                    val
-                                  );
-                                }}
-                                className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-4"
-                              >
-                                -
-                              </Button>
-                              <NumericFormat
-                                value={val.qty}
-                                allowLeadingZeros
-                                className="w-full border-none outline-none text-center font-semibold text-sm py-3"
-                                thousandSeparator=","
-                                onChange={(e) => {
-                                  adjustProductQuantity(
-                                    val.id,
-                                    parseInt(
-                                      e.target.value.replace(/[^0-9]/g, "")
-                                    )
-                                  );
-                                  debounceCalculatePrice(
-                                    parseInt(
-                                      e.target.value.replace(/[^0-9]/g, "")
-                                    ),
-                                    val.productId,
-                                    val
-                                  );
-                                }}
-                              />
-                              <Button
-                                disabled={val.qty === val.product?.stock}
-                                onClick={() => {
-                                  adjustProductQuantity(
-                                    val.id,
-                                    typeof val.qty === "string"
-                                      ? parseInt(
-                                          val.qty.replace(/[^0-9]/g, "")
-                                        ) + 1
-                                      : val.qty + 1
-                                  );
-                                  debounceCalculatePrice(
-                                    val.qty + 1,
-                                    val.productId,
-                                    val
-                                  );
-                                }}
-                                className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-3"
-                              >
-                                +
-                              </Button>
-                            </Box>
+                            <img
+                              style={{ borderRadius: "20%" }}
+                              className="rounded-lg object-contain w-full md:w-44 md:h-44"
+                              src={val?.product?.img?.[0] || imagePlaceholder}
+                              alt="image"
+                            />
+                            <div className="md:flex md:items-center md:gap-4 md:justify-between w-full">
+                              <div className="space-y-2 md:w-full">
+                                <Typography
+                                  className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                                  fontSize={14}
+                                  fontWeight={400}
+                                >
+                                  {getCategoryLabel(val?.productCategoryId)}
+                                </Typography>
+                                <Typography
+                                  fontSize={17}
+                                  fontWeight={400}
+                                  color="text.primary"
+                                  className="font-semibold"
+                                >
+                                  {val?.product?.productName}
+                                </Typography>
+                                <Typography className="text-sm text-slate-600">
+                                  {rupiah(val.totalPrice)}
+                                </Typography>
+                                <Box className="space-y-4">
+                                  <Box className="flex items-center md:max-w-[200px]">
+                                    <Button
+                                      disabled={val.qty === 1}
+                                      onClick={() => {
+                                        if (val.qty > val.product?.moq) {
+                                          adjustProductQuantity(
+                                            val.id,
+                                            val.qty - 1
+                                          );
+                                        }
+                                        debounceCalculatePrice(
+                                          val.qty - 1,
+                                          val.productId,
+                                          val
+                                        );
+                                      }}
+                                      className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-4"
+                                    >
+                                      -
+                                    </Button>
+                                    <NumericFormat
+                                      value={val.qty}
+                                      allowLeadingZeros
+                                      className="w-full border-none outline-none text-center font-semibold text-sm py-3"
+                                      thousandSeparator=","
+                                      onChange={(e) => {
+                                        adjustProductQuantity(
+                                          val.id,
+                                          parseInt(
+                                            e.target.value.replace(
+                                              /[^0-9]/g,
+                                              ""
+                                            )
+                                          )
+                                        );
+                                        debounceCalculatePrice(
+                                          parseInt(
+                                            e.target.value.replace(
+                                              /[^0-9]/g,
+                                              ""
+                                            )
+                                          ),
+                                          val.productId,
+                                          val
+                                        );
+                                      }}
+                                    />
+                                    <Button
+                                      disabled={val.qty === val.product?.stock}
+                                      onClick={() => {
+                                        adjustProductQuantity(
+                                          val.id,
+                                          typeof val.qty === "string"
+                                            ? parseInt(
+                                                val.qty.replace(/[^0-9]/g, "")
+                                              ) + 1
+                                            : val.qty + 1
+                                        );
+                                        debounceCalculatePrice(
+                                          val.qty + 1,
+                                          val.productId,
+                                          val
+                                        );
+                                      }}
+                                      className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-3"
+                                    >
+                                      +
+                                    </Button>
+                                  </Box>
+                                  {val?.productCategoryId == 2 && (
+                                    <>
+                                      <Button
+                                        variant="contained"
+                                        className="capitalize md:hidden"
+                                        fullWidth
+                                        onClick={() => {
+                                          if (val.id == cardDetail?.data?.id) {
+                                            setCardDetail({
+                                              open: false,
+                                              data: {},
+                                            });
+                                          } else {
+                                            setCardDetail({
+                                              open: true,
+                                              data: val,
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        Detail
+                                      </Button>
+                                    </>
+                                  )}
+                                  <Button
+                                    onClick={() => handleDelete(val)}
+                                    variant="outlined"
+                                    className="capitalize md:hidden"
+                                    fullWidth
+                                  >
+                                    Delete
+                                  </Button>
+                                  <div className="md:hidden">
+                                    {val?.productCategoryId == 2 &&
+                                      cardDetail?.open &&
+                                      cardDetail?.data?.id == val?.id &&
+                                      Object?.keys(val?.selectedOptions).map(
+                                        (key: any, i) => {
+                                          const selected: any =
+                                            val?.selectedOptions[
+                                              `${key as number}`
+                                            ];
+                                          const keyName = key
+                                            .split("-")
+                                            .map(
+                                              (val: any) =>
+                                                val.charAt(0).toUpperCase() +
+                                                val.slice(1)
+                                            )
+                                            .join(" ");
+
+                                          let selectedOptionName;
+
+                                          if (
+                                            !Array.isArray(
+                                              selected.selectedOption
+                                            )
+                                          ) {
+                                            selectedOptionName =
+                                              selected.selectedOption.name;
+                                          } else {
+                                            selectedOptionName =
+                                              selected.selectedOption
+                                                .map((val: any) => val.name)
+                                                .join(", ");
+                                          }
+                                          return (
+                                            <Fade
+                                              in={cardDetail.open}
+                                              timeout={500}
+                                            >
+                                              <Grid
+                                                item
+                                                md={6}
+                                                key={i}
+                                                className="w-full"
+                                              >
+                                                <Typography className="font-medium text-slate-600 text-sm">
+                                                  {keyName}
+                                                </Typography>
+                                                <Box
+                                                  style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                  }}
+                                                >
+                                                  <Typography className="font-medium text-[#713F97] text-sm">
+                                                    {selectedOptionName}
+                                                  </Typography>
+                                                </Box>
+                                              </Grid>
+                                            </Fade>
+                                          );
+                                        }
+                                      )}
+                                  </div>
+                                </Box>
+                              </div>
+                              <div className="hidden md:block">
+                                <Tooltip placement="top" arrow title="Hapus">
+                                  <IconButton onClick={() => handleDelete(val)}>
+                                    <HighlightOffIcon
+                                      color="error"
+                                      className="text-danger"
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="hidden md:block">
                             {val?.productCategoryId == 2 && (
                               <>
-                                <Button
-                                  variant="contained"
-                                  className="capitalize"
-                                  fullWidth
-                                  onClick={() => {
-                                    if (val.id == cardDetail?.data?.id) {
-                                      setCardDetail({
-                                        open: false,
-                                        data: {},
-                                      });
-                                    } else {
-                                      setCardDetail({
-                                        open: true,
-                                        data: val,
-                                      });
+                                <div className="flex items-center justify-end">
+                                  <Button
+                                    className="capitalize"
+                                    onClick={() => {
+                                      if (val.id == cardDetail?.data?.id) {
+                                        setCardDetail({
+                                          open: false,
+                                          data: {},
+                                        });
+                                      } else {
+                                        setCardDetail({
+                                          open: true,
+                                          data: val,
+                                        });
+                                      }
+                                    }}
+                                    endIcon={
+                                      cardDetail?.open ? (
+                                        <ExpandLess />
+                                      ) : (
+                                        <ExpandMore />
+                                      )
                                     }
-                                  }}
-                                >
-                                  Detail
-                                </Button>
+                                  >
+                                    Detail
+                                  </Button>
+                                </div>
+                                <Divider />
                               </>
                             )}
-                            <Button
-                              onClick={() => handleDelete(val)}
-                              variant="outlined"
-                              className="capitalize"
-                              fullWidth
-                            >
-                              Delete
-                            </Button>
-                            {val?.productCategoryId == 2 &&
-                              cardDetail?.open &&
-                              cardDetail?.data?.id == val?.id &&
-                              Object?.keys(val?.selectedOptions).map(
-                                (key: any, i) => {
-                                  const selected: any =
-                                    val?.selectedOptions[`${key as number}`];
-                                  const keyName = key
-                                    .split("-")
-                                    .map(
-                                      (val: any) =>
-                                        val.charAt(0).toUpperCase() +
-                                        val.slice(1)
-                                    )
-                                    .join(" ");
+                            <div className="hidden md:block mt-4">
+                              {val?.productCategoryId == 2 &&
+                                cardDetail?.open &&
+                                cardDetail?.data?.id == val?.id &&
+                                Object?.keys(val?.selectedOptions).map(
+                                  (key: any, i) => {
+                                    const selected: any =
+                                      val?.selectedOptions[`${key as number}`];
+                                    const keyName = key
+                                      .split("-")
+                                      .map(
+                                        (val: any) =>
+                                          val.charAt(0).toUpperCase() +
+                                          val.slice(1)
+                                      )
+                                      .join(" ");
 
-                                  let selectedOptionName;
+                                    let selectedOptionName;
 
-                                  if (!Array.isArray(selected.selectedOption)) {
-                                    selectedOptionName =
-                                      selected.selectedOption.name;
-                                  } else {
-                                    selectedOptionName = selected.selectedOption
-                                      .map((val: any) => val.name)
-                                      .join(", ");
-                                  }
-                                  return (
-                                    <Fade in={cardDetail.open} timeout={500}>
-                                      <Grid
-                                        item
-                                        md={6}
-                                        key={i}
-                                        className="w-full"
-                                      >
-                                        <Typography className="font-medium text-slate-600 text-sm">
-                                          {keyName}
-                                        </Typography>
-                                        <Box
-                                          style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                          }}
+                                    if (
+                                      !Array.isArray(selected.selectedOption)
+                                    ) {
+                                      selectedOptionName =
+                                        selected.selectedOption.name;
+                                    } else {
+                                      selectedOptionName =
+                                        selected.selectedOption
+                                          .map((val: any) => val.name)
+                                          .join(", ");
+                                    }
+                                    return (
+                                      <Fade in={cardDetail.open} timeout={500}>
+                                        <Grid
+                                          item
+                                          md={6}
+                                          key={i}
+                                          className="w-full"
                                         >
-                                          <Typography className="font-medium text-[#713F97] text-sm">
-                                            {selectedOptionName}
+                                          <Typography className="font-medium text-slate-600 text-sm">
+                                            {keyName}
                                           </Typography>
-                                        </Box>
-                                      </Grid>
-                                    </Fade>
-                                  );
-                                }
-                              )}
-                          </Box>
+                                          <Box
+                                            style={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                            }}
+                                          >
+                                            <Typography className="font-medium text-[#713F97] text-sm">
+                                              {selectedOptionName}
+                                            </Typography>
+                                          </Box>
+                                        </Grid>
+                                      </Fade>
+                                    );
+                                  }
+                                )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </Box>
