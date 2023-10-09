@@ -430,15 +430,17 @@ function LandingPage(props: any) {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Typography>
-                        Lorem ipsum dolor sit amet consectetur. In enim
-                        elementum tellus adipiscing lorem. At enim eget sit
-                        donec. Pellentesque lorem in viverra amet aliquam
-                        potenti nullam porta. Cras neque condimentum fringilla
-                        sit purus vitae. Tellus convallis tristique purus mattis
-                        purus purus sagittis egestas. Augue enim dis lectus
-                        tempor praesent. Ultrices in nunc mi egestas adipiscing
-                        est viverra. Dignissim duis orci sagittis et. Porttitor
-                        sed neque tincidunt euismod.
+					  	Selamat datang di Garapin Packaging, mitra andal untuk 
+						kemasan makanan dan produk lainnya. Kami menawarkan solusi 
+						kemasan berkualitas tinggi dengan desain kreatif yang 
+						mencerminkan brand Anda. Keamanan dan ramah lingkungan 
+						adalah prioritas kami.
+						<br/>
+						Dengan kemasan kami, Anda dapat meningkatkan daya tarik 
+						produk, melindungi barang-barang berharga, dan memberikan 
+						kesan positif pada pelanggan. Percayakan kemasan Anda pada 
+						kami untuk keberhasilan bisnis Anda. Hubungi kami hari ini 
+						untuk konsultasi gratis.
                       </Typography>
                     </AccordionDetails>
                   </Accordion>
