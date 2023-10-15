@@ -49,7 +49,7 @@ const ProductListPage = () => {
   const searchRef = useRef<HTMLFormElement>(null);
 
   React.useEffect(() => {
-    dispatch(getSearchProduct(q as string));
+    // dispatch(getSearchProduct(q as string));
   }, [q]);
 
   React.useEffect(() => {

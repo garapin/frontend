@@ -294,19 +294,36 @@ export const getAllProductsBasedOnCategories = (
   };
 };
 
-export const getSearchProduct = (productName: string): AppThunk => {
+export const getSearchProduct = (filter: {
+  query: string;
+  category: string[];
+  minPrice: number;
+  maxPrice: number;
+  valueRange: number[];
+}): AppThunk => {
   return async (dispatch) => {
     try {
-      const requestBody = {
-        query: productName,
-      };
+      let requestBody: any = {};
+      if (filter.query) {
+        requestBody["query"] = filter.query;
+      }
+      if (filter.category.length > 0) {
+        requestBody["category"] = filter.category;
+      }
+      if (filter.minPrice) {
+        requestBody["minPrice"] = filter.minPrice;
+      }
+      if (filter.maxPrice) {
+        requestBody["maxPrice"] = filter.maxPrice;
+      }
       dispatch(setAllProductsLoaded(false));
       dispatch(setProductLoading());
       const data = await axios.post(
         "https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/search",
         requestBody
       );
-      dispatch(setProducts(data.data.result.map((item: any) => item._source)));
+      // dispatch(setProducts(data.data.result.map((item: any) => item._source)));
+      dispatch(setProducts(data.data.result));
       dispatch(setSearchHits(data.data.hits));
 
       if (data.data.result.length < 25) {
@@ -385,7 +402,8 @@ export const getNextSearchProduct = (): AppThunk => {
       dispatch(
         setProducts([
           ...products,
-          ...data.data.result.map((item: any) => item._source),
+          ...data.data.result,
+          // ...data.data.result.map((item: any) => item._source),
         ])
       );
 

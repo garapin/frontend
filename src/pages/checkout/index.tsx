@@ -39,6 +39,7 @@ import { getShippingCompany } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { getCategoryLabel } from "@/tools/utils";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 function CheckoutPage() {
   const auth = useFirebaseAuth();
@@ -201,511 +202,638 @@ function CheckoutPage() {
   };
 
   return (
-    <Box className="max-w-md mx-auto bg-slate-50 p-4 space-y-6">
-      <Box className="bg-white rounded-xl py-8">
-        <Container maxWidth="xl" className="px-4 space-y-4">
-          <Typography
-            fontSize={32}
-            color="text.primary"
-            className="pb-2 font-semibold"
-          >
-            Order Saya
-          </Typography>
-
-          {checkoutData?.map((val: any) => (
-            <Box>
-              <div className="flex items-start gap-2">
-                <div className="w-full bg-slate-50 p-4 rounded-lg space-y-2">
-                  <img
-                    style={{ borderRadius: "20%" }}
-                    className="rounded-lg object-cover w-full aspect-video"
-                    src={val?.product?.img?.[0] || imagePlaceholder}
-                    alt="image"
-                  />
-                  <Typography
-                    className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
-                    fontSize={14}
-                    fontWeight={400}
-                  >
-                    {getCategoryLabel(val?.productCategoryId)}
-                  </Typography>
-                  <Typography
-                    fontSize={17}
-                    fontWeight={400}
-                    color="text.primary"
-                    className="font-semibold"
-                  >
-                    {val?.product?.productName}
-                  </Typography>
-                  <Typography className="text-sm text-slate-600">
-                    {rupiah(val.totalPrice)}
-                  </Typography>
-                  <Box className="space-y-4">
-                    {val?.productCategoryId == 2 && (
-                      <>
-                        <Button
-                          variant="contained"
-                          className="capitalize"
-                          fullWidth
-                          onClick={() => {
-                            if (val.id == cardDetail?.data?.id) {
-                              setCardDetail({
-                                open: false,
-                                data: {},
-                              });
-                            } else {
-                              setCardDetail({
-                                open: true,
-                                data: val,
-                              });
-                            }
-                          }}
-                        >
-                          Detail
-                        </Button>
-                      </>
-                    )}
-                    {val?.productCategoryId == 2 &&
-                      cardDetail?.open &&
-                      cardDetail?.data?.id == val?.id &&
-                      Object?.keys(val?.selectedOptions).map((key: any, i) => {
-                        const selected: any =
-                          val?.selectedOptions[`${key as number}`];
-                        const keyName = key
-                          .split("-")
-                          .map(
-                            (val: any) =>
-                              val.charAt(0).toUpperCase() + val.slice(1)
-                          )
-                          .join(" ");
-
-                        let selectedOptionName;
-
-                        if (!Array.isArray(selected.selectedOption)) {
-                          selectedOptionName = selected.selectedOption.name;
-                        } else {
-                          selectedOptionName = selected.selectedOption
-                            .map((val: any) => val.name)
-                            .join(", ");
-                        }
-                        return (
-                          <Fade in={cardDetail.open} timeout={500}>
-                            <Grid item md={6} key={i} className="w-full">
-                              <Typography className="font-medium text-slate-600 text-sm">
-                                {keyName}
-                              </Typography>
-                              <Box
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <Typography className="font-medium text-[#713F97] text-sm">
-                                  {selectedOptionName}
-                                </Typography>
-                              </Box>
-                            </Grid>
-                          </Fade>
-                        );
-                      })}
-                  </Box>
-                </div>
-              </div>
-            </Box>
-          ))}
-        </Container>
-      </Box>
-
-      <Box className="bg-white rounded-xl py-8">
-        <form>
-          <Container maxWidth="xl" className="px-4 space-y-4">
-            <Typography
-              fontSize={32}
-              color="text.primary"
-              className="pb-2 font-semibold"
-            >
-              Address Detail
-            </Typography>
-
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Nama Lengkap
+    <div className="bg-slate-50 md:py-4">
+      <Box className="max-w-screen-2xl mx-auto p-4 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-6">
+        <div className="lg:col-span-8 space-y-6">
+          <Box className="bg-white rounded-xl py-8">
+            <Container maxWidth="xl" className="px-4 md:px-8 space-y-4">
+              <Typography
+                fontSize={32}
+                color="text.primary"
+                className="pb-2 font-semibold"
+              >
+                Order Saya
               </Typography>
-              <TextField
-                fullWidth
-                // label="Nama Lengkap"
-                placeholder="Masukkan Nama Lengkap Anda"
-                error={
-                  formik.touched.fullName && Boolean(formik.errors.fullName)
-                }
-                helperText={
-                  Boolean(formik.touched.fullName) && formik.errors.fullName
-                }
-                value={formik.values.fullName}
-                name={"fullName"}
-                required
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Nomor Handphone
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Masukan Nomor Hp atau Wa"
-                value={formik.values.phoneNumber}
-                error={
-                  formik.touched.phoneNumber &&
-                  Boolean(formik.errors.phoneNumber)
-                }
-                helperText={Boolean(formik.errors) && formik.errors.phoneNumber}
-                name={"phoneNumber"}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Alamat Pembeli
-              </Typography>
-              <AddressPicker
-                label={"Alamat Pembeli"}
-                onLocationSelect={(place) => {
-                  const postalCode = place.address_components?.find(
-                    (component: any) => {
-                      return component.types.includes("postal_code");
-                    }
-                  )?.long_name;
-                  const completeAddress = place.formatted_address;
-                  const geometry = place?.geometry?.location;
-                  let latLong = { lat: "", lng: "" };
-                  if (geometry != undefined) {
-                    latLong = {
-                      lat: geometry.lat().toString(),
-                      lng: geometry.lng().toString(),
-                    };
-                  }
-                  const objAddress = {
-                    completeAddress,
-                    postalCode,
-                    latLong,
-                  };
 
-                  const city = place.address_components?.find(
-                    (component: any) => {
-                      return component.types.includes(
-                        "administrative_area_level_1"
-                      );
-                    }
-                  )?.long_name;
-                  const country = place.address_components?.find(
-                    (component: any) => {
-                      return component.types.includes("country");
-                    }
-                  )?.long_name;
-
-                  formik.setFieldValue("city", city, true);
-                  formik.setFieldValue("country", country);
-                  formik.setFieldValue("zipCode", postalCode, true);
-                  setTimeout(() => formik.setFieldTouched("city", true));
-                  setTimeout(() => formik.setFieldTouched("zipCode", true));
-
-                  setAddressMap(objAddress);
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Keterangan Alamat
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Masukan Keterangan Alamat"
-                error={
-                  formik.touched.addressNote &&
-                  Boolean(formik.errors.addressNote)
-                }
-                helperText={
-                  Boolean(formik.touched.addressNote) &&
-                  formik.errors.addressNote
-                }
-                value={formik.values.addressNote}
-                name={"addressNote"}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Kota
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Masukan Kota Anda"
-                error={formik.touched.city && Boolean(formik.errors.city)}
-                helperText={Boolean(formik.touched.city) && formik.errors.city}
-                value={formik.values.city}
-                name={"city"}
-                required
-                InputLabelProps={{ shrink: Boolean(formik.values.city) }}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Kode POS
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Masukan Kode Pos Kota Anda"
-                error={formik.touched.zipCode && Boolean(formik.errors.zipCode)}
-                helperText={
-                  Boolean(formik.touched.zipCode) && formik.errors.zipCode
-                }
-                value={formik.values.zipCode}
-                name={"zipCode"}
-                required
-                InputLabelProps={{ shrink: Boolean(formik.values.zipCode) }}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Negara
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Masukan Negara Anda"
-                disabled
-                error={formik.touched.country && Boolean(formik.errors.country)}
-                helperText={
-                  Boolean(formik.touched.country) && formik.errors.country
-                }
-                value={formik.values.country}
-                name={"country"}
-                required
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Email
-              </Typography>
-              <TextField
-                fullWidth
-                placeholder="Masukan Alamat Email Anda"
-                name="email"
-                value={auth.authUser?.email}
-                disabled
-                InputLabelProps={{ shrink: Boolean(auth.authUser?.email) }}
-                required
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-            {addressMap.completeAddress.length > 0 && (
-              <div className="space-y-2">
-                <Typography className="text-base font-medium text-slate-600">
-                  Ekspedisi Pengiriman
-                </Typography>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={formik.values.shippingCompany}
-                  fullWidth
-                  placeholder="Pilih Ekspedisi"
-                  onChange={(e) => {
-                    formik.setFieldValue("shippingCompany", e.target.value);
-                    handleGetShippingCompanyService(e.target.value);
-                  }}
-                >
-                  {shippingCompanies?.map((shipping: any, i: any) => (
-                    <MenuItem value={shipping.code} key={i}>
-                      <Box className="flex items-center">
+              {checkoutData?.map((val: any) => (
+                <Box>
+                  <div className="flex items-start gap-2">
+                    <div className="w-full bg-slate-50 p-4 rounded-lg space-y-2">
+                      <div
+                        className="
+                          md:flex md:items-center md:gap-4"
+                      >
                         <img
-                          src={
-                            shipping.img ||
-                            "https://www.eggsnsoldiers.com/media/catalog/product/placeholder/default/EnS-product-coming-soon.jpg"
-                          }
-                          alt={shipping.code}
-                          className="w-10 mr-2 max-h-8"
+                          style={{ borderRadius: "20%" }}
+                          className="rounded-lg object-cover w-full aspect-video md:w-44 md:h-44"
+                          src={val?.product?.img?.[0] || imagePlaceholder}
+                          alt="image"
                         />
-                        <Box sx={{ fontWeight: 600 }}>{shipping.name}</Box>
-                      </Box>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </div>
-            )}
+                        <div className="md:flex md:items-center md:gap-4 md:justify-between w-full">
+                          <div className="space-y-2 md:w-full">
+                            <Typography
+                              className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                              fontSize={14}
+                              fontWeight={400}
+                            >
+                              {getCategoryLabel(val?.productCategoryId)}
+                            </Typography>
+                            <Typography
+                              fontSize={17}
+                              fontWeight={400}
+                              color="text.primary"
+                              className="font-semibold"
+                            >
+                              {val?.product?.productName}
+                            </Typography>
+                            <Typography className="text-sm text-slate-600">
+                              {rupiah(val.totalPrice)}
+                            </Typography>
+                            <Box className="space-y-4 md:hidden">
+                              {val?.productCategoryId == 2 && (
+                                <>
+                                  <Button
+                                    variant="contained"
+                                    className="capitalize"
+                                    fullWidth
+                                    onClick={() => {
+                                      if (val.id == cardDetail?.data?.id) {
+                                        setCardDetail({
+                                          open: false,
+                                          data: {},
+                                        });
+                                      } else {
+                                        setCardDetail({
+                                          open: true,
+                                          data: val,
+                                        });
+                                      }
+                                    }}
+                                  >
+                                    Detail
+                                  </Button>
+                                </>
+                              )}
+                              {val?.productCategoryId == 2 &&
+                                cardDetail?.open &&
+                                cardDetail?.data?.id == val?.id &&
+                                Object?.keys(val?.selectedOptions).map(
+                                  (key: any, i) => {
+                                    const selected: any =
+                                      val?.selectedOptions[`${key as number}`];
+                                    const keyName = key
+                                      .split("-")
+                                      .map(
+                                        (val: any) =>
+                                          val.charAt(0).toUpperCase() +
+                                          val.slice(1)
+                                      )
+                                      .join(" ");
 
-            {addressMap.completeAddress.length > 0 &&
-              formik.values.shippingCompany && (
+                                    let selectedOptionName;
+
+                                    if (
+                                      !Array.isArray(selected.selectedOption)
+                                    ) {
+                                      selectedOptionName =
+                                        selected.selectedOption.name;
+                                    } else {
+                                      selectedOptionName =
+                                        selected.selectedOption
+                                          .map((val: any) => val.name)
+                                          .join(", ");
+                                    }
+                                    return (
+                                      <Fade in={cardDetail.open} timeout={500}>
+                                        <Grid
+                                          item
+                                          md={6}
+                                          key={i}
+                                          className="w-full"
+                                        >
+                                          <Typography className="font-medium text-slate-600 text-sm">
+                                            {keyName}
+                                          </Typography>
+                                          <Box
+                                            style={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                            }}
+                                          >
+                                            <Typography className="font-medium text-[#713F97] text-sm">
+                                              {selectedOptionName}
+                                            </Typography>
+                                          </Box>
+                                        </Grid>
+                                      </Fade>
+                                    );
+                                  }
+                                )}
+                            </Box>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="hidden md:block">
+                        {val?.productCategoryId == 2 && (
+                          <>
+                            <div className="flex items-center justify-end">
+                              <Button
+                                className="capitalize"
+                                onClick={() => {
+                                  if (val.id == cardDetail?.data?.id) {
+                                    setCardDetail({
+                                      open: false,
+                                      data: {},
+                                    });
+                                  } else {
+                                    setCardDetail({
+                                      open: true,
+                                      data: val,
+                                    });
+                                  }
+                                }}
+                                endIcon={
+                                  cardDetail?.open ? (
+                                    <ExpandLess />
+                                  ) : (
+                                    <ExpandMore />
+                                  )
+                                }
+                              >
+                                Detail
+                              </Button>
+                            </div>
+                            <Divider />
+                          </>
+                        )}
+                        <div className="hidden md:block mt-4">
+                          {val?.productCategoryId == 2 &&
+                            cardDetail?.open &&
+                            cardDetail?.data?.id == val?.id &&
+                            Object?.keys(val?.selectedOptions).map(
+                              (key: any, i) => {
+                                const selected: any =
+                                  val?.selectedOptions[`${key as number}`];
+                                const keyName = key
+                                  .split("-")
+                                  .map(
+                                    (val: any) =>
+                                      val.charAt(0).toUpperCase() + val.slice(1)
+                                  )
+                                  .join(" ");
+
+                                let selectedOptionName;
+
+                                if (!Array.isArray(selected.selectedOption)) {
+                                  selectedOptionName =
+                                    selected.selectedOption.name;
+                                } else {
+                                  selectedOptionName = selected.selectedOption
+                                    .map((val: any) => val.name)
+                                    .join(", ");
+                                }
+                                return (
+                                  <Fade in={cardDetail.open} timeout={500}>
+                                    <Grid
+                                      item
+                                      md={6}
+                                      key={i}
+                                      className="w-full"
+                                    >
+                                      <Typography className="font-medium text-slate-600 text-sm">
+                                        {keyName}
+                                      </Typography>
+                                      <Box
+                                        style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <Typography className="font-medium text-[#713F97] text-sm">
+                                          {selectedOptionName}
+                                        </Typography>
+                                      </Box>
+                                    </Grid>
+                                  </Fade>
+                                );
+                              }
+                            )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Box>
+              ))}
+            </Container>
+          </Box>
+
+          <Box className="bg-white rounded-xl py-8">
+            <form>
+              <Container maxWidth="xl" className="px-4 lg:px-8 space-y-4">
+                <Typography
+                  fontSize={32}
+                  color="text.primary"
+                  className="pb-2 font-semibold"
+                >
+                  Address Detail
+                </Typography>
+
                 <div className="space-y-2">
                   <Typography className="text-base font-medium text-slate-600">
-                    Paket Pengiriman
+                    Nama Lengkap
                   </Typography>
-                  {formik.values.shippingCompany && (
-                    <FormControl fullWidth className="relative">
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={shippingLoading ? "" : ship}
-                        disabled={shippingLoading}
-                        fullWidth
-                        placeholder="Pilih Paket"
-                        onChange={handleChange}
-                      >
-                        {shipment?.map((val: any, i: any) => (
-                          <MenuItem value={val} key={i}>
-                            <Box className="flex justify-between">
-                              <Box sx={{ fontWeight: 600, marginRight: 6 }}>
-                                {`${val.courier_name} ${val.courier_service_name}`}
-                              </Box>
-                              <Box className="pl-2">
-                                {`${rupiah(val?.price)} (${
-                                  val?.shipment_duration_range
-                                } ${val?.shipment_duration_unit})`}
-                              </Box>
-                            </Box>
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      {shippingLoading && (
-                        <CircularProgress
-                          color="inherit"
-                          size="24px"
-                          className="absolute top-4 right-8"
-                        />
-                      )}
-                    </FormControl>
-                  )}
+                  <TextField
+                    fullWidth
+                    // label="Nama Lengkap"
+                    placeholder="Masukkan Nama Lengkap Anda"
+                    error={
+                      formik.touched.fullName && Boolean(formik.errors.fullName)
+                    }
+                    helperText={
+                      Boolean(formik.touched.fullName) && formik.errors.fullName
+                    }
+                    value={formik.values.fullName}
+                    name={"fullName"}
+                    required
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
                 </div>
-              )}
+                <div className="space-y-2">
+                  <Typography className="text-base font-medium text-slate-600">
+                    Nomor Handphone
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="Masukan Nomor Hp atau Wa"
+                    value={formik.values.phoneNumber}
+                    error={
+                      formik.touched.phoneNumber &&
+                      Boolean(formik.errors.phoneNumber)
+                    }
+                    helperText={
+                      Boolean(formik.errors) && formik.errors.phoneNumber
+                    }
+                    name={"phoneNumber"}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Typography className="text-base font-medium text-slate-600">
+                    Alamat Pembeli
+                  </Typography>
+                  <AddressPicker
+                    label={"Alamat Pembeli"}
+                    onLocationSelect={(place) => {
+                      const postalCode = place.address_components?.find(
+                        (component: any) => {
+                          return component.types.includes("postal_code");
+                        }
+                      )?.long_name;
+                      const completeAddress = place.formatted_address;
+                      const geometry = place?.geometry?.location;
+                      let latLong = { lat: "", lng: "" };
+                      if (geometry != undefined) {
+                        latLong = {
+                          lat: geometry.lat().toString(),
+                          lng: geometry.lng().toString(),
+                        };
+                      }
+                      const objAddress = {
+                        completeAddress,
+                        postalCode,
+                        latLong,
+                      };
 
-            <div className="space-y-2">
-              <Typography className="text-base font-medium text-slate-600">
-                Catatan
+                      const city = place.address_components?.find(
+                        (component: any) => {
+                          return component.types.includes(
+                            "administrative_area_level_1"
+                          );
+                        }
+                      )?.long_name;
+                      const country = place.address_components?.find(
+                        (component: any) => {
+                          return component.types.includes("country");
+                        }
+                      )?.long_name;
+
+                      formik.setFieldValue("city", city, true);
+                      formik.setFieldValue("country", country);
+                      formik.setFieldValue("zipCode", postalCode, true);
+                      setTimeout(() => formik.setFieldTouched("city", true));
+                      setTimeout(() => formik.setFieldTouched("zipCode", true));
+
+                      setAddressMap(objAddress);
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Typography className="text-base font-medium text-slate-600">
+                    Keterangan Alamat
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="Masukan Keterangan Alamat"
+                    error={
+                      formik.touched.addressNote &&
+                      Boolean(formik.errors.addressNote)
+                    }
+                    helperText={
+                      Boolean(formik.touched.addressNote) &&
+                      formik.errors.addressNote
+                    }
+                    value={formik.values.addressNote}
+                    name={"addressNote"}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                </div>
+                <div className="lg:flex lg:items-center lg:gap-4 w-full space-y-4 lg:space-y-0">
+                  <div className="space-y-2 lg:flex-1">
+                    <Typography className="text-base font-medium text-slate-600">
+                      Kota
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      placeholder="Masukan Kota Anda"
+                      error={formik.touched.city && Boolean(formik.errors.city)}
+                      helperText={
+                        Boolean(formik.touched.city) && formik.errors.city
+                      }
+                      value={formik.values.city}
+                      name={"city"}
+                      required
+                      InputLabelProps={{ shrink: Boolean(formik.values.city) }}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2 lg:flex-1">
+                    <Typography className="text-base font-medium text-slate-600">
+                      Kode POS
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      placeholder="Masukan Kode Pos Kota Anda"
+                      error={
+                        formik.touched.zipCode && Boolean(formik.errors.zipCode)
+                      }
+                      helperText={
+                        Boolean(formik.touched.zipCode) && formik.errors.zipCode
+                      }
+                      value={formik.values.zipCode}
+                      name={"zipCode"}
+                      required
+                      InputLabelProps={{
+                        shrink: Boolean(formik.values.zipCode),
+                      }}
+                      onBlur={formik.handleBlur}
+                      onChange={formik.handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Typography className="text-base font-medium text-slate-600">
+                    Negara
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="Masukan Negara Anda"
+                    disabled
+                    error={
+                      formik.touched.country && Boolean(formik.errors.country)
+                    }
+                    helperText={
+                      Boolean(formik.touched.country) && formik.errors.country
+                    }
+                    value={formik.values.country}
+                    name={"country"}
+                    required
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Typography className="text-base font-medium text-slate-600">
+                    Email
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    placeholder="Masukan Alamat Email Anda"
+                    name="email"
+                    value={auth.authUser?.email}
+                    disabled
+                    InputLabelProps={{ shrink: Boolean(auth.authUser?.email) }}
+                    required
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                </div>
+                {addressMap.completeAddress.length > 0 && (
+                  <div className="space-y-2">
+                    <Typography className="text-base font-medium text-slate-600">
+                      Ekspedisi Pengiriman
+                    </Typography>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={formik.values.shippingCompany}
+                      fullWidth
+                      placeholder="Pilih Ekspedisi"
+                      onChange={(e) => {
+                        formik.setFieldValue("shippingCompany", e.target.value);
+                        handleGetShippingCompanyService(e.target.value);
+                      }}
+                    >
+                      {shippingCompanies?.map((shipping: any, i: any) => (
+                        <MenuItem value={shipping.code} key={i}>
+                          <Box className="flex items-center">
+                            <img
+                              src={
+                                shipping.img ||
+                                "https://www.eggsnsoldiers.com/media/catalog/product/placeholder/default/EnS-product-coming-soon.jpg"
+                              }
+                              alt={shipping.code}
+                              className="w-10 mr-2 max-h-8"
+                            />
+                            <Box sx={{ fontWeight: 600 }}>{shipping.name}</Box>
+                          </Box>
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
+                )}
+
+                {addressMap.completeAddress.length > 0 &&
+                  formik.values.shippingCompany && (
+                    <div className="space-y-2">
+                      <Typography className="text-base font-medium text-slate-600">
+                        Paket Pengiriman
+                      </Typography>
+                      {formik.values.shippingCompany && (
+                        <FormControl fullWidth className="relative">
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={shippingLoading ? "" : ship}
+                            disabled={shippingLoading}
+                            fullWidth
+                            placeholder="Pilih Paket"
+                            onChange={handleChange}
+                          >
+                            {shipment?.map((val: any, i: any) => (
+                              <MenuItem value={val} key={i}>
+                                <Box className="flex justify-between">
+                                  <Box sx={{ fontWeight: 600, marginRight: 6 }}>
+                                    {`${val.courier_name} ${val.courier_service_name}`}
+                                  </Box>
+                                  <Box className="pl-2">
+                                    {`${rupiah(val?.price)} (${
+                                      val?.shipment_duration_range
+                                    } ${val?.shipment_duration_unit})`}
+                                  </Box>
+                                </Box>
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {shippingLoading && (
+                            <CircularProgress
+                              color="inherit"
+                              size="24px"
+                              className="absolute top-4 right-8"
+                            />
+                          )}
+                        </FormControl>
+                      )}
+                    </div>
+                  )}
+
+                <div className="space-y-2">
+                  <Typography className="text-base font-medium text-slate-600">
+                    Catatan
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    name="notes"
+                    placeholder="Letakkan paket di depan pintu"
+                    error={formik.touched.notes && Boolean(formik.errors.notes)}
+                    helperText={
+                      Boolean(formik.touched.notes) && formik.errors.notes
+                    }
+                    multiline
+                    rows={4}
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                  />
+                </div>
+              </Container>
+            </form>
+          </Box>
+        </div>
+        <Box className="lg:col-span-4">
+          <Box className="bg-white rounded-xl py-8">
+            <Container maxWidth="xl" className="px-4 lg:px-6 space-y-4">
+              <Typography
+                fontSize={32}
+                color="text.primary"
+                className="pb-2 font-semibold"
+              >
+                Order Summary
               </Typography>
-              <TextField
-                fullWidth
-                name="notes"
-                placeholder="Letakkan paket di depan pintu"
-                error={formik.touched.notes && Boolean(formik.errors.notes)}
-                helperText={
-                  Boolean(formik.touched.notes) && formik.errors.notes
-                }
-                multiline
-                rows={4}
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-              />
-            </div>
-          </Container>
-        </form>
-      </Box>
 
-      <Box className="bg-white rounded-xl py-8">
-        <Container maxWidth="xl" className="px-4 space-y-4">
-          <Typography
-            fontSize={32}
-            color="text.primary"
-            className="pb-2 font-semibold"
-          >
-            Order Summary
-          </Typography>
-
-          <Box className="flex items-center justify-between">
-            <Typography className="font-semibold text-lg text-slate-600">
-              Order
-            </Typography>
-            <Typography className="font-semibold text-lg">
-              {rupiah(priceItem)}
-            </Typography>
-          </Box>
-          <Box className="flex items-center justify-between">
-            <Typography className="font-semibold text-lg text-slate-600">
-              Delivery
-            </Typography>
-            <Typography className="flex items-center">
-              {getCourierByCode(ship.courier_code)?.img && (
-                <img
-                  src={getCourierByCode(ship.courier_code)?.img}
-                  alt="kurir"
-                  className="w-10 max-h-7 mr-1"
-                />
-              )}
-              {courierShipment}
-            </Typography>
-          </Box>
-
-          <Box className="flex items-center justify-between">
-            <Typography className="font-semibold text-lg text-slate-600">
-              Tax
-            </Typography>
-            <Typography className="font-semibold text-lg">
-              {rupiah(priceItem * 0.11)}
-            </Typography>
-          </Box>
-          {ship && (
-            <>
-              <Box className="flex items-center justify-end">
+              <Box className="flex items-center justify-between">
+                <Typography className="font-semibold text-lg text-slate-600">
+                  Order
+                </Typography>
                 <Typography className="font-semibold text-lg">
-                  {rupiah(ship.price)}
+                  {rupiah(priceItem)}
+                </Typography>
+              </Box>
+              <Box className="flex items-center justify-between">
+                <Typography className="font-semibold text-lg text-slate-600">
+                  Delivery
+                </Typography>
+                <Typography className="flex items-center">
+                  {getCourierByCode(ship.courier_code)?.img && (
+                    <img
+                      src={getCourierByCode(ship.courier_code)?.img}
+                      alt="kurir"
+                      className="w-10 max-h-7 mr-1"
+                    />
+                  )}
+                  {courierShipment}
                 </Typography>
               </Box>
 
               <Box className="flex items-center justify-between">
                 <Typography className="font-semibold text-lg text-slate-600">
-                  Insurance
+                  Tax
                 </Typography>
                 <Typography className="font-semibold text-lg">
-                  {rupiah(ship.insurance_fee)}
+                  {rupiah(priceItem * 0.11)}
                 </Typography>
               </Box>
-            </>
-          )}
-          <Box className="flex items-center justify-between">
-            <Typography className="font-semibold text-lg text-slate-600">
-              Tax
-            </Typography>
-            <Typography className="font-semibold text-lg">
-              {rupiah(priceItem * 0.11)}
-            </Typography>
-          </Box>
-          <Divider className="my-3" />
-          <Box className="flex items-center justify-between">
-            <Typography className="font-semibold text-lg">Sub Total</Typography>
-            <Typography className="float-right font-semibold text-lg">
-              {rupiah(priceItem + shipPrice + priceItem * 0.11)}
-            </Typography>
-          </Box>
+              {ship && (
+                <>
+                  <Box className="flex items-center justify-end">
+                    <Typography className="font-semibold text-lg">
+                      {rupiah(ship.price)}
+                    </Typography>
+                  </Box>
 
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={formik.submitForm}
-            type="submit"
-            className="py-3 capitalize"
-            disabled={busy || !formik.isValid}
-          >
-            {busy ? (
-              <span className="flex items-center gap-1">
-                <CircularProgress color="inherit" size={20} />
-                Memproses pesanan
-              </span>
-            ) : (
-              "Lanjut Pembayaran"
-            )}
-          </Button>
-        </Container>
+                  <Box className="flex items-center justify-between">
+                    <Typography className="font-semibold text-lg text-slate-600">
+                      Insurance
+                    </Typography>
+                    <Typography className="font-semibold text-lg">
+                      {rupiah(ship.insurance_fee)}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+              <Box className="flex items-center justify-between">
+                <Typography className="font-semibold text-lg text-slate-600">
+                  Tax
+                </Typography>
+                <Typography className="font-semibold text-lg">
+                  {rupiah(priceItem * 0.11)}
+                </Typography>
+              </Box>
+              <Divider className="my-3" />
+              <Box className="flex items-center justify-between">
+                <Typography className="font-semibold text-lg">
+                  Sub Total
+                </Typography>
+                <Typography className="float-right font-semibold text-lg">
+                  {rupiah(priceItem + shipPrice + priceItem * 0.11)}
+                </Typography>
+              </Box>
+
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={formik.submitForm}
+                type="submit"
+                className="py-3 capitalize"
+                disabled={busy || !formik.isValid}
+              >
+                {busy ? (
+                  <span className="flex items-center gap-1">
+                    <CircularProgress color="inherit" size={20} />
+                    Memproses pesanan
+                  </span>
+                ) : (
+                  "Lanjut Pembayaran"
+                )}
+              </Button>
+            </Container>
+          </Box>
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 }
 

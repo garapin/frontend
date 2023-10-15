@@ -76,6 +76,38 @@ const LoginPage = () => {
 
   const { t } = useTranslation("auth");
 
+  const googleLogin = async () => {
+    const redirect = localStorage.getItem("redirect");
+    try {
+      const res: any = await auth.signInWithGoogle();
+      if (res) {
+        setTimeout(() => {
+          router.push(redirect ?? "/");
+        }, 200);
+      }
+    } catch (error: any) {
+      console.log("there's an error: ", error);
+    } finally {
+      localStorage.removeItem("redirect");
+    }
+  };
+
+  const facebookLogin = async () => {
+    const redirect = localStorage.getItem("redirect");
+    try {
+      const res: any = await auth.signInWithFacebook();
+      if (res) {
+        setTimeout(() => {
+          router.push(redirect ?? "/");
+        }, 200);
+      }
+    } catch (error: any) {
+      console.log("there's an error: ", error);
+    } finally {
+      localStorage.removeItem("redirect");
+    }
+  };
+
   return (
     <Box className={`${classes.loginUi} mx-auto md:mx-0`}>
       <div className="md:grid grid-cols-12">
@@ -208,10 +240,16 @@ const LoginPage = () => {
                     </span>
                   </div>
                   <div className="flex items-center justify-center gap-4 w-full">
-                    <div className="p-4 rounded-lg shadow-lg cursor-pointer">
+                    <div
+                      className="p-4 rounded-lg shadow-lg cursor-pointer"
+                      onClick={googleLogin}
+                    >
                       <GoogleIconSVG />
                     </div>
-                    <div className="p-4 rounded-lg shadow-lg cursor-pointer">
+                    <div
+                      className="p-4 rounded-lg shadow-lg cursor-pointer"
+                      onClick={facebookLogin}
+                    >
                       <FacebookIconSVG />
                     </div>
                   </div>

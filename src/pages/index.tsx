@@ -139,19 +139,19 @@ function LandingPage(props: any) {
       img: "/assets/custom-packaging-cover.png",
       header: t("sectionJelajah.custom_packaging.header"),
       desc: t("sectionJelajah.custom_packaging.desc"),
-      link: "/product-category/custom-packaging",
+      link: "/product-list?category=03",
     },
     {
       img: "/assets/ready-to-buy-cover.png",
       header: t("sectionJelajah.ready_to_buy.header"),
       desc: t("sectionJelajah.ready_to_buy.desc"),
-      link: "/product-category/ready-to-buy",
+      link: "/product-list?category=01",
     },
     {
       img: "/assets/digital-packaging-cover.png",
       header: t("sectionJelajah.digital_packaging.header"),
       desc: t("sectionJelajah.digital_packaging.desc"),
-      link: "/product-category/digital-packaging",
+      link: "/product-list?category=02",
     },
   ];
   return (

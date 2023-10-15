@@ -77,6 +77,16 @@ const useFirebaseAuth = () => {
   const resetPassword = (email: string) =>
     Firebase.auth().sendPasswordResetEmail(email);
 
+  const signInWithGoogle = () => {
+    const provider = new Firebase.auth.GoogleAuthProvider();
+    return Firebase.auth().signInWithPopup(provider);
+  };
+
+  const signInWithFacebook = () => {
+    const provider = new Firebase.auth.FacebookAuthProvider();
+    return Firebase.auth().signInWithPopup(provider);
+  };
+
   const updateUser = (profile: {
     displayName?: string | null;
     photoURL?: string | null;
@@ -99,6 +109,8 @@ const useFirebaseAuth = () => {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     resetPassword,
+    signInWithGoogle,
+    signInWithFacebook,
   };
 };
 
