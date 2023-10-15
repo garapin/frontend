@@ -20,7 +20,11 @@ import { useRouter } from "next/router";
 import { i18n, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
-import { getAllProductList, getSearchProduct } from "@/store/modules/products";
+import {
+  getAllProductList,
+  getNextSearchProduct,
+  getSearchProduct,
+} from "@/store/modules/products";
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { useRef } from "react";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
@@ -372,7 +376,7 @@ const ProductListPage = () => {
                       <Button
                         variant="contained"
                         disabled={isFetchingNext}
-                        onClick={() => dispatch(getAllProductList())}
+                        onClick={() => dispatch(getNextSearchProduct())}
                       >
                         Load more...{" "}
                         {isFetchingNext && <CircularProgress size={10} />}
