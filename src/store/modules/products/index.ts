@@ -845,4 +845,25 @@ export const getRecalculateCartRTB = (
   };
 };
 
+export const getShippingData = async (payload: any) => {
+  try {
+    const shipping = await axios.post(
+      `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/webShipping/pricing`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:
+            "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
+            "",
+        },
+      }
+    );
+    return shipping.data;
+  } catch (error: any) {
+    console.log(error);
+    toast.error(error.response.data.message || "Failed to calculate shipping");
+  }
+};
+
 export default ProductSlice.reducer;
