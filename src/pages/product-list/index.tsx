@@ -38,7 +38,7 @@ import NoResult from "@/components/NoResult";
 
 const ProductListPage = () => {
   const router = useRouter();
-  const [valueRange, setValueRange] = React.useState<number[]>([0, 100000000]);
+  const [valueRange, setValueRange] = React.useState<number[]>([0, 10000000]);
   const [filter, setFilter] = React.useState<any>({
     query: "",
     category: [],
@@ -74,7 +74,7 @@ const ProductListPage = () => {
         category: category ? [category as string] : [],
         minPrice: 0,
         maxPrice: 0,
-        valueRange: [0, 100000000],
+        valueRange: [0, 10000000],
       })
     );
   }, [category]);
@@ -100,14 +100,14 @@ const ProductListPage = () => {
       maxPrice: 0,
     });
     searchRef.current.value = "";
-    setValueRange([0, 100000000]);
+    setValueRange([0, 10000000]);
     dispatch(
       getSearchProduct({
         query: "",
         category: [],
         minPrice: 0,
         maxPrice: 0,
-        valueRange: [0, 100000000],
+        valueRange: [0, 10000000],
       })
     );
   };
@@ -149,7 +149,7 @@ const ProductListPage = () => {
         <Container className="max-w-screen-2xl lg:py-6 mx-auto px-4">
           <ImageSlider />
           <div className="grid grid-cols-12 gap-6 w-full">
-            <div className="hidden lg:block col-span-3 bg-white h-screen p-6 rounded-2xl mt-4 space-y-4">
+            <div className="hidden lg:block col-span-3 bg-white h-screen p-6 rounded-2xl mt-4 space-y-4 sticky">
               <div className="flex items-center justify-between">
                 <h2 className="text-[22px] font-semibold">Filter</h2>
                 <Button
@@ -255,8 +255,8 @@ const ProductListPage = () => {
                     onChange={(e: any, value: any) => {
                       setValueRange(value as number[]);
                     }}
-                    max={100000000}
-                    step={1}
+                    max={10000000}
+                    step={1000}
                     valueLabelDisplay="auto"
                     getAriaValueText={(value: number) => `${rupiah(value)}`}
                     className="h-[8px]"
@@ -316,7 +316,7 @@ const ProductListPage = () => {
                   ) : (
                     <Box>
                       {searchHit === 0 ? (
-                        <div className="py-6 flex items-center justify-center">
+                        <div className="h-[80vh] flex items-center justify-center">
                           <NoResult />
                         </div>
                       ) : (
