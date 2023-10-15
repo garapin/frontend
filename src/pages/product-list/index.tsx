@@ -58,6 +58,7 @@ const ProductListPage = () => {
   const dispatch = useAppDispatch();
   const { category } = router.query;
   const searchRef = useRef<HTMLFormElement | any>(null);
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   React.useEffect(() => {
     if (category) {
@@ -77,6 +78,14 @@ const ProductListPage = () => {
         valueRange: [0, 10000000],
       })
     );
+
+    setSearchTerm(
+      getSearchTerm({
+        ...filter,
+        query: "",
+        category: category ? [category as string] : [],
+      })
+    );
   }, [category]);
 
   const handleSubmitFilter = (e: any) => {
@@ -90,10 +99,11 @@ const ProductListPage = () => {
         },
       })
     );
+    setSearchTerm(getSearchTerm(filter));
   };
 
-  const handleReset = () => {
-    setFilter({
+  const handleReset = async () => {
+    await setFilter({
       query: "",
       category: [],
       minPrice: 0,
@@ -110,9 +120,16 @@ const ProductListPage = () => {
         valueRange: [0, 10000000],
       })
     );
+    setSearchTerm(
+      getSearchTerm({
+        ...filter,
+        query: "",
+        category: [],
+      })
+    );
   };
 
-  const getSearchTerm = () => {
+  function getSearchTerm(filter: any) {
     if (filter.query) {
       return filter.query;
     } else if (filter.category.length > 0) {
@@ -123,7 +140,7 @@ const ProductListPage = () => {
     } else {
       return "Semua Produk";
     }
-  };
+  }
 
   return (
     <Box className="bg-slate-50">
@@ -310,7 +327,7 @@ const ProductListPage = () => {
               <Box className="flex flex-col py-4 md:py-0">
                 <Container>
                   {isProductLoading ? (
-                    <div className="flex items-center justify-center py-10">
+                    <div className="flex h-[80vh] items-center justify-center py-10">
                       <CircularProgress />
                     </div>
                   ) : (
@@ -331,7 +348,7 @@ const ProductListPage = () => {
                               {searchHit}
                             </span>
                             {t("results", {
-                              searchTerm: getSearchTerm(),
+                              searchTerm: searchTerm,
                             })}
                           </Typography>
                           <Grid

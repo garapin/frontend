@@ -333,6 +333,7 @@ export const getSearchProduct = (filter: {
       } else {
         dispatch(setScrollId(data.data.scrollId));
       }
+      return data.data.result;
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
@@ -413,6 +414,8 @@ export const getNextSearchProduct = (): AppThunk => {
       } else {
         dispatch(setScrollId(data.data.scrollId));
       }
+
+      return data.data.result;
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
