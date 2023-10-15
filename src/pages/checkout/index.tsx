@@ -35,7 +35,7 @@ import API from "@/configs/api";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import { getShippingCompany } from "@/store/modules/products";
+import { getShippingCompany, getShippingData } from "@/store/modules/products";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import { getCategoryLabel } from "@/tools/utils";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
@@ -168,7 +168,7 @@ function CheckoutPage() {
     },
   });
 
-  const handleGetShippingCompanyService = (courierCode: string | any) => {
+  const handleGetShippingCompanyService = async (courierCode: string | any) => {
     const payload = {
       weight: totalWeight,
       destination_postal: formik.values.zipCode,
@@ -179,19 +179,17 @@ function CheckoutPage() {
     };
 
     setShippingLoading(true);
-    API.getShipping(payload)
-      .then((response) => {
-        setShipment(response.data);
-      })
-      .catch((error) => {
-        toast.error(
-          "Pengiriman menggunakan kurir ini tidak tersedia, mohon pilih kurir lainnya"
-        );
-        setShipment([]);
-      })
-      .finally(() => {
-        setShippingLoading(false);
-      });
+    try {
+      const response: any = await getShippingData(payload);
+      setShipment(response);
+    } catch (error) {
+      toast.error(
+        "Pengiriman menggunakan kurir ini tidak tersedia, mohon pilih kurir lainnya"
+      );
+      setShipment([]);
+    } finally {
+      setShippingLoading(false);
+    }
   };
 
   const getCourierByCode = (courierCode: string | any) => {
