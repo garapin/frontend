@@ -20,7 +20,7 @@ import {
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
-import Firebase from "@/configs/firebase";
+import Firebase, { getAuth } from "@/configs/firebase";
 import { toast } from "react-toastify";
 import { Invoices } from "@/types/admin";
 
@@ -868,15 +868,14 @@ export const getRecalculateCartRTB = (
 
 export const getShippingData = async (payload: any) => {
   try {
+    const token = await getAuth()?.currentUser?.getIdToken();
     const shipping = await axios.post(
       `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/webShipping/pricing`,
       payload,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization:
-            "Bearer " + JSON.parse(localStorage.getItem("token") as string) ||
-            "",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
