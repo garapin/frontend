@@ -489,7 +489,7 @@ const ProductListPage = () => {
                     ))}
                   </div> */}
                   <Button
-                    className="capitalize py-6"
+                    className="capitalize py-3"
                     variant="contained"
                     fullWidth
                     type="submit"
