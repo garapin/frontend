@@ -96,20 +96,20 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
               {t("footer.get_in_touch.header")}
             </h2>
             <ul className="list-none font-light space-y-4 text-sm">
-              <li className="cursor-pointer">
-                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center mb-2 text-purple-900">
+              <li className="cursor-pointer flex items-center gap-2">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-purple-900">
                   <WhatsApp />
                 </div>
                 <p>0821-3758-5330 (Mitra)</p>
               </li>
-              <li className="cursor-pointer">
-                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center mb-2 text-purple-900">
+              <li className="cursor-pointer flex items-center gap-2">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-purple-900">
                   <WhatsApp />
                 </div>
                 <p>0813-8020-6100 (Customer)</p>
               </li>
-              <li className="cursor-pointer">
-                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center mb-2 text-purple-900">
+              <li className="cursor-pointer flex items-center gap-2">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-purple-900">
                   <MailOutline />
                 </div>
                 <p>contact@garap.in</p>

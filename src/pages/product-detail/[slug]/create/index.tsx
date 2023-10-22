@@ -143,7 +143,9 @@ const index = () => {
         userId: auth?.authUser?.uid,
         totalPrice: templatePrice?.totalPrice,
         calculationId: templatePrice?.calculationId,
-        weight: singleProduct?.weightCalculation,
+        weight: {
+          totalWeight: singleProduct?.unitWeight,
+        },
         idempotencyKey: templatePrice?.idempotencyKey,
       };
 
