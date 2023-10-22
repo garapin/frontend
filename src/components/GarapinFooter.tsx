@@ -26,7 +26,10 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
     [router]
   );
   return (
-    <Box className="bg-[#713F97] pt-10 pb-5 space-y-6 px-4 lg:pt-16 font-sans text-slate-100">
+    <Box
+      className="bg-[#713F97] pt-10 pb-5 space-y-6 px-4 lg:pt-16 font-sans text-slate-100"
+      id="footer"
+    >
       <div className="max-w-screen-2xl mx-auto">
         <Grid container>
           <Grid item lg={5} xs={12} className="space-y-4">
@@ -82,7 +85,14 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
             </h2>
             <ul className="list-none font-light space-y-4 text-sm">
               <li className="cursor-pointer">{t("footer.our_menu.home")}</li>
-              <li className="cursor-pointer">{t("footer.our_menu.product")}</li>
+              <li
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push("/product-list");
+                }}
+              >
+                {t("footer.our_menu.product")}
+              </li>
               <li className="cursor-pointer">
                 {t("footer.our_menu.about_us")}
               </li>

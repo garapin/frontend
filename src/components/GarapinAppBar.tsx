@@ -172,15 +172,15 @@ const GarapinAppBar = ({
     },
     {
       label: "Tentang Kami",
-      link: "/",
+      link: "#footer",
     },
     {
       label: "Produk",
-      link: "/",
+      link: "/product-list",
     },
     {
       label: "Kontak Kami",
-      link: "/",
+      link: "#footer",
     },
   ];
   return (
