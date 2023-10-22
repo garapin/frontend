@@ -459,7 +459,7 @@ const ProductListPage = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <p className="font-medium">Bahan</p>
                     <FormGroup>
                       <FormControlLabel
@@ -469,8 +469,8 @@ const ProductListPage = () => {
                       <FormControlLabel control={<Checkbox />} label="Kertas" />
                       <FormControlLabel control={<Checkbox />} label="Karton" />
                     </FormGroup>
-                  </div>
-                  <div className="space-y-2">
+                  </div> */}
+                  {/* <div className="space-y-2">
                     <p className="font-medium">Bahan</p>
                     {[5, 4, 3, 2, 1].map((item) => (
                       <FormGroup key={item}>
@@ -487,9 +487,9 @@ const ProductListPage = () => {
                         />
                       </FormGroup>
                     ))}
-                  </div>
+                  </div> */}
                   <Button
-                    className="capitalize py-3"
+                    className="capitalize py-6"
                     variant="contained"
                     fullWidth
                     type="submit"
