@@ -4,8 +4,14 @@ import * as React from "react";
 import { color } from "@mui/system";
 import { useTranslation, withTranslation, WithTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { FormControl, NativeSelect } from "@mui/material";
+import { Divider, FormControl, Grid, NativeSelect } from "@mui/material";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { TiktokSocialIconSVG } from "@/assets/icons/tiktok-social-icon";
+import { FacebookSocialIconSVG } from "@/assets/icons/facebook-social-icon";
+import { InstagramSocialIconSVG } from "@/assets/icons/instagram-social-icon";
+import { YoutubeSocialIconSVG } from "@/assets/icons/youtube-social-icon";
+import { MailOutline, WhatsApp } from "@mui/icons-material";
 
 interface Props extends WithTranslation {}
 const GarapinFooter: React.FC<Props> = ({ t }) => {
@@ -21,88 +27,111 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
   );
   return (
     <Box
-      className="flex flex-col md:flex-row justify-around p-10"
-      sx={{ backgroundColor: "#713F97" }}
+      className="bg-[#713F97] pt-10 pb-5 space-y-6 px-4 lg:pt-16 font-sans text-slate-100"
+      id="footer"
     >
-      <Box
-        className="block md:hidden mb-4"
-      >
-        <Box className="w-32 bg-white rounded pl-2">
-          <FormControl fullWidth>
-            <NativeSelect
-              disableUnderline={true}
-              value={i18n.resolvedLanguage}
-              inputProps={{
-                name: "age",
-                id: "uncontrolled-native",
-              }}
-              onChange={(e) => switchToLocale(e.target.value as string)}
-            >
-              <option value={"id"} disabled={i18n.resolvedLanguage === "id"}>
-                Indonesia
-              </option>
-              <option value={"en"} disabled={i18n.resolvedLanguage === "en"}>
-                English
-              </option>
-            </NativeSelect>
-          </FormControl>
-        </Box>
-      </Box>
-      <Box className="flex flex-col max-w-sm pb-8">
-        <Typography variant="h5" className="pb-3 text-white">
-          {t("footer.excerpt.header")}
-        </Typography>
-        <Typography variant="body2" className="pb-3 text-white">
-          {t("footer.excerpt.content")}
-        </Typography>
-        <Typography variant="h5" className="pb-3 text-white">
-          PT Visi Teknologi Digital
-        </Typography>
-        <Typography variant="body2" className="text-white">
-          Gd Grand Slipi Tower 5th Fl Unit F
-        </Typography>
-        <Typography variant="body2" className="text-white">
-          Jl Letjen S Parman Kav 22-24. Palmerah
-        </Typography>
-        <Typography variant="body2" className="pb-3 text-white">
-          Jakarta Barat 11480. Indonesia.
-        </Typography>
-        <Typography variant="h5" className="pb-3 text-white">
-          {t("footer.pse.header")}
-        </Typography>
-        <Typography variant="body2" className="text-white">
-          000205.01/DJAI.PSE/02/2021
-        </Typography>
-      </Box>
-      <Box className="flex flex-col">
-        <Typography variant="h5" className="pb-3 text-white">
-          {t("footer.socials.header")}
-        </Typography>
-        <Box className="flex flex-row justify-around pb-3">
-          <img src="/instagram_icon.svg" alt="Instagram Icon" />
-          <img src="/youtube_icon.svg" alt="Youtube Icon" />
-          <img src="/facebook_icon.svg" alt="Facebook Icon" />
-          <img src="/linkedin_icon.svg" alt="Linkedin Icon" />
-        </Box>
-        <Typography variant="h5" className="pb-3 text-white">
-          {t("footer.contact.header")}
-        </Typography>
-        <Box className="flex flex-row justify-between pb-3 text-white">
-          <Typography variant="body2">contact@garap.in</Typography>
-          <img src="/mail_icon.svg" alt="Email Icon" />
-        </Box>
-        <Box className="flex flex-row justify-between pb-3 text-white">
-          <Typography variant="body2">0813-8020-6100 (Customer)</Typography>
-          <img src="/whatsapp_icon.svg" alt="Whatsapp Icon" />
-        </Box>
-        <Box className="flex flex-row justify-between pb-3 text-white">
-          <Typography variant="body2">0821-3758-5330 (Mitra)</Typography>
-          <img src="/whatsapp_icon.svg" alt="Whatsapp Icon" />
-        </Box>
-      </Box>
-      <Box className="hidden md:block">
-        <img src="/garapin_logo_white.svg" alt="Garapin Logo" width="400" />
-      </Box>
+      <div className="max-w-screen-2xl mx-auto">
+        <Grid container>
+          <Grid item lg={5} xs={12} className="space-y-4">
+            <div className="flex items-center lg:items-start justify-center lg:justify-start">
+              <Image
+                src="/garapin_logo_white.svg"
+                alt="Garapin Logo"
+                width={100}
+                height={100}
+                className="w-[350px] h-[100px]"
+              />
+            </div>
+            <p className="font-light leading-7 max-w-[450px]">
+              Garapin is a mobile application or digital platform that assists
+              producers and contract manufacturers in obtaining customers who
+              wish to manufacture a product through reliable factories and
+              producers with quantities that are affordable for the customer.
+            </p>
+            <div className="flex items-center gap-4">
+              <TiktokSocialIconSVG className="w-6 h-6 cursor-pointer" />
+              <FacebookSocialIconSVG
+                className="w-6 h-6 cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    "https://www.facebook.com/GarapInSemuaBisa/",
+                    "_blank"
+                  );
+                }}
+              />
+              <InstagramSocialIconSVG
+                className="w-6 h-6 cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    "https://www.instagram.com/garap_in/?hl=en",
+                    "_blank"
+                  );
+                }}
+              />
+              <YoutubeSocialIconSVG
+                className="w-8 h-8 cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    "https://www.youtube.com/channel/UCrKjYi-_c7HEJvppHKYfsTw",
+                    "_blank"
+                  );
+                }}
+              />
+            </div>
+          </Grid>
+          <Grid item lg={3} xs={12} className="space-y-4 pt-8 lg:pt-2">
+            <h2 className="font-normal text-lg md:text-3xl">
+              {t("footer.our_menu.header")}
+            </h2>
+            <ul className="list-none font-light space-y-4 text-sm">
+              <li className="cursor-pointer">{t("footer.our_menu.home")}</li>
+              <li
+                className="cursor-pointer"
+                onClick={() => {
+                  router.push("/product-list");
+                }}
+              >
+                {t("footer.our_menu.product")}
+              </li>
+              <li className="cursor-pointer">
+                {t("footer.our_menu.about_us")}
+              </li>
+              <li className="cursor-pointer">
+                {t("footer.our_menu.our_contact")}
+              </li>
+            </ul>
+          </Grid>
+          <Grid item lg={4} xs={12} className="space-y-4 pt-8 lg:pt-2">
+            <h2 className="font-normal text-lg md:text-3xl">
+              {t("footer.get_in_touch.header")}
+            </h2>
+            <ul className="list-none font-light space-y-4 text-sm">
+              <li className="cursor-pointer flex items-center gap-2">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-purple-900">
+                  <WhatsApp />
+                </div>
+                <p>0821-3758-5330 (Mitra)</p>
+              </li>
+              <li className="cursor-pointer flex items-center gap-2">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-purple-900">
+                  <WhatsApp />
+                </div>
+                <p>0813-8020-6100 (Customer)</p>
+              </li>
+              <li className="cursor-pointer flex items-center gap-2">
+                <div className="bg-white rounded-full w-8 h-8 flex items-center justify-center text-purple-900">
+                  <MailOutline />
+                </div>
+                <p>contact@garap.in</p>
+              </li>
+            </ul>
+          </Grid>
+        </Grid>
+      </div>
+      <Divider className="border-white" />
+      <div className="text-center font-bold">
+        Copyright © {new Date().getFullYear()} garap.in All Rights Reserved
+      </div>
     </Box>
   );
 };

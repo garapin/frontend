@@ -1,3 +1,5 @@
+import { FacebookIconSVG } from "@/assets/icons/facebook-icon";
+import { GoogleIconSVG } from "@/assets/icons/google-icon";
 import GarapinAppBar from "@/components/GarapinAppBar";
 import ImageCarousel, { CarouselImageSet } from "@/components/ImageCarousel";
 import { getFirestore } from "@/configs/firebase";
@@ -7,6 +9,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   FormControl,
   FormHelperText,
   InputLabel,
@@ -27,8 +30,8 @@ import * as Yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
   loginUi: {
-    height: "calc(100vh - 64px)",
-    minHeight: "calc(100vh - 64px)",
+    height: "100vh",
+    minHeight: "100vh",
     // height: '100vh',
     // minHeight: '100vh',
   },
@@ -106,7 +109,6 @@ const LoginPage = () => {
           values.email,
           values.password
         );
-        console.log("user: ", user);
         if (user) {
           await user.user?.updateProfile({ displayName: values.namaLengkap });
           await user.user?.sendEmailVerification({
@@ -136,43 +138,48 @@ const LoginPage = () => {
   const { t } = useTranslation("auth");
 
   return (
-    <Box className={`h-auto md:${classes.loginUi}`}>
-      <Paper>
-        <GarapinAppBar searchVariant />
-
-        <Box
-          className={`h-auto md:${classes.loginUi} flex flex-row flex-grow`}
-          style={{ marginTop: "64px" }}
-        >
-          <Box className="w-0 hidden md:block md:w-2/3  bg-gray-200 p-3">
-            <ImageCarousel
-              className={classes.carousel}
-              dataSource={imageSet}
-              maxWidth={2000}
-              withThumbnail={false}
-              rsProps={{ autoplay: true, autoplaySpeed: 5000, infinite: true }}
-              useMagnifier={false}
-              rimProps={{ className: classes.carousel }}
-            />
-          </Box>
-          <Box className="w-full lg:w-1/3 bg-gray-100 py-10 md:py-0">
-            <Box className="flex flex-col justify-center h-full">
-              <Box
-                className="flex flex-col justify-center items-center"
-                sx={{ pb: 4 }}
-              >
+    <Box className={`mx-auto md:mx-0 ${classes.loginUi}`}>
+      <div className="md:grid grid-cols-12">
+        <div className="hidden md:block md:col-span-6 relative">
+          <img
+            src="/assets/auth-bg.png"
+            alt="garapin"
+            className="absolute w-full h-full opacity-60"
+          />
+          <div className="absolute top-0 left-0 bg-purple-800/60 h-full w-full flex items-center justify-center">
+            <Box className="text-white space-y-4 max-w-md">
+              <p>SELAMAT DATANG DI</p>
+              <img
+                src="/garapin_logo_white.svg"
+                alt="garapin"
+                className="max-w-[340px]"
+              />
+              <p className="leading-6">
+                Tempat mencari packaging terbaik di indonesia untuk barang
+                barang kebutuhan anda.
+              </p>
+            </Box>
+          </div>
+        </div>
+        <div className="md:col-span-6 lg:min-w-[600px] lg:max-w-xl lg:mx-auto">
+          <Paper className="lg:shadow-none">
+            <Box className="flex flex-col justify-center h-full py-10 px-4 space-y-4">
+              <Box className="flex flex-col justify-center space-y-4">
                 <Typography variant="h5">{t("register.title")}</Typography>
                 <Typography variant="subtitle1">
                   {t("register.subtitle")}
                 </Typography>
               </Box>
               <form onSubmit={formik.handleSubmit}>
-                <Box className="flex flex-col justify-center items-center">
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                <Box className="flex flex-col justify-center items-center space-y-4">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.namaLengkap")}
+                    </p>
                     <TextField
-                      label={t("register.fields.namaLengkap")}
                       variant="outlined"
                       name="namaLengkap"
+                      placeholder="Masukan Nama Lengkap Anda"
                       fullWidth
                       onChange={formik.handleChange}
                       required
@@ -184,11 +191,17 @@ const LoginPage = () => {
                       helperText={
                         formik.touched.namaLengkap && formik.errors.namaLengkap
                       }
+                      InputProps={{
+                        className: "rounded-lg p-2",
+                      }}
                     />
                   </Box>
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.email")}
+                    </p>
                     <TextField
-                      label={t("register.fields.email")}
+                      placeholder="Masukan Email Anda"
                       variant="outlined"
                       name="email"
                       fullWidth
@@ -199,11 +212,17 @@ const LoginPage = () => {
                         formik.touched.email && Boolean(formik.errors.email)
                       }
                       helperText={formik.touched.email && formik.errors.email}
+                      InputProps={{
+                        className: "rounded-lg p-2",
+                      }}
                     />
                   </Box>
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.password")}
+                    </p>
                     <TextField
-                      label={t("register.fields.password")}
+                      placeholder="Masukan Password Anda"
                       type="password"
                       name="password"
                       variant="outlined"
@@ -218,11 +237,17 @@ const LoginPage = () => {
                       helperText={
                         formik.touched.password && formik.errors.password
                       }
+                      InputProps={{
+                        className: "rounded-lg p-2",
+                      }}
                     />
                   </Box>
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.password_confirmation")}
+                    </p>
                     <TextField
-                      label={t("register.fields.password_confirmation")}
+                      placeholder="Masukan Ulang Password Anda"
                       type="password"
                       name="konfirmasiPassword"
                       variant="outlined"
@@ -238,11 +263,17 @@ const LoginPage = () => {
                         formik.touched.konfirmasiPassword &&
                         formik.errors.konfirmasiPassword
                       }
+                      InputProps={{
+                        className: "rounded-lg p-2",
+                      }}
                     />
                   </Box>
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.nomorHp")}
+                    </p>
                     <TextField
-                      label={t("register.fields.nomorHp")}
+                      placeholder="Masukan Nomor Telepon Anda"
                       variant="outlined"
                       name="nomorHp"
                       fullWidth
@@ -255,14 +286,17 @@ const LoginPage = () => {
                       helperText={
                         formik.touched.nomorHp && formik.errors.nomorHp
                       }
+                      InputProps={{
+                        className: "rounded-lg p-2",
+                      }}
                     />
                   </Box>
-                  <Typography variant="subtitle1" sx={{ pt: 4 }}>
-                    {t("register.fields.dataPerusahaan")}
-                  </Typography>
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.namaPerusahaan")}
+                    </p>
                     <TextField
-                      label={t("register.fields.namaPerusahaan")}
+                      placeholder="Masukan Nama Usaha/Perusahaan Anda"
                       variant="outlined"
                       name="namaPerusahaan"
                       fullWidth
@@ -276,21 +310,28 @@ const LoginPage = () => {
                         formik.touched.namaPerusahaan &&
                         formik.errors.namaPerusahaan
                       }
+                      InputProps={{
+                        className: "rounded-lg p-2",
+                      }}
                     />
                   </Box>
 
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full">
+                    <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                      {t("register.fields.liniBisnis")}
+                    </p>
                     <FormControl fullWidth>
-                      <InputLabel id="business-label">
-                        {t("register.fields.liniBisnis")}
-                      </InputLabel>
                       <Select
-                        labelId="business-label"
                         name="liniBisnis"
                         fullWidth
                         onChange={formik.handleChange}
                         value={formik.values.liniBisnis}
-                        label={t("register.fields.liniBisnis")}
+                        sx={{
+                          "& .MuiSelect-select": {
+                            borderRadius: "1rem",
+                            padding: "24px 22px",
+                          },
+                        }}
                         error={
                           formik.touched.liniBisnis &&
                           Boolean(formik.errors.liniBisnis)
@@ -311,9 +352,12 @@ const LoginPage = () => {
                     </FormControl>
                   </Box>
                   {formik.values.liniBisnis === "Lainnya" && (
-                    <Box className="w-3/4 md:w-1/2 py-2">
+                    <Box className="w-full">
+                      <p className="font-medium text-base text-slate-500 font-sans pb-2">
+                        {t("register.fields.liniBisnisOther")}
+                      </p>
                       <TextField
-                        label={t("register.fields.liniBisnisOther")}
+                        placeholder="Masukan Lainnya"
                         variant="outlined"
                         name="liniBisnisOtherVal"
                         fullWidth
@@ -327,10 +371,13 @@ const LoginPage = () => {
                           formik.touched.liniBisnisOtherVal &&
                           formik.errors.liniBisnisOtherVal
                         }
+                        InputProps={{
+                          className: "rounded-lg p-2",
+                        }}
                       />
                     </Box>
                   )}
-                  <Box className="w-3/4 md:w-1/2 py-2">
+                  <Box className="w-full pt-2">
                     <Button
                       variant="contained"
                       fullWidth
@@ -339,6 +386,7 @@ const LoginPage = () => {
                         backgroundColor: "#713F97",
                         color: "#ffffff",
                       }}
+                      className="rounded-lg py-4"
                       type="submit"
                       disabled={formik.isSubmitting}
                     >
@@ -355,21 +403,41 @@ const LoginPage = () => {
                 </Box>
               </form>
               <Box className="text-center">
-                <Typography variant="subtitle1" sx={{ pt: 4 }}>
+                <Typography
+                  variant="subtitle1"
+                  className="text-center text-base text-slate-500"
+                >
                   {t("register.loginCopy.title")}{" "}
-                  <Link href="/login">{t("register.loginCopy.link")}</Link>
+                  <Link href="/login" className="text-[#713F97]">
+                    {t("register.loginCopy.link")}
+                  </Link>
                 </Typography>
+                <div className="relative">
+                  <Divider className="my-6" />
+                  <span className="absolute px-8 py-2 bg-white -top-4 left-1/2 -translate-x-1/2 font-sans">
+                    Or
+                  </span>
+                </div>
+                <div className="flex items-center justify-center gap-4 w-full">
+                  <div className="p-4 rounded-lg shadow-lg cursor-pointer">
+                    <GoogleIconSVG />
+                  </div>
+                  <div className="p-4 rounded-lg shadow-lg cursor-pointer">
+                    <FacebookIconSVG />
+                  </div>
+                </div>
               </Box>
             </Box>
-          </Box>
-        </Box>
-      </Paper>
+          </Paper>
+        </div>
+      </div>
     </Box>
   );
 };
 
 LoginPage.authGuard = false;
 LoginPage.guestGuard = true;
+LoginPage.showAppBar = false;
 
 export default LoginPage;
 

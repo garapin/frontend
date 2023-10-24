@@ -2,8 +2,13 @@ import {
   Box,
   Button,
   Checkbox,
+  Collapse,
   Container,
+  Divider,
+  Fade,
   Grid,
+  IconButton,
+  Tooltip,
   Typography,
   debounce,
 } from "@mui/material";
@@ -24,7 +29,9 @@ import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
 import { NumericFormat } from "react-number-format";
-import { changeCurrency } from "@/tools/utils";
+import { changeCurrency, getCategoryLabel } from "@/tools/utils";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 
 interface Product {
   id: number;
@@ -43,6 +50,10 @@ function Cart() {
   const router = useRouter();
   const auth = useFirebaseAuth();
   const dispatch = useAppDispatch();
+  const [cardDetail, setCardDetail] = useState<any>({
+    open: false,
+    data: {},
+  });
 
   const handleDelete = async (product: any) => {
     deleteItemCart(product?.id, auth?.authUser?.uid);
@@ -126,7 +137,7 @@ function Cart() {
   const debounceCalculatePrice = React.useRef(
     debounce(async (itemQty, productId, item?) => {
       if (item.productCategoryId == 1) {
-        const data = await dispatch(
+        const data: any = await dispatch(
           getRecalculateCartRTB(itemQty, productId, item.idempotencyKey)
         );
         if (data) {
@@ -149,7 +160,7 @@ function Cart() {
           });
         }
       } else {
-        const data = await dispatch(
+        const data: any = await dispatch(
           getProductTemplatePriceCart({
             product: item.product,
             selectedOptions: item.selectedOptions,
@@ -193,197 +204,352 @@ function Cart() {
   };
 
   return (
-    <>
-      <main>
-        <Box maxWidth="lg" className="flex flex-col content-center mx-auto">
-          <Box className="h-min-screen flex flex-col justify-center bg-white">
-            <Container
-              maxWidth="xl"
-              className="px-4 pt-36 pb-28 md:pt-48 md:pb-48"
+    <main className="bg-slate-50">
+      <div className="max-w-[940px] mx-auto p-4 md:py-8">
+        <Box className="h-min-screen flex flex-col justify-center bg-white rounded-xl py-8">
+          <Container maxWidth="xl" className="px-4 md:px-6 space-y-4">
+            <Typography
+              fontSize={32}
+              color="text.primary"
+              className="pb-2 font-semibold"
             >
-              <Typography fontSize={26} fontWeight={700} color="text.primary">
-                {t("cart.title")}
-              </Typography>
-              <Box className="flex items-center">
-                <Checkbox
-                  onClick={selectAllProducts}
-                  checked={
-                    selectedProducts?.length > 0 &&
-                    selectedProducts?.length ===
-                      cartList?.filter(
-                        (product: any) => changeCurrency(product.qty) > 0
-                      ).length
-                  }
-                />
-                <Typography fontSize={17} fontWeight={400} color="text.primary">
-                  {t("cart.selectAll")}
-                </Typography>
-              </Box>
-              <hr className="h-px my-2 bg-[#E2E2E2] border-0 dark:bg-[#E2E2E2]" />
-              {cartList?.map((val: any) => (
-                <>
-                  {val?.delete ? null : (
-                    <>
-                      <Box className="mt-5 flex justify-between">
-                        <Box className="flex items-center flex-1">
-                          <Checkbox
-                            checked={selectedProducts.includes(val.id)}
-                            onChange={() => toggleProductSelection(val.id)}
-                          />
-                          <img
-                            width={120}
-                            style={{ borderRadius: "20%" }}
-                            className="rounded-lg object-contain mr-3"
-                            height={120}
-                            src={val?.product?.img?.[0] || imagePlaceholder}
-                            alt="image"
-                          />
-                          <Box className="flex-1">
-                            {val?.productCategoryId === "02" ? (
-                              <Typography
-                                style={{
-                                  background: "gray",
-                                  borderRadius: "10px",
-                                  textAlign: "center",
-                                }}
-                                className="font-bold max-w-[12rem]"
-                                fontSize={17}
-                                fontWeight={400}
-                                color="text.primary"
-                              >
-                                Digital Packaging
-                              </Typography>
-                            ) : (
-                              <Typography
-                                style={{
-                                  background: "gray",
-                                  borderRadius: "10px",
-                                  textAlign: "center",
-                                }}
-                                className="font-bold max-w-[12rem]"
-                                fontSize={17}
-                                fontWeight={400}
-                                color="text.primary"
-                              >
-                                Ready to buy
-                              </Typography>
-                            )}
-                            <Typography
-                              fontSize={17}
-                              fontWeight={400}
-                              color="text.primary"
-                            >
-                              {val?.product?.productName}
-                            </Typography>
-                            <Typography
-                              fontSize={17}
-                              fontWeight={600}
-                              color="text.primary"
-                            >
-                              {rupiah(val.totalPrice)}
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        <Box>
-                          <div className="flex justify-center">
-                            <Button
-                              onClick={() => handleDelete(val)}
-                              className="text-red-500"
-                            >
-                              hapus
-                            </Button>
-                          </div>
-                          <Box className="flex items-center gap-2">
-                            <button
-                              disabled={val.qty === 1}
-                              onClick={() => {
-                                if (val.qty > val.product?.moq) {
-                                  adjustProductQuantity(val.id, val.qty - 1);
-                                }
-                                debounceCalculatePrice(
-                                  val.qty - 1,
-                                  val.productId,
-                                  val
-                                );
-                              }}
-                              className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
-                            >
-                              -
-                            </button>
-                            <NumericFormat
-                              value={val.qty}
-                              allowLeadingZeros
-                              className="w-20 h-7 text-center font-bold text-base"
-                              thousandSeparator=","
-                              onChange={(e) => {
-                                adjustProductQuantity(
-                                  val.id,
-                                  parseInt(
-                                    e.target.value.replace(/[^0-9]/g, "")
-                                  )
-                                );
-                                debounceCalculatePrice(
-                                  parseInt(
-                                    e.target.value.replace(/[^0-9]/g, "")
-                                  ),
-                                  val.productId,
-                                  val
-                                );
-                              }}
+              {t("cart.title")}
+            </Typography>
+            {cartList?.map((val: any) => (
+              <>
+                {val?.delete ? null : (
+                  <>
+                    <Box>
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          checked={selectedProducts.includes(val.id)}
+                          onChange={() => toggleProductSelection(val.id)}
+                        />
+                        <div className="w-full bg-slate-50 p-4 rounded-lg space-y-2 md:space-y-0">
+                          <div
+                            className="
+                          md:flex md:items-center md:gap-4"
+                          >
+                            <img
+                              style={{ borderRadius: "20%" }}
+                              className="rounded-lg object-contain w-full md:w-44 md:h-44"
+                              src={val?.product?.img?.[0] || imagePlaceholder}
+                              alt="image"
                             />
-                            <button
-                              disabled={val.qty === val.product?.stock}
-                              onClick={() => {
-                                adjustProductQuantity(
-                                  val.id,
-                                  typeof val.qty === "string"
-                                    ? parseInt(val.qty.replace(/[^0-9]/g, "")) +
-                                        1
-                                    : val.qty + 1
-                                );
-                                debounceCalculatePrice(
-                                  val.qty + 1,
-                                  val.productId,
-                                  val
-                                );
-                              }}
-                              className="w-7 h-7 bg-transparent outline-none border-slate-800 rounded-full cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </Box>
-                        </Box>
-                      </Box>
-                      <hr className="h-px my-2 bg-[#E2E2E2] border-0 dark:bg-[#E2E2E2]" />
-                    </>
-                  )}
-                </>
-              ))}
-              <Box className="mt-7 flex justify-between items-center">
-                <Typography
-                  fontSize={17}
-                  marginLeft="15px"
-                  marginRight="15px"
-                  fontWeight={500}
-                  color="text.primary"
-                >
-                  Total Harga:{" "}
-                  <span className="font-bold">{rupiah(getTotalPrice())}</span>
-                </Typography>
-                <button
-                  disabled={selectedProducts?.length === 0}
-                  onClick={() => buySelectedProducts()}
-                  className="w-16 h-9 bg-[#713F97] border-none rounded-md text-slate-50 cursor-pointer"
-                >
-                  Beli
-                </button>
-              </Box>
-            </Container>
-          </Box>
+                            <div className="md:flex md:items-center md:gap-4 md:justify-between w-full">
+                              <div className="space-y-2 md:w-full">
+                                <Typography
+                                  className="max-w-[12rem] text-[#713F97] pt-2 font-semibold"
+                                  fontSize={14}
+                                  fontWeight={400}
+                                >
+                                  {getCategoryLabel(val?.productCategoryId)}
+                                </Typography>
+                                <Typography
+                                  fontSize={17}
+                                  fontWeight={400}
+                                  color="text.primary"
+                                  className="font-semibold"
+                                >
+                                  {val?.product?.productName}
+                                </Typography>
+                                <Typography className="text-sm text-slate-600">
+                                  {rupiah(val.totalPrice)}
+                                </Typography>
+                                <Box className="space-y-4">
+                                  <Box className="flex items-center md:max-w-[200px]">
+                                    <Button
+                                      disabled={val.qty === 1}
+                                      onClick={() => {
+                                        if (val.qty > val.product?.moq) {
+                                          adjustProductQuantity(
+                                            val.id,
+                                            val.qty - 1
+                                          );
+                                        }
+                                        debounceCalculatePrice(
+                                          val.qty - 1,
+                                          val.productId,
+                                          val
+                                        );
+                                      }}
+                                      className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-4"
+                                    >
+                                      -
+                                    </Button>
+                                    <NumericFormat
+                                      value={val.qty}
+                                      allowLeadingZeros
+                                      className="w-full border-none outline-none text-center font-semibold text-sm py-3"
+                                      thousandSeparator=","
+                                      onChange={(e) => {
+                                        adjustProductQuantity(
+                                          val.id,
+                                          parseInt(
+                                            e.target.value.replace(
+                                              /[^0-9]/g,
+                                              ""
+                                            )
+                                          )
+                                        );
+                                        debounceCalculatePrice(
+                                          parseInt(
+                                            e.target.value.replace(
+                                              /[^0-9]/g,
+                                              ""
+                                            )
+                                          ),
+                                          val.productId,
+                                          val
+                                        );
+                                      }}
+                                    />
+                                    <Button
+                                      disabled={val.qty === val.product?.stock}
+                                      onClick={() => {
+                                        adjustProductQuantity(
+                                          val.id,
+                                          typeof val.qty === "string"
+                                            ? parseInt(
+                                                val.qty.replace(/[^0-9]/g, "")
+                                              ) + 1
+                                            : val.qty + 1
+                                        );
+                                        debounceCalculatePrice(
+                                          val.qty + 1,
+                                          val.productId,
+                                          val
+                                        );
+                                      }}
+                                      className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-3"
+                                    >
+                                      +
+                                    </Button>
+                                  </Box>
+                                  {val?.productCategoryId == 2 && (
+                                    <>
+                                      <Button
+                                        variant="contained"
+                                        className="capitalize md:hidden"
+                                        fullWidth
+                                        onClick={() => {
+                                          if (val.id == cardDetail?.data?.id) {
+                                            setCardDetail({
+                                              open: false,
+                                              data: {},
+                                            });
+                                          } else {
+                                            setCardDetail({
+                                              open: true,
+                                              data: val,
+                                            });
+                                          }
+                                        }}
+                                      >
+                                        Detail
+                                      </Button>
+                                    </>
+                                  )}
+                                  <Button
+                                    onClick={() => handleDelete(val)}
+                                    variant="outlined"
+                                    className="capitalize md:hidden"
+                                    fullWidth
+                                  >
+                                    Delete
+                                  </Button>
+                                  <div className="md:hidden">
+                                    {val?.productCategoryId == 2 &&
+                                      cardDetail?.open &&
+                                      cardDetail?.data?.id == val?.id &&
+                                      Object?.keys(val?.selectedOptions).map(
+                                        (key: any, i) => {
+                                          const selected: any =
+                                            val?.selectedOptions[
+                                              `${key as number}`
+                                            ];
+                                          const keyName = key
+                                            .split("-")
+                                            .map(
+                                              (val: any) =>
+                                                val.charAt(0).toUpperCase() +
+                                                val.slice(1)
+                                            )
+                                            .join(" ");
+
+                                          let selectedOptionName;
+
+                                          if (
+                                            !Array.isArray(
+                                              selected.selectedOption
+                                            )
+                                          ) {
+                                            selectedOptionName =
+                                              selected.selectedOption.name;
+                                          } else {
+                                            selectedOptionName =
+                                              selected.selectedOption
+                                                .map((val: any) => val.name)
+                                                .join(", ");
+                                          }
+                                          return (
+                                            <Fade
+                                              in={cardDetail.open}
+                                              timeout={500}
+                                            >
+                                              <Grid
+                                                item
+                                                md={6}
+                                                key={i}
+                                                className="w-full"
+                                              >
+                                                <Typography className="font-medium text-slate-600 text-sm">
+                                                  {keyName}
+                                                </Typography>
+                                                <Box
+                                                  style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                  }}
+                                                >
+                                                  <Typography className="font-medium text-[#713F97] text-sm">
+                                                    {selectedOptionName}
+                                                  </Typography>
+                                                </Box>
+                                              </Grid>
+                                            </Fade>
+                                          );
+                                        }
+                                      )}
+                                  </div>
+                                </Box>
+                              </div>
+                              <div className="hidden md:block">
+                                <Tooltip placement="top" arrow title="Hapus">
+                                  <IconButton onClick={() => handleDelete(val)}>
+                                    <HighlightOffIcon
+                                      color="error"
+                                      className="text-danger"
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="hidden md:block">
+                            {val?.productCategoryId == 2 && (
+                              <>
+                                <div className="flex items-center justify-end">
+                                  <Button
+                                    className="capitalize"
+                                    onClick={() => {
+                                      if (val.id == cardDetail?.data?.id) {
+                                        setCardDetail({
+                                          open: false,
+                                          data: {},
+                                        });
+                                      } else {
+                                        setCardDetail({
+                                          open: true,
+                                          data: val,
+                                        });
+                                      }
+                                    }}
+                                    endIcon={
+                                      cardDetail?.open ? (
+                                        <ExpandLess />
+                                      ) : (
+                                        <ExpandMore />
+                                      )
+                                    }
+                                  >
+                                    Detail
+                                  </Button>
+                                </div>
+                                <Divider />
+                              </>
+                            )}
+                            <div className="hidden md:block mt-4">
+                              {val?.productCategoryId == 2 &&
+                                cardDetail?.open &&
+                                cardDetail?.data?.id == val?.id &&
+                                Object?.keys(val?.selectedOptions).map(
+                                  (key: any, i) => {
+                                    const selected: any =
+                                      val?.selectedOptions[`${key as number}`];
+                                    const keyName = key
+                                      .split("-")
+                                      .map(
+                                        (val: any) =>
+                                          val.charAt(0).toUpperCase() +
+                                          val.slice(1)
+                                      )
+                                      .join(" ");
+
+                                    let selectedOptionName;
+
+                                    if (
+                                      !Array.isArray(selected.selectedOption)
+                                    ) {
+                                      selectedOptionName =
+                                        selected.selectedOption.name;
+                                    } else {
+                                      selectedOptionName =
+                                        selected.selectedOption
+                                          .map((val: any) => val.name)
+                                          .join(", ");
+                                    }
+                                    return (
+                                      <Fade in={cardDetail.open} timeout={500}>
+                                        <Grid
+                                          item
+                                          md={6}
+                                          key={i}
+                                          className="w-full"
+                                        >
+                                          <Typography className="font-medium text-slate-600 text-sm">
+                                            {keyName}
+                                          </Typography>
+                                          <Box
+                                            style={{
+                                              display: "flex",
+                                              alignItems: "center",
+                                            }}
+                                          >
+                                            <Typography className="font-medium text-[#713F97] text-sm">
+                                              {selectedOptionName}
+                                            </Typography>
+                                          </Box>
+                                        </Grid>
+                                      </Fade>
+                                    );
+                                  }
+                                )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Box>
+                  </>
+                )}
+              </>
+            ))}
+            <Box className="pt-8 space-y-6">
+              <Divider />
+              <Button
+                variant="contained"
+                className="py-3 capitalize text-lg"
+                onClick={() => buySelectedProducts()}
+                disabled={selectedProducts?.length === 0}
+                fullWidth
+              >
+                Lanjut Pembayaran
+              </Button>
+            </Box>
+          </Container>
         </Box>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
 
@@ -398,7 +564,7 @@ export const getServerSideProps = async ({ locale }: { locale: string }) => {
   }
   return {
     props: {
-      ...(await serverSideTranslations(locale, ["products", "common"])),
+      ...(await serverSideTranslations(locale, ["landing", "common"])),
     },
   };
 };

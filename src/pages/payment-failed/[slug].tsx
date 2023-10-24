@@ -4,27 +4,45 @@ import { useRouter } from "next/router";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import CancelIcon from "@mui/icons-material/Cancel";
+import HeadsetIcon from "@mui/icons-material/Headset";
 
 function PaymentComplete() {
   const router = useRouter();
 
   return (
-    <Container className="h-[80vh] w-screen flex items-center justify-center">
-      <Box className="max-w-3xl w-full flex justify-center flex-col mx-auto p-6 bg-white rounded-lg shadow-xl items-center">
-        <CancelIcon className="text-[120px] text-red-500" />
-        <Typography
-          variant="h4"
-          color="#713F97"
-          fontWeight="bold"
-          className="pt-4"
-        >
-          Payment Failed!
-        </Typography>
-        <Typography fontWeight="500" className="text-gray-600 text-lg mb-6">
-          Sorry, your payment has failed. Please recreate your order or contact
-          us for support.
-        </Typography>
-        <Button onClick={() => router.push("/")}>Back to home</Button>
+    <Container className="max-w-md md:max-w-2xl mx-auto py-16 md:h-[80vh] md:flex md:items-center md:justify-center">
+      <Box>
+        <Box className="flex justify-center flex-col items-center">
+          <div className={`space-y-4`}>
+            <div className="text-center">
+              <img
+                src="/assets/failed.png"
+                alt="success"
+                className="w-1/2 mx-auto"
+              />
+            </div>
+            <Typography
+              variant="h4"
+              className="text-2xl font-semibold text-center max-w-sm md:max-w-none"
+            >
+              Terjadi Kesalahan Pada Pembayaran
+            </Typography>
+            <Typography className="text-gray-600 text-base leading-6">
+              Anda dapat melakukan pemesanan ulang namun jika masih tidak bisa,
+              anda dapat menghubungi tim kami agar kami dapat membantu anda
+            </Typography>
+            <div className="lg:max-w-md md:mx-auto">
+              <Button
+                variant="contained"
+                className="capitalize text-lg py-4"
+                fullWidth
+                startIcon={<HeadsetIcon />}
+              >
+                Hubungi Tim Support
+              </Button>
+            </div>
+          </div>
+        </Box>
       </Box>
     </Container>
   );

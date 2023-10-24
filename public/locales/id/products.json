@@ -1,3 +1,5 @@
 {
-    "searchResult": "Menampilkan {{result}} hasil untuk pencarian \"{{searchTerm}}\""
+  "searchResult": "Menampilkan {{result}} hasil untuk \"{{searchTerm}}\"",
+  "show": "Menampilkan",
+  "results": "hasil untuk \"{{searchTerm}}\""
 }

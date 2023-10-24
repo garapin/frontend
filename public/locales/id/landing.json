@@ -1,52 +1,91 @@
 {
-    "section1":{
-        "header": "Bikin <1>Packaging</1> Apa Aja<br />di Garapin, Bisa!",
-        "content": "Garapin menyediakan berbagai layanan produksi untuk semua kebutuhanmu.<br />Butuh packaging siap pakai, cetak kuantiti kecil, atau custom partai besar? Garapin solusinya!",
+  "section1": {
+    "header": "Buat Kemasan Apapun Di Garapin Aja",
+    "content": "Solusi terbaik untuk semua kebutuhan kemasan Anda. Dengan pengalaman dan keahlian kami, kami siap memberikan kemasan yang kreatif, fungsional, dan sesuai dengan keinginan Anda.",
 
-        "searchbar": "Saya mau buat...",
-        "searchButton": "Cari",
-        "credentials": "Dipercaya oleh klien-klien ternama Indonesia"
-
+    "searchbar": "Saya mau buat...",
+    "searchButton": "Cari",
+    "credentials": "Dipercaya oleh klien-klien ternama Indonesia",
+    "tagline": "PEMBUATAN PACKAGING #1 DI INDONESIA",
+    "order_guide": "Panduan Pemesanan yang",
+    "order_guide_tagline": "Simpel dan Efisien"
+  },
+  "section2": {
+    "header": "Cara Kerja Garapin: 1, 2, 3, Kirim.",
+    "content": {
+      "step1": {
+        "header": "Ide.",
+        "content": "Ide Kamu penting dan berharga, dan kamu membutuhkan bantuan untuk mewujudkan ide Kamu."
+      },
+      "step2": {
+        "header": "Cari",
+        "content": "Temukan dan pelajari produk yang sesuai untuk kebutuhan idemu."
+      },
+      "step3": {
+        "header": "Proses",
+        "content": "Setelah menemukan produk yang sesuai, biar kami memulai mengerjakan ide Kamu. Kamu bebas untuk memonitor dan memastikan pekerjaan sesuai dengan keinginan Kamu."
+      },
+      "step4": {
+        "header": "Kirim",
+        "content": "Produk Kamu sudah jadi! Kami segera mengirimkan ke tempat Kamu. Jangan lupa di cek, dan berikan penilaian ya."
+      }
     },
-    "section2":{
-        "header": "Cara Kerja Garapin: 1, 2, 3, Kirim.",
-        "content": {
-            "step1": {
-                "header": "Ide.",
-                "content": "Ide Kamu penting dan berharga, dan kamu membutuhkan bantuan untuk mewujudkan ide Kamu."
-            },
-            "step2": {
-                "header": "Cari",
-                "content": "Temukan dan pelajari produk yang sesuai untuk kebutuhan idemu."
-            },
-            "step3": {
-                "header": "Proses",
-                "content": "Setelah menemukan produk yang sesuai, biar kami memulai mengerjakan ide Kamu. Kamu bebas untuk memonitor dan memastikan pekerjaan sesuai dengan keinginan Kamu."
-            },
-            "step4": {
-                "header": "Kirim",
-                "content": "Produk Kamu sudah jadi! Kami segera mengirimkan ke tempat Kamu. Jangan lupa di cek, dan berikan penilaian ya."
-            }
-        }
-
-    },
-    "sectionJelajah": {
-        "header": "Jelajahi Produk di Garapin",
-        "viewAllButton": "Lihat Semua",
-        "categoryHeader": "Jelajahi Berdasar Kategori"
-    },
-    "section3":{
-        "header": "Mengundang mitra baru untuk bergabung!",
-        "content": "Kami mengundang para KREATOR, PENGRAJIN, PRODUSEN, PEKERJA TERAMPIL, dan SIAPAPUN yang bisa MENGHASILKAN KARYA atau PRODUK untuk bergabung bersama kami."
-    },
-    "section4": {
-        "header": "Dalam Sorotan Media",
-        "content": "Garapin telah diliput di beberapa media! Tetap stay tuned ya, supaya kamu bisa tahu lebih banyak tentang perjalanan kami, pencapaian yang udah kami raih, dan dampak yang kami ciptakan. Yuk, ikut bergabung dengan kami dalam meneruskan semangat berinovasi dan mewujudkan ide-idemu!"},
-    "section5": {
-        "header": "Mudahkan Produksi Usahamu Bersama Garapin",
-        "content": "This is the content of section 5.",
-        "email": "email@perusahaan-anda.co.id",
-        "register": "Daftar Sekarang"
+    "grid": {
+      "grid1": {
+        "header": "Cari Kemasan",
+        "description": "Temukan kemasan yang Anda sukai dengan mudah melalui langkah-langkah pemesanan yang sederhana di Garapin."
+      },
+      "grid2": {
+        "header": "Pesan Kemasan Pada Kami",
+        "description": "Pesan kemasan yang Anda sukai dengan cepat dan mudah melalui proses pemesanan yang simpel di Garapin."
+      },
+      "grid3": {
+        "header": "Kami Akan Mengirimkannya",
+        "description": "Yang terakhir yaitu mengirimkan pesanan anda ketika pesanan telah selesai dibuat."
+      }
     }
-    
+  },
+  "sectionJelajah": {
+    "header": "Jelajahi Berbagai Kemasan Unik Berdasarkan",
+    "category": "Kategori",
+    "viewAllButton": "Lihat Semua",
+    "categoryHeader": "Jelajahi Berdasar Kategori",
+    "custom_packaging": {
+      "header": "Custom Packaging",
+      "desc": "Kustomisasi seluruh elemen kemasan dengan mengikuti kemauan anda."
+    },
+    "ready_to_buy": {
+      "header": "Ready To Buy",
+      "desc": "Kemasan yang dapat anda beli langsung, karena kemasan stok sudah tersedia."
+    },
+    "digital_packaging": {
+      "header": "Digital Packaging",
+      "desc": "Kustomisasi dengan mudah untuk kemasan yang anda sukai."
+    }
+  },
+  "section3": {
+    "header": "Mengundang mitra baru untuk bergabung!",
+    "content": "Kami mengundang para KREATOR, PENGRAJIN, PRODUSEN, PEKERJA TERAMPIL, dan SIAPAPUN yang bisa MENGHASILKAN KARYA atau PRODUK untuk bergabung bersama kami."
+  },
+  "section4": {
+    "header": "Dalam Sorotan Media",
+    "content": "Garapin telah diliput di beberapa media! Tetap stay tuned ya, supaya kamu bisa tahu lebih banyak tentang perjalanan kami, pencapaian yang udah kami raih, dan dampak yang kami ciptakan. Yuk, ikut bergabung dengan kami dalam meneruskan semangat berinovasi dan mewujudkan ide-idemu!"
+  },
+  "section5": {
+    "header": "Mudahkan Produksi Usahamu Bersama Garapin",
+    "content": "This is the content of section 5.",
+    "email": "email@perusahaan-anda.co.id",
+    "register": "Daftar Sekarang"
+  },
+  "section_recomendation": {
+    "title": "Rekomendasi Produk Untuk Anda"
+  },
+  "section_happy_client": {
+    "title": "Happy Client"
+  },
+  "section_consultation": {
+    "title": "Konsultasi Gratis",
+    "description": "Dengan Klik button di samping anda akan mendapatkan konsultasi gratis dari kami",
+    "button": "Konsultasi Sekarang"
+  }
 }

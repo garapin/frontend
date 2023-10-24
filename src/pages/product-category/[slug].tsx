@@ -4,6 +4,7 @@ import {
   Container,
   Divider,
   Grid,
+  IconButton,
   InputAdornment,
   TextField,
 } from "@mui/material";
@@ -25,6 +26,9 @@ import {
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import { useRef } from "react";
 import { imagePlaceholder } from "@/components/ProductList/ProductList";
+import { getCategoryLabel } from "@/tools/utils";
+import { SearchIconSVG } from "@/assets/icons/search-icon";
+import ImageSlider from "@/components/ImageSlider";
 
 const ProductCategoryPage = () => {
   const router = useRouter();
@@ -54,73 +58,80 @@ const ProductCategoryPage = () => {
 
   return (
     <Box>
-      <GarapinAppBar searchVariant={true} />
-      <Box className="max-w-xl px-10 pt-20 block md:hidden">
+      <Box className="p-4 shadow-sm border-t border-slate-700 max-w-md mx-auto flex items-stretch gap-2 bg-white mb-4">
         <TextField
-          placeholder="Saya mau buat..."
+          placeholder="Cari produk anda..."
           fullWidth
           inputRef={searchRef}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              router.push(
+                `/search${
+                  searchRef?.current?.value !== undefined
+                    ? `?q=${searchRef?.current?.value}`
+                    : ""
+                }`
+              );
+            }
+          }}
           InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Button
-                  variant="contained"
-                  color="garapinColor"
-                  onClick={(event) => {
-                    router.push(
-                      `/search${
-                        searchRef?.current?.value !== undefined
-                          ? `?q=${searchRef?.current?.value}`
-                          : ""
-                      }`
-                    );
-                  }}
-                >
-                  Cari
-                </Button>
-              </InputAdornment>
+            startAdornment: (
+              <IconButton
+                onClick={(event) => {
+                  router.push(
+                    `/search${
+                      searchRef?.current?.value !== undefined
+                        ? `?q=${searchRef?.current?.value}`
+                        : ""
+                    }`
+                  );
+                }}
+              >
+                <SearchIconSVG className="w-6 h-6 text-black" />
+              </IconButton>
             ),
           }}
         ></TextField>
+
+        {/* <Button variant="contained" className="rounded-md">
+          <FilterIconSVG className="w-6 h-6 text-white" />
+        </Button> */}
       </Box>
-      <Container>
-        <Box className="flex flex-col py-4 md:py-20">
+      <Container className="max-w-md mx-auto bg-slate-50 px-4">
+        <ImageSlider />
+        <Box className="flex flex-col py-4">
           {slug !== undefined && (
             <Typography
-              className="px-10 md:px-0"
+              className="px-0 text-[22px] font-semibold"
               variant="h6"
               color="text.primary"
             >
-              {t("searchResult", {
-                result: products.length,
+              {t("show")}
+              <span className="text-[#713F97] px-1">{products.length}</span>
+              {t("results", {
                 searchTerm: slug ?? "",
               })}
             </Typography>
           )}
           <Grid
-            className="px-10 md:px-0 pt-4 md:pt-8"
+            className="px-0 pt-4 md:pt-8"
             container
-            spacing={4}
+            spacing={3}
             alignItems="stretch"
           >
             {isProductLoading ? (
               <CircularProgress />
             ) : (
               products.map((product: any) => (
-                <Grid
-                  key={product.id}
-                  item
-                  xs={6}
-                  md={3}
-                  className="content-center"
-                >
+                <Grid key={product.id} item xs={6} className="content-center">
                   <CardVertical
                     key={product.id}
                     imageUrl={product.img[0] ?? imagePlaceholder}
                     productName={product.productName}
                     price={getProductPrice(product)}
-                    location="Jakarta"
                     slug={product.slug?.toString() ?? product.sku}
+                    category={getCategoryLabel(product.category)}
+                    isWhiteBg
                   />
                 </Grid>
               ))

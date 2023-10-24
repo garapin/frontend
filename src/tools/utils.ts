@@ -25,9 +25,21 @@ export const changeCurrency = (value: any) => {
 };
 
 export const formatDateTime = (date?: Date) => {
-  return date !== undefined ? new Date(date).toLocaleString("id-ID", {
-    timeZone: "Asia/Jakarta",
-    dateStyle: "long",
-    timeStyle: "long",
-  }): '';
+  return date !== undefined
+    ? new Date(date).toLocaleString("id-ID", {
+        timeZone: "Asia/Jakarta",
+        dateStyle: "long",
+        timeStyle: "long",
+      })
+    : "";
+};
+
+export const getCategoryLabel = (category: string) => {
+  if (category === "03") {
+    return "Custom Packaging";
+  } else if (category === "02") {
+    return "Digital Packaging";
+  } else {
+    return "Ready To Buy";
+  }
 };

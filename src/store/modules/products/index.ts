@@ -16,10 +16,11 @@ import {
   getQuotationFromDB,
   getShippingCompanyFromDB,
   getPaymentStatusFromDB,
+  getAllProductsListFromDB,
 } from "@/db";
 import axios from "axios";
 import { Product, Template } from "@/types/product";
-import Firebase from "@/configs/firebase";
+import Firebase, { getAuth } from "@/configs/firebase";
 import { toast } from "react-toastify";
 import { Invoices } from "@/types/admin";
 
@@ -293,19 +294,36 @@ export const getAllProductsBasedOnCategories = (
   };
 };
 
-export const getSearchProduct = (productName: string): AppThunk => {
+export const getSearchProduct = (filter: {
+  query: string;
+  category: string[];
+  minPrice: number;
+  maxPrice: number;
+  valueRange: number[];
+}): AppThunk => {
   return async (dispatch) => {
     try {
-      const requestBody = {
-        query: productName,
-      };
+      let requestBody: any = {};
+      if (filter.query) {
+        requestBody["query"] = filter.query;
+      }
+      if (filter.category.length > 0) {
+        requestBody["category"] = filter.category;
+      }
+      if (filter.minPrice) {
+        requestBody["minPrice"] = filter.minPrice;
+      }
+      if (filter.maxPrice) {
+        requestBody["maxPrice"] = filter.maxPrice;
+      }
       dispatch(setAllProductsLoaded(false));
       dispatch(setProductLoading());
       const data = await axios.post(
         "https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/search",
         requestBody
       );
-      dispatch(setProducts(data.data.result.map((item: any) => item._source)));
+      // dispatch(setProducts(data.data.result.map((item: any) => item._source)));
+      dispatch(setProducts(data.data.result));
       dispatch(setSearchHits(data.data.hits));
 
       if (data.data.result.length < 25) {
@@ -315,6 +333,7 @@ export const getSearchProduct = (productName: string): AppThunk => {
       } else {
         dispatch(setScrollId(data.data.scrollId));
       }
+      return data.data.result;
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
@@ -329,6 +348,28 @@ export const getAllProductNext = (category: string): AppThunk => {
       dispatch(setIsFetchingNext(true));
       dispatch(setAllProductsLoaded(false));
       const data = await getAllProductsNextFromDB(lastProductQuery, category);
+      dispatch(setIsFetchingNext(false));
+      dispatch(setProducts([...products, ...data.data]));
+      if (data.data.length < pageSize) {
+        console.log("All products loaded");
+        dispatch(setLastProductQuery(undefined));
+        dispatch(setAllProductsLoaded(true));
+      } else {
+        dispatch(setLastProductQuery(data.lastProductQuery));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(setError((error as any).message));
+    }
+  };
+};
+export const getAllProductList = (): AppThunk => {
+  return async (dispatch, getState) => {
+    const { lastProductQuery, products } = getState().product;
+    try {
+      dispatch(setIsFetchingNext(true));
+      dispatch(setAllProductsLoaded(false));
+      const data = await getAllProductsListFromDB(lastProductQuery);
       dispatch(setIsFetchingNext(false));
       dispatch(setProducts([...products, ...data.data]));
       if (data.data.length < pageSize) {
@@ -362,7 +403,8 @@ export const getNextSearchProduct = (): AppThunk => {
       dispatch(
         setProducts([
           ...products,
-          ...data.data.result.map((item: any) => item._source),
+          ...data.data.result,
+          // ...data.data.result.map((item: any) => item._source),
         ])
       );
 
@@ -372,6 +414,8 @@ export const getNextSearchProduct = (): AppThunk => {
       } else {
         dispatch(setScrollId(data.data.scrollId));
       }
+
+      return data.data.result;
     } catch (error) {
       console.log(error);
       dispatch(setError((error as any).message));
@@ -820,6 +864,26 @@ export const getRecalculateCartRTB = (
       dispatch(setCalculateLoading(false));
     }
   };
+};
+
+export const getShippingData = async (payload: any) => {
+  try {
+    const token = await getAuth()?.currentUser?.getIdToken();
+    const shipping = await axios.post(
+      `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/webShipping/pricing`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return shipping.data;
+  } catch (error: any) {
+    console.log(error);
+    toast.error(error.response.data.message || "Failed to calculate shipping");
+  }
 };
 
 export default ProductSlice.reducer;
