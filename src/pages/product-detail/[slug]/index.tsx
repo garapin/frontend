@@ -4,7 +4,10 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppRedux";
 import FallbackSpinner from "@/components/spinner";
-import { getSingleProduct } from "@/store/modules/products";
+import {
+  getSingleProduct,
+  setCalculateTemplatePrice,
+} from "@/store/modules/products";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import ImageCarousel from "@/components/ImageCarousel";
@@ -12,17 +15,12 @@ import { getCategoryLabel } from "@/tools/utils";
 import { Star } from "@mui/icons-material";
 import { ShoppingBagIconSVG } from "@/assets/icons/shopping-bag-icon";
 import { TimeIconSVG } from "@/assets/icons/time-icon";
-import { TruckIconSVG } from "@/assets/icons/truck-icon";
 import ModalLogin from "@/components/ModalLogin";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import SocialShare from "@/components/SocialShare";
 import Consultation from "@/components/Consultation";
 import GarapinFAQ from "@/components/GarapinFAQ";
-interface addressMap {
-  postalCode?: string;
-  completeAddress: string;
-  latLong?: { lat: string; long: string };
-}
+import { rupiah } from "@/tools/rupiah";
 
 const ProductDetailPage = () => {
   const router = useRouter();
@@ -32,7 +30,7 @@ const ProductDetailPage = () => {
     (state) => state.product
   );
   const auth = useFirebaseAuth();
-  const [showRating, setShowRating] = React.useState(true);
+  const [showRating, setShowRating] = React.useState(false);
   const [openLogin, setOpenLogin] = React.useState(false);
   const handleOpenLogin = () => setOpenLogin(true);
   const handleCloseLogin = () => setOpenLogin(false);
@@ -42,6 +40,10 @@ const ProductDetailPage = () => {
       dispatch(getSingleProduct(slug as string));
     }
   }, [slug]);
+
+  React.useEffect(() => {
+    dispatch(setCalculateTemplatePrice(null));
+  }, []);
 
   if (isProductLoading) {
     return <FallbackSpinner />;
@@ -121,7 +123,7 @@ const ProductDetailPage = () => {
                   variant="h5"
                   color="#713F97"
                 >
-                  Rp {singleProduct?.productPrice?.toLocaleString("id-ID")}
+                  {rupiah(singleProduct?.productPrice)}
                 </Typography>
               ) : (
                 <Typography
@@ -129,8 +131,8 @@ const ProductDetailPage = () => {
                   variant="h5"
                   color="#713F97"
                 >
-                  Rp {singleProduct?.minPrice?.toLocaleString("id-ID")} - Rp{" "}
-                  {singleProduct?.maxPrice?.toLocaleString("id-ID")} / pcs
+                  {rupiah(singleProduct?.minPrice)} -
+                  {rupiah(singleProduct?.maxPrice)} / pcs
                 </Typography>
               )}
 
