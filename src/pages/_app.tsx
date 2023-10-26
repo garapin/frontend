@@ -121,7 +121,7 @@ const GarapinApp = (props: ExtendedAppProps) => {
   return (
     <>
       <Head>
-        <title>Garapin</title>
+        <title>Heipack</title>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <FirebaseAuthProvider>

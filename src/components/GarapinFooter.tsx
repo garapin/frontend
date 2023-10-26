@@ -39,44 +39,69 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
                 alt="Garapin Logo"
                 width={100}
                 height={100}
-                className="w-[350px] h-[100px]"
+                className="w-[350px] h-[100px] lg:w-[280px] lg:h-[75px]"
               />
             </div>
-            <p className="font-light leading-7 max-w-[450px]">
-              Garapin is a mobile application or digital platform that assists
-              producers and contract manufacturers in obtaining customers who
-              wish to manufacture a product through reliable factories and
-              producers with quantities that are affordable for the customer.
-            </p>
-            <div className="flex items-center gap-4">
-              <TiktokSocialIconSVG className="w-6 h-6 cursor-pointer" />
-              <FacebookSocialIconSVG
-                className="w-6 h-6 cursor-pointer"
-                onClick={() => {
-                  window.open(
-                    "https://www.facebook.com/GarapInSemuaBisa/",
-                    "_blank"
-                  );
-                }}
-              />
-              <InstagramSocialIconSVG
-                className="w-6 h-6 cursor-pointer"
-                onClick={() => {
-                  window.open(
-                    "https://www.instagram.com/garap_in/?hl=en",
-                    "_blank"
-                  );
-                }}
-              />
-              <YoutubeSocialIconSVG
-                className="w-8 h-8 cursor-pointer"
-                onClick={() => {
-                  window.open(
-                    "https://www.youtube.com/channel/UCrKjYi-_c7HEJvppHKYfsTw",
-                    "_blank"
-                  );
-                }}
-              />
+            <div className="md:pl-20 space-y-4">
+              <p className="font-light leading-7 max-w-[400px]">
+                Garapin is a mobile application or digital platform that assists
+                producers and contract manufacturers in obtaining customers who
+                wish to manufacture a product through reliable factories and
+                producers with quantities that are affordable for the customer.
+              </p>
+              <div>
+                <p className="font-semibold text-lg">
+                  PT. Visi Teknologi Digital
+                </p>
+                <p className="max-w-[300px] font-light leading-7">
+                  Gd Grand Slipi Tower 5th Fl Unit F Jl Letjen S Parman Kav
+                  22-24. Palmerah - Jakarta Barat 11480. Indonesia.
+                </p>
+              </div>
+              <div>
+                <p className="text-lg">Tanda Daftar PSE</p>
+                <div className="flex items-center gap-2">
+                  <img
+                    src="/kominfo.png"
+                    alt="kominfo"
+                    className="h-[20px] w-[20px]"
+                  />
+
+                  <p className="max-w-[300px] font-light leading-7">
+                    000205.01/DJAI.PSE/02/2021
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <TiktokSocialIconSVG className="w-6 h-6 cursor-pointer" />
+                <FacebookSocialIconSVG
+                  className="w-6 h-6 cursor-pointer"
+                  onClick={() => {
+                    window.open(
+                      "https://www.facebook.com/GarapInSemuaBisa/",
+                      "_blank"
+                    );
+                  }}
+                />
+                <InstagramSocialIconSVG
+                  className="w-6 h-6 cursor-pointer"
+                  onClick={() => {
+                    window.open(
+                      "https://www.instagram.com/garap_in/?hl=en",
+                      "_blank"
+                    );
+                  }}
+                />
+                <YoutubeSocialIconSVG
+                  className="w-8 h-8 cursor-pointer"
+                  onClick={() => {
+                    window.open(
+                      "https://www.youtube.com/channel/UCrKjYi-_c7HEJvppHKYfsTw",
+                      "_blank"
+                    );
+                  }}
+                />
+              </div>
             </div>
           </Grid>
           <Grid item lg={3} xs={12} className="space-y-4 pt-8 lg:pt-2">

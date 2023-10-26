@@ -816,7 +816,7 @@ function CheckoutPage() {
                 onClick={formik.submitForm}
                 type="submit"
                 className="py-3 capitalize"
-                disabled={busy || !formik.isValid}
+                disabled={busy || !formik.isValid || !formik.dirty}
               >
                 {busy ? (
                   <span className="flex items-center gap-1">

@@ -40,6 +40,7 @@ const defaultState: {
   searchHit?: number;
   name: any;
   productCart: any;
+  cartCount: number;
   category: any;
   history: any;
   calculateTemplatePrice: any;
@@ -57,6 +58,7 @@ const defaultState: {
   singleProduct: [],
   templatePrice: null,
   productCart: [],
+  cartCount: 0,
   isProductLoading: false,
   isTemplateLoading: false,
   isFetchingNext: false,
@@ -163,6 +165,9 @@ export const ProductSlice = createSlice({
     setPaymentStatus: (state, action) => {
       state.paymentStatus = action.payload;
     },
+    setCartCount: (state, action) => {
+      state.cartCount = action.payload;
+    },
   },
 
   extraReducers: {
@@ -170,6 +175,7 @@ export const ProductSlice = createSlice({
       state.products = action.payload.product.products;
       state.singleProduct = action.payload.product.singleProduct;
       state.productCart = action.payload.product.productCart;
+      state.cartCount = action.payload.product.cartCount;
       state.errors = action.payload.product.errors;
       state.lastProductQuery = action.payload.product.lastProductQuery;
       state.allProductsLoaded = action.payload.product.allProductsLoaded;
@@ -208,6 +214,7 @@ export const {
   setShippingCompany,
   setPaymentStatus,
   setCalculateProductPricing,
+  setCartCount,
 } = ProductSlice.actions;
 
 export const selectProduct = (state: AppState) => state.product;
@@ -431,7 +438,7 @@ export const getSingleProduct = (slug: string): AppThunk => {
       dispatch(
         setSingleProduct({
           ...data,
-          productPrice: data.maxPrice,
+          productPrice: data?.maxPrice,
         })
       );
       dispatch(getProductTemplate(data.templateId!));
@@ -456,6 +463,7 @@ export const getProductCart = (userId: any): AppThunk => {
           )
       );
       dispatch(setProductCart(filteredData));
+      dispatch(setCartCount(filteredData.length));
     } catch (error) {
       dispatch(setError((error as any).message));
     }

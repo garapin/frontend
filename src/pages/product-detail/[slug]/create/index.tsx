@@ -16,8 +16,6 @@ import {
   CircularProgress,
   Divider,
   Grid,
-  InputAdornment,
-  Modal,
   TextField,
   Typography,
   debounce,
@@ -33,15 +31,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getStorage } from "@/configs/firebase";
 import { ProductType, StoragePath, TemplateInput } from "@/types/product";
-import CardVertical from "@/components/CardVertical";
 import { getProductPrice, rupiah } from "@/tools/rupiah";
 import GarapinProductCustomizer from "@/components/GarapinProductCustomizer";
 import AddressPicker from "@/components/AddressPicker";
-import ModalLogin from "@/components/ModalLogin";
-import { wrapper } from "@/store";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { t } from "i18next";
 
 interface addressMap {
   postalCode?: string;
@@ -53,7 +47,6 @@ const index = () => {
   const router = useRouter();
   const { slug } = router.query;
   const {
-    isProductLoading,
     templatePrice,
     singleProduct,
     isTemplateLoading,
@@ -151,7 +144,7 @@ const index = () => {
 
       await addToCart(data);
       toast.success("Berhasil Menambahkan Ke Cart");
-      router.back();
+      router.push("/cart");
     },
   });
 
@@ -249,7 +242,7 @@ const index = () => {
           ? toast.success("Berhasil Menambahkan Ke Cart")
           : toast.success("Permintaan Anda Berhasil Dikirimkan");
 
-        router.back();
+        router.push("/cart");
       } catch (e: any) {
         console.error(e);
         toast.error(e.message);
