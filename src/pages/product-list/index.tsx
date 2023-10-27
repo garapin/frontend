@@ -544,7 +544,12 @@ const ProductListPage = () => {
                               >
                                 <CardVertical
                                   key={product.id}
-                                  imageUrl={product.img[0] ?? imagePlaceholder}
+                                  imageUrl={
+                                    (product.img &&
+                                      product.img.length > 0 &&
+                                      product.img[0]) ??
+                                    imagePlaceholder
+                                  }
                                   productName={product.productName}
                                   price={getProductPrice(product)}
                                   slug={product.slug?.toString() ?? product.sku}
