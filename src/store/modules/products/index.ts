@@ -329,8 +329,8 @@ export const getSearchProduct = (filter: {
         "https://asia-southeast2-garapin-f35ef.cloudfunctions.net/products/search",
         requestBody
       );
-      // dispatch(setProducts(data.data.result.map((item: any) => item._source)));
-      dispatch(setProducts(data.data.result));
+      dispatch(setProducts(data.data.result.map((item: any) => item._source)));
+      // dispatch(setProducts(data.data.result));
       dispatch(setSearchHits(data.data.hits));
 
       if (data.data.result.length < 25) {
@@ -410,8 +410,8 @@ export const getNextSearchProduct = (): AppThunk => {
       dispatch(
         setProducts([
           ...products,
-          ...data.data.result,
-          // ...data.data.result.map((item: any) => item._source),
+          // ...data.data.result,
+          ...data.data.result.map((item: any) => item._source),
         ])
       );
 
