@@ -46,6 +46,7 @@ export interface ProductElement {
   id:                string;
   productCategoryId: string;
   orderDescription?: string;
+  files?:            {uri: string, url: string}[];  
 }
 
 export interface ProductProduct {

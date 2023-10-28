@@ -11,7 +11,7 @@ import { getShippingCompany } from "@/store/modules/products";
 import { toDate } from "@/tools/firebaseDate";
 import { rupiah } from "@/tools/rupiah";
 import { formatDateTime, getCategoryLabel } from "@/tools/utils";
-import { Close } from "@mui/icons-material";
+import { Close, InsertDriveFile } from "@mui/icons-material";
 import {
   Chip,
   Dialog,
@@ -20,9 +20,11 @@ import {
   Box,
   Divider,
   IconButton,
+  Link,
 } from "@mui/material";
 import React from "react";
 import { imagePlaceholder } from "../ProductList/ProductList";
+import { ProductElement } from "@/types/admin";
 
 export default function OrderDetailModal() {
   const { invoice, invoiceModalOpen } = useAppSelector((state) => state.admin);
@@ -61,6 +63,8 @@ export default function OrderDetailModal() {
       </Box>
     );
   };
+
+  console.log(invoice.products);
 
   return (
     <Dialog
@@ -171,8 +175,8 @@ export default function OrderDetailModal() {
               <Box className="space-y-4">
                 <h2 className="text-[32px] font-semibold">Order Saya</h2>
                 <Box className="space-y-4">
-                  {invoice.products?.map((val: any) => (
-                    <Box>
+                  {invoice.products?.map((val: ProductElement) => (
+                    <Box key={val.id}>
                       <div className="flex items-start gap-2">
                         <div className="w-full bg-slate-50 p-4 rounded-lg space-y-1 md:flex md:items-center md:gap-4">
                           <img
@@ -212,6 +216,29 @@ export default function OrderDetailModal() {
                                 {val.qty} Pcs
                               </Typography>
                             </div>
+                              <>
+                              <Typography
+                                fontSize={15}
+                                className="font-normal text-slate-500 pt-5"
+                              >
+                                <b>
+                                  Order Description:<br />
+                                </b>
+                                {val.orderDescription}
+                              </Typography>
+                              <Typography
+                                fontSize={15}
+                                className="font-normal text-slate-500 pt-5"
+                              >
+                                <b>
+                                  Files:<br />
+                                </b>
+                                {val.files?.map((file, index) => (
+                                  <Link key={file.uri} href={file.url} target="_blank" rel="noreferrer"><Box display="flex" alignItems={'center'}><InsertDriveFile /> File {index+1}</Box></Link>
+                                ))}
+                                {(val.files?.length === 0 || val.files == undefined) && "No files attached"}
+                              </Typography>
+                              </>
                           </div>
                         </div>
                       </div>

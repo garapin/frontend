@@ -1,4 +1,3 @@
-import CheckAdmin from "@/components/Admin/CheckAdmin";
 import InvoiceCard from "@/components/Admin/InvoiceCard";
 import Header from "@/components/Admin/Layouts/Header";
 import OrderDetailModal from "@/components/Admin/OrderDetailModal";
@@ -48,7 +47,7 @@ const Orders = () => {
             {invoiceLoadingStatus === 'LOADING' ? <Box display='flex' justifyContent='center' alignItems='center'><CircularProgress /></Box> : (
                     invoiceLoadingStatus === 'SUCCESS' ? (
                         (selectedStatus == 'all' ? invoices : invoices.filter(el => el.status === selectedStatus)).map((invoice, index) => (
-                            <InvoiceCard key={index} invoice={invoice} />
+                            <InvoiceCard key={invoice.id} invoice={invoice} />
                         ))) : (
                         <Typography>Failed to load data</Typography>
                     )
