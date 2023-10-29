@@ -766,14 +766,6 @@ function CheckoutPage() {
                 </Typography>
               </Box>
 
-              <Box className="flex items-center justify-between">
-                <Typography className="font-semibold text-lg text-slate-600">
-                  Tax
-                </Typography>
-                <Typography className="font-semibold text-lg">
-                  {rupiah(priceItem * 0.11)}
-                </Typography>
-              </Box>
               {ship && (
                 <>
                   <Box className="flex items-center justify-end">
@@ -792,21 +784,22 @@ function CheckoutPage() {
                   </Box>
                 </>
               )}
-              <Box className="flex items-center justify-between">
+              {/* <Box className="flex items-center justify-between">
                 <Typography className="font-semibold text-lg text-slate-600">
                   Tax
                 </Typography>
                 <Typography className="font-semibold text-lg">
                   {rupiah(priceItem * 0.11)}
                 </Typography>
-              </Box>
+              </Box> */}
               <Divider className="my-3" />
               <Box className="flex items-center justify-between">
                 <Typography className="font-semibold text-lg">
                   Sub Total
                 </Typography>
                 <Typography className="float-right font-semibold text-lg">
-                  {rupiah(priceItem + shipPrice + priceItem * 0.11)}
+                  {/* {rupiah(priceItem + shipPrice + priceItem * 0.11)} */}
+                  {rupiah(priceItem + shipPrice)}
                 </Typography>
               </Box>
 

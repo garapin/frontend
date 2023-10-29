@@ -20,6 +20,7 @@ import React, { useState } from "react";
 type CardExtended = CardTypeMap["props"] & {
   active: boolean;
   text: string;
+  imgSrc?: string;
   selectHandler: () => void;
 };
 
@@ -132,6 +133,7 @@ export default function GarapinVariantSelector({
                 <CardItemsOption
                   active={item.value === value?.value}
                   text={item.name}
+                  imgSrc={item.imgSrc}
                   selectHandler={() => {
                     if (!variant.canSelectMultiple) {
                       handleChange({ ...item });
@@ -152,6 +154,7 @@ export default function GarapinVariantSelector({
 }
 function CardItemsOption(props: CardExtended) {
   const { selectHandler, text, ...other } = props;
+
   return (
     <Card
       aria-selected={props.active}
@@ -179,6 +182,13 @@ function CardItemsOption(props: CardExtended) {
           height: "100%",
         }}
       >
+        {props.imgSrc !== undefined && (
+          <img
+            src={props.imgSrc}
+            style={{ borderRadius: "5px", width: "80px" }}
+            className="mb-2"
+          ></img>
+        )}
         <Typography
           variant="body1"
           textAlign="center"

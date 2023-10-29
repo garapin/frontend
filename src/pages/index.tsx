@@ -1,32 +1,15 @@
 import Head from "next/head";
-import GarapinAppBar from "@/components/GarapinAppBar";
 import Box from "@mui/material/Box";
-import GarapinFooter from "@/components/GarapinFooter";
 import Typography from "@mui/material/Typography";
-import RoundedImage from "@/components/RoundedImage";
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
 import Button from "@mui/material/Button";
 import { i18n, Trans, useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { makeStyles } from "@mui/styles";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Container,
-  Divider,
-  Grid,
-  IconButton,
-  InputAdornment,
-  Tab,
-  Tabs,
-  TextField,
-} from "@mui/material";
-import ImageCarousel, { CarouselImageSet } from "@/components/ImageCarousel";
+import { Container, Grid, IconButton, Tab, Tabs } from "@mui/material";
+import { CarouselImageSet } from "@/components/ImageCarousel";
+import Slider from "react-slick";
 import { useRouter } from "next/router";
-import CardCategories from "@/components/CardCategories";
 import ProductList from "@/components/ProductList/ProductList";
 import { AppState, wrapper } from "@/store";
 import { getAllProducts, getAllCategories } from "@/store/modules/products";
@@ -34,24 +17,21 @@ import { connect } from "react-redux";
 import Image from "next/image";
 import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 import { toast } from "react-toastify";
-import { ArrowBack, East, KeyboardBackspace } from "@mui/icons-material";
+import { East, KeyboardBackspace } from "@mui/icons-material";
 import { SearchPackageIconSVG } from "@/assets/icons/search-package-icon";
 import { OrderPackageIconSVG } from "@/assets/icons/order-package-icon";
 import { ShippingPackageIconSVG } from "@/assets/icons/shipping-package-icon";
 import Consultation from "@/components/Consultation";
 import GarapinFAQ from "@/components/GarapinFAQ";
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "#713F97",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 3),
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      width: "50ch",
-    },
-  },
-}));
+const settingsSlider = {
+  dots: false,
+  infinite: true,
+  speed: 500,
+  slidesToShow: 1,
+  slidesToScroll: 1,
+};
+
 makeStyles({
   cardContainer: {
     display: "flex",
@@ -90,6 +70,7 @@ function LandingPage(props: any) {
   const [productList, setProductList] = React.useState(
     props?.product?.products
   );
+  const slider = React.useRef<Slider>(null);
 
   const handleChangeTabVal = (
     event: React.SyntheticEvent,
@@ -154,6 +135,25 @@ function LandingPage(props: any) {
       link: "/product-list?category=02",
     },
   ];
+
+  const carousel = [
+    {
+      id: 1,
+      srcUrl: "/assets/slider-1.png",
+      tagline: t("section1.tagline"),
+      header: t("section1.header"),
+      content: t("section1.content"),
+      button: t("create_packaging"),
+    },
+    {
+      id: 1,
+      srcUrl: "/assets/slider-1.png",
+      tagline: t("section1.tagline"),
+      header: t("section1.header"),
+      content: t("section1.content"),
+      button: t("create_packaging"),
+    },
+  ];
   return (
     <>
       <Head>
@@ -165,59 +165,73 @@ function LandingPage(props: any) {
       <main>
         <Box className="flex flex-col pb-20 content-center max-w-screen-2xl mx-auto">
           <Box className="h-min-screen flex flex-col justify-center bg-white space-y-4">
-            <div className="grid grid-cols-12">
-              <div className="col-span-12 lg:col-span-6 lg:order-2">
-                <img
-                  src={imageSet[0].srcUrl}
-                  alt="garapin"
-                  className="w-full"
-                />
-              </div>
-              <div className="col-span-12 lg:col-span-6 lg:order-1 lg:flex lg:items-center">
-                <Box className="space-y-4 px-4">
-                  <Typography
-                    variant="body1"
-                    color="primary"
-                    className="text-[#344289] text-lg font-bold max-w-xs lg:max-w-xl"
-                  >
-                    <Trans>{t("section1.tagline")}</Trans>
-                  </Typography>
-                  <Typography
-                    variant="h2"
-                    className="text-[32px] lg:text-[60px] font-semibold max-w-xs lg:max-w-xl"
-                  >
-                    <Trans>{t("section1.header")}</Trans>
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    className="text-md text-slate-600 lg:max-w-xl"
-                  >
-                    <Trans>{t("section1.content")}</Trans>
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    className="py-3"
-                    onClick={() => {
-                      // scroll to recomendation-product
-                      const element = document.getElementById(
-                        "recomendation-product"
-                      );
-                      element?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                  >
-                    Buat Kemasan
-                  </Button>
-                  <div className="arrows">
-                    <IconButton color="primary">
-                      <KeyboardBackspace />
-                    </IconButton>
-                    <IconButton color="primary" className="bg-[#713F97]">
-                      <East className="text-white" />
-                    </IconButton>
+            <Slider {...settingsSlider} ref={slider}>
+              {carousel.map((item, index) => (
+                <div className="grid grid-cols-12">
+                  <div className="col-span-12 lg:col-span-6 lg:order-2">
+                    <img
+                      src={imageSet[0].srcUrl}
+                      alt="garapin"
+                      className="w-full"
+                    />
                   </div>
-                </Box>
-              </div>
-            </div>
+                  <div className="col-span-12 lg:col-span-6 lg:order-1 lg:flex lg:items-center">
+                    <Box className="space-y-4 px-4">
+                      <Typography
+                        variant="body1"
+                        color="primary"
+                        className="text-[#344289] text-lg font-bold max-w-xs lg:max-w-xl"
+                      >
+                        <Trans>{t("section1.tagline")}</Trans>
+                      </Typography>
+                      <Typography
+                        variant="h2"
+                        className="text-[32px] lg:text-[60px] font-semibold max-w-xs lg:max-w-xl"
+                      >
+                        <Trans>{t("section1.header")}</Trans>
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        className="text-md text-slate-600 lg:max-w-xl"
+                      >
+                        <Trans>{t("section1.content")}</Trans>
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        className="py-3"
+                        onClick={() => {
+                          const element = document.getElementById(
+                            "recomendation-product"
+                          );
+                          element?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                      >
+                        {t("create_packaging")}
+                      </Button>
+                      <div className="arrows">
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            slider.current?.slickPrev();
+                          }}
+                        >
+                          <KeyboardBackspace />
+                        </IconButton>
+                        <IconButton
+                          color="primary"
+                          className="bg-[#713F97]"
+                          onClick={() => {
+                            slider.current?.slickNext();
+                          }}
+                        >
+                          <East className="text-white" />
+                        </IconButton>
+                      </div>
+                    </Box>
+                  </div>
+                </div>
+              ))}
+            </Slider>
             <Container className="px-4 max-w-screen-2xl">
               <Box>
                 <Box
