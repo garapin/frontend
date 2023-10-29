@@ -100,19 +100,19 @@ const GarapinAppBar = ({
 
   const menus = [
     {
-      label: "Home",
+      label: t("appBar.menu.home"),
       link: "/",
     },
     {
-      label: "Tentang Kami",
+      label: t("appBar.menu.about_us"),
       link: "#footer",
     },
     {
-      label: "Produk",
+      label: t("appBar.menu.product"),
       link: "/product-list",
     },
     {
-      label: "Kontak Kami",
+      label: t("appBar.menu.our_contact"),
       link: "#footer",
     },
   ];
@@ -188,7 +188,7 @@ const GarapinAppBar = ({
                 window.open("https://wa.me/+6281380206100", "_blank");
               }}
             >
-              Konsultasi Gratis
+              {t("free_consultation.header")}
             </Button>
             <IconButton
               className="hidden lg:block"

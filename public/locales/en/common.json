@@ -1,36 +1,54 @@
 {
-    "footer": {
-        "excerpt": {
-            "header": "What is Garapin?",
-            "content": "Garapin is a mobile application or digital platform that assists producers and contract manufacturers in obtaining customers who wish to manufacture a product through reliable factories and producers with quantities that are affordable for the customer."
-        },
-        "pse": {
-            "header": "ESO Registration Number"
-        },
-        "socials": {
-            "header": "Find us on Social Media"
-        },
-        "contact": {
-            "header": "Get in Touch"
-        }
-    }, 
-    "appBar": {
-        "searchBarText": "Search...",
-        "menu": {
-            "profile": "Profile",
-            "logout": "Logout"
-
-        },
-        "loginButton": "Login"
+  "footer": {
+    "excerpt": {
+      "header": "What is Garapin?",
+      "content": "Garapin is a mobile application or digital platform that assists producers and contract manufacturers in obtaining customers who wish to manufacture a product through reliable factories and producers with quantities that are affordable for the customer."
     },
-    "cart": {
-        "title": "Cart",
-        "confirmButton": "BUY",
-        "totalPrice": "Total Price",
-        "deleteButton": "delete",
-        "selectAll": "Select All"
+    "pse": {
+      "header": "ESO Registration Number"
     },
-    "email": {
-        "verified": "Email verified successfully!"
+    "socials": {
+      "header": "Find us on Social Media"
+    },
+    "contact": {
+      "header": "Get in Touch"
+    },
+    "our_menu": {
+      "header": "Our Menu",
+      "home": "Home",
+      "product": "Product",
+      "about_us": "About Us",
+      "our_contact": "Contact Us"
     }
+  },
+  "appBar": {
+    "searchBarText": "Search...",
+    "menu": {
+      "profile": "Profile",
+      "logout": "Logout",
+      "totalTransaction": "Total Transaction",
+      "totalShop": "Cart",
+      "shopPoint": "Shop Point",
+      "cart": "Cart",
+      "header": "Our Menu",
+      "home": "Home",
+      "product": "Product",
+      "about_us": "About Us",
+      "our_contact": "Contact Us"
+    },
+    "loginButton": "Login"
+  },
+  "cart": {
+    "title": "Cart",
+    "confirmButton": "BUY",
+    "totalPrice": "Total Price",
+    "deleteButton": "delete",
+    "selectAll": "Select All"
+  },
+  "email": {
+    "verified": "Email verified successfully!"
+  },
+  "free_consultation": {
+    "header": "Free Consultation"
+  }
 }

@@ -1,10 +1,7 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { color } from "@mui/system";
-import { useTranslation, withTranslation, WithTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Divider, FormControl, Grid, NativeSelect } from "@mui/material";
+import { withTranslation, WithTranslation } from "next-i18next";
+import { Divider, Grid } from "@mui/material";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { TiktokSocialIconSVG } from "@/assets/icons/tiktok-social-icon";
@@ -15,7 +12,6 @@ import { MailOutline, WhatsApp } from "@mui/icons-material";
 
 interface Props extends WithTranslation {}
 const GarapinFooter: React.FC<Props> = ({ t }) => {
-  const { i18n } = useTranslation();
   const router = useRouter();
   const switchToLocale = React.useCallback(
     (locale: string) => {
@@ -44,10 +40,7 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
             </div>
             <div className="md:pl-20 space-y-4">
               <p className="font-light leading-7 max-w-[400px]">
-                Garapin is a mobile application or digital platform that assists
-                producers and contract manufacturers in obtaining customers who
-                wish to manufacture a product through reliable factories and
-                producers with quantities that are affordable for the customer.
+                {t("footer.excerpt.content")}.
               </p>
               <div>
                 <p className="font-semibold text-lg">
@@ -59,7 +52,7 @@ const GarapinFooter: React.FC<Props> = ({ t }) => {
                 </p>
               </div>
               <div>
-                <p className="text-lg">Tanda Daftar PSE</p>
+                <p className="text-lg">{t("footer.pse.header")}</p>
                 <div className="flex items-center gap-2">
                   <img
                     src="/kominfo.png"

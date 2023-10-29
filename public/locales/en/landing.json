@@ -1,52 +1,54 @@
 {
-    "section1":{
-        "header": "Create any <1>Packaging</1> in Garapin<br />Yes you can!",
-        "content": "Garapin provides various production services for your packaging needs.<br />From design to production, we can help you create your packaging in a fast and easy way.",
+  "section1": {
+    "header": "Create any Packaging in Garapin<br />Yes you can!",
+    "content": "Garapin provides various production services for your packaging needs.<br />From design to production, we can help you create your packaging in a fast and easy way.",
 
-        "searchbar": "I want to create a...",
-        "searchButton": "Search",
-        "credentials": "Trusted by Indonesia's Top Brands"
-
-    },
-    "section2": {
-        "header": "How Garapin Works: 1, 2, 3, Send.",
-        "content": {
-            "step1": {
-                "header": "Ideation",
-                "content": "Your ideas are important and valuable, and you need assistance to bring your ideas to life."
-            },
-            "step2": {
-                "header": "Search",
-                "content": "Discover and learn about products that align with your idea's needs."
-            },
-            "step3": {
-                "header": "Process",
-                "content": "After finding the suitable product, we will begin working on your idea. You're free to monitor and ensure that the work aligns with your desires."
-            },
-            "step4": {
-                "header": "Send",
-                "content": "Your product is now ready! We will promptly deliver it to your location. Don't forget to check it and provide your feedback."
-            }
-        }
-    },    
-    "sectionJelajah": {
-        "header": "Discover Garapin Products",
-        "viewAllButton": "View All",
-        "categoryHeader": "Discover by Category"
-    },
-    "section3":{
-        "header": "Inviting new partners to join!",
-        "content": "We invite CREATORS, ARTISANS, PRODUCERS, CRAFTSMEN, and ANYONE who can CREATE ARTWORK or PRODUCTS to join us."
-    },
-    "section4": {
-        "header": "In Media's Spotlight",
-        "content": "We're excited to share that Garapin has been making waves in the media. Stay tuned to learn more about our journey, achievements, and the impact we're making. Join us as we continue to push boundaries and bring your ideas to life!"
-    },
-    "section5": {
-        "header": "Ease your Business with Garapin",
-        "content": "Lorem ipsum dolor sit amet consectetur. Scelerisque fusce gravida et risus facilisis. Dapibus nascetur purus et ac. Nec euismod amet enim scelerisque venenatis. At sem purus arcu et egestas. Velit aenean et sed cras habitant morbi. Cursus urna tellus pellentesque vestibulum aliquam aenean.",
-        "email": "email@your-company.com",
-        "register": "Get Started"
+    "searchbar": "I want to create a...",
+    "searchButton": "Search",
+    "credentials": "Trusted by Indonesia's Top Brands",
+    "tagline": "PACKAGING MANUFACTURING #1 IN INDONESIA.",
+    "order_guide": "Ordering Guide",
+    "order_guide_tagline": "Simple and Efficient"
+  },
+  "section2": {
+    "header": "How Garapin Works: 1, 2, 3, Send.",
+    "content": {
+      "step1": {
+        "header": "Ideation",
+        "content": "Your ideas are important and valuable, and you need assistance to bring your ideas to life."
+      },
+      "step2": {
+        "header": "Search",
+        "content": "Discover and learn about products that align with your idea's needs."
+      },
+      "step3": {
+        "header": "Process",
+        "content": "After finding the suitable product, we will begin working on your idea. You're free to monitor and ensure that the work aligns with your desires."
+      },
+      "step4": {
+        "header": "Send",
+        "content": "Your product is now ready! We will promptly deliver it to your location. Don't forget to check it and provide your feedback."
+      }
     }
-    
+  },
+  "sectionJelajah": {
+    "header": "Discover Garapin Products",
+    "viewAllButton": "View All",
+    "categoryHeader": "Discover by Category"
+  },
+  "section3": {
+    "header": "Inviting new partners to join!",
+    "content": "We invite CREATORS, ARTISANS, PRODUCERS, CRAFTSMEN, and ANYONE who can CREATE ARTWORK or PRODUCTS to join us."
+  },
+  "section4": {
+    "header": "In Media's Spotlight",
+    "content": "We're excited to share that Garapin has been making waves in the media. Stay tuned to learn more about our journey, achievements, and the impact we're making. Join us as we continue to push boundaries and bring your ideas to life!"
+  },
+  "section5": {
+    "header": "Ease your Business with Garapin",
+    "content": "Lorem ipsum dolor sit amet consectetur. Scelerisque fusce gravida et risus facilisis. Dapibus nascetur purus et ac. Nec euismod amet enim scelerisque venenatis. At sem purus arcu et egestas. Velit aenean et sed cras habitant morbi. Cursus urna tellus pellentesque vestibulum aliquam aenean.",
+    "email": "email@your-company.com",
+    "register": "Get Started"
+  },
+  "create_packaging": "Create Packaging"
 }

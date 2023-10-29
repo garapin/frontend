@@ -67,7 +67,14 @@ function Cart() {
   }, [auth?.authUser?.uid, dispatch]);
 
   React.useEffect(() => {
-    setCartList(productCart);
+    setCartList(
+      productCart.map((val: any) => {
+        return {
+          ...val,
+          qty: parseInt(val.qty),
+        };
+      })
+    );
   }, [productCart]);
 
   const toggleProductSelection = (productId: number) => {
@@ -85,21 +92,6 @@ function Cart() {
     } else {
       setSelectedProducts((prevSelectedProducts) =>
         prevSelectedProducts.filter((id) => id !== productId)
-      );
-    }
-  };
-
-  const selectAllProducts = () => {
-    if (
-      selectedProducts?.length ===
-      cartList?.filter((product: any) => product.qty > 0).length
-    ) {
-      setSelectedProducts([]);
-    } else {
-      setSelectedProducts(
-        cartList
-          ?.filter((product: any) => product.qty > 0)
-          .map((product: any) => product.id)
       );
     }
   };
@@ -125,17 +117,12 @@ function Cart() {
     }
   };
 
-  const getTotalPrice = () => {
-    return selectedProducts.reduce((total, productId) => {
-      const product = cartList?.find((p: any) => p.id === productId) ?? {
-        totalPrice: 0,
-      };
-      return total + product.totalPrice;
-    }, 0);
-  };
-
   const debounceCalculatePrice = React.useRef(
-    debounce(async (itemQty, productId, item?) => {
+    debounce(async (itemQty, productId, item, moq) => {
+      if (itemQty < parseInt(moq)) {
+        toast.error(`Minimal pembelian ${moq}`);
+        return;
+      }
       if (item.productCategoryId == 1) {
         const data: any = await dispatch(
           getRecalculateCartRTB(itemQty, productId, item.idempotencyKey)
@@ -193,14 +180,20 @@ function Cart() {
     }, 500)
   ).current;
 
-  const adjustProductQuantity = async (itemId: number, newQuantity: any) => {
-    const updatedProducts = cartList?.map((product: any) => {
-      if (product.id === itemId) {
-        return { ...product, qty: newQuantity };
-      }
-      return product;
-    });
-    setCartList(updatedProducts);
+  const adjustProductQuantity = async (
+    itemId: number,
+    newQuantity: any,
+    moq: number
+  ) => {
+    if (newQuantity >= moq) {
+      const updatedProducts = cartList?.map((product: any) => {
+        if (product.id === itemId) {
+          return { ...product, qty: newQuantity };
+        }
+        return product;
+      });
+      setCartList(updatedProducts);
+    }
   };
 
   return (
@@ -264,14 +257,20 @@ function Cart() {
                                         if (val.qty > val.product?.moq) {
                                           adjustProductQuantity(
                                             val.id,
-                                            val.qty - 1
+                                            val.qty - 1,
+                                            val.product?.moq
+                                          );
+                                          debounceCalculatePrice(
+                                            val.qty - 1,
+                                            val.productId,
+                                            val,
+                                            val.product?.moq
+                                          );
+                                        } else {
+                                          toast.error(
+                                            `Minimal pembelian ${val.product?.moq}`
                                           );
                                         }
-                                        debounceCalculatePrice(
-                                          val.qty - 1,
-                                          val.productId,
-                                          val
-                                        );
                                       }}
                                       className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-4"
                                     >
@@ -283,25 +282,34 @@ function Cart() {
                                       className="w-full border-none outline-none text-center font-semibold text-sm py-3"
                                       thousandSeparator=","
                                       onChange={(e) => {
-                                        adjustProductQuantity(
-                                          val.id,
-                                          parseInt(
-                                            e.target.value.replace(
-                                              /[^0-9]/g,
-                                              ""
-                                            )
-                                          )
-                                        );
-                                        debounceCalculatePrice(
-                                          parseInt(
-                                            e.target.value.replace(
-                                              /[^0-9]/g,
-                                              ""
-                                            )
-                                          ),
-                                          val.productId,
-                                          val
-                                        );
+                                        if (e.target.value < val.product?.moq) {
+                                          toast.dismiss();
+                                          toast.error(
+                                            `Minimal pembelian ${val.product?.moq}`
+                                          );
+                                        } else {
+                                          adjustProductQuantity(
+                                            val.id,
+                                            parseInt(
+                                              e.target.value.replace(
+                                                /[^0-9]/g,
+                                                ""
+                                              )
+                                            ),
+                                            val.product?.moq
+                                          );
+                                          debounceCalculatePrice(
+                                            parseInt(
+                                              e.target.value.replace(
+                                                /[^0-9]/g,
+                                                ""
+                                              )
+                                            ),
+                                            val.productId,
+                                            val,
+                                            val.product?.moq
+                                          );
+                                        }
                                       }}
                                     />
                                     <Button
@@ -313,12 +321,14 @@ function Cart() {
                                             ? parseInt(
                                                 val.qty.replace(/[^0-9]/g, "")
                                               ) + 1
-                                            : val.qty + 1
+                                            : val.qty + 1,
+                                          val.product?.moq
                                         );
                                         debounceCalculatePrice(
                                           val.qty + 1,
                                           val.productId,
-                                          val
+                                          val,
+                                          val.product?.moq
                                         );
                                       }}
                                       className="w-10 h-10 text-3xl text-white bg-[#713F97] border-none outline-none leading-3 max-w-10 min-w-max px-3"
