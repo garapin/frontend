@@ -147,10 +147,12 @@ function LandingPage(props: any) {
     },
     {
       id: 1,
-      srcUrl: "/assets/slider-1.png",
+      srcUrl: "/assets/buat-packaging.png",
       tagline: t("section1.tagline"),
-      header: t("section1.header"),
-      content: t("section1.content"),
+      header: "Mulai Buat Packaging Kalian di heiPack",
+      content: t(
+        "Raih kesan pertama yang memukau dengan packaging makanan premium khusus bisnis online! Desain elegan, tahan bocor, dan ramah lingkungan. Pastikan makanan Anda sampai dengan sempurna. Tingkatkan citra brand, kepuasan pelanggan, dan ulasan positif. Investasi terbaik untuk bisnis kuliner Anda. Pesan sekarang, jadikan unggulan bisnismu dan berikan pengalaman tak terlupakan untuk pelanggan!"
+      ),
       button: t("create_packaging"),
     },
   ];
@@ -169,11 +171,7 @@ function LandingPage(props: any) {
               {carousel.map((item, index) => (
                 <div className="grid grid-cols-12">
                   <div className="col-span-12 lg:col-span-6 lg:order-2">
-                    <img
-                      src={imageSet[0].srcUrl}
-                      alt="garapin"
-                      className="w-full"
-                    />
+                    <img src={item.srcUrl} alt="garapin" className="w-full" />
                   </div>
                   <div className="col-span-12 lg:col-span-6 lg:order-1 lg:flex lg:items-center">
                     <Box className="space-y-4 px-4">
@@ -182,19 +180,19 @@ function LandingPage(props: any) {
                         color="primary"
                         className="text-[#344289] text-lg font-bold max-w-xs lg:max-w-xl"
                       >
-                        <Trans>{t("section1.tagline")}</Trans>
+                        <Trans>{item.tagline}</Trans>
                       </Typography>
                       <Typography
                         variant="h2"
                         className="text-[32px] lg:text-[60px] font-semibold max-w-xs lg:max-w-xl"
                       >
-                        <Trans>{t("section1.header")}</Trans>
+                        <Trans>{item.header}</Trans>
                       </Typography>
                       <Typography
                         variant="body1"
                         className="text-md text-slate-600 lg:max-w-xl"
                       >
-                        <Trans>{t("section1.content")}</Trans>
+                        <Trans>{item.content}</Trans>
                       </Typography>
                       <Button
                         variant="contained"
@@ -206,7 +204,7 @@ function LandingPage(props: any) {
                           element?.scrollIntoView({ behavior: "smooth" });
                         }}
                       >
-                        {t("create_packaging")}
+                        {item.button}
                       </Button>
                       <div className="arrows">
                         <IconButton
