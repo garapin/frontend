@@ -32,7 +32,12 @@
       "totalTransaction": "Total Transaksi",
       "totalShop": "Keranjang Belanja",
       "shopPoint": "Point Belanja",
-      "cart": "Keranjang"
+      "cart": "Keranjang",
+      "header": "Menu Kami",
+      "home": "Home",
+      "product": "Produk",
+      "about_us": "Tentang Kami",
+      "our_contact": "Kontak Kami"
     },
     "loginButton": "Masuk"
   },
@@ -45,5 +50,8 @@
   },
   "email": {
     "verified": "Email berhasil diverifikasi!"
+  },
+  "free_consultation": {
+    "header": "Konsultasi Gratis"
   }
 }
