@@ -83,7 +83,6 @@ export default function InvoiceCard({invoice}: {invoice: Invoices}) {
                     {invoice.products.map((product, index) => (<>
                             <DetailText variant='body1' fontWeight={600}>{product.product.productName}</DetailText>
                             <DetailText variant='body1'>{product.qty} x {rupiah(product.unitPrice)}</DetailText>
-                            <DetailText variant='body1'>{product.orderDescription}</DetailText>
                             </>
                     ))}
                 </Box>
