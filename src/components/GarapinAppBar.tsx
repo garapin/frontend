@@ -32,7 +32,6 @@ import { HamburgerIconSVG } from "@/assets/icons/hamburger-icon";
 import CloseIcon from "@mui/icons-material/Close";
 import { TransactionIconSVG } from "@/assets/icons/transaction-icon";
 import { CartIconSVG } from "@/assets/icons/cart-icon";
-import { BagIconSVG } from "@/assets/icons/bag-icon";
 import { WhatsApp } from "@mui/icons-material";
 import { useAppSelector } from "@/hooks/useAppRedux";
 
@@ -65,6 +64,8 @@ const GarapinAppBar = ({
   const [value, setValue] = React.useState(
     secondNavbarRoutes.indexOf(router.pathname)
   );
+
+  console.log("router", router.pathname);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -105,7 +106,7 @@ const GarapinAppBar = ({
     },
     {
       label: t("appBar.menu.about_us"),
-      link: "#footer",
+      link: "/#footer",
     },
     {
       label: t("appBar.menu.product"),
@@ -113,22 +114,38 @@ const GarapinAppBar = ({
     },
     {
       label: t("appBar.menu.our_contact"),
-      link: "#footer",
+      link: "/#footer",
+    },
+    {
+      label: t("appBar.menu.affiliate"),
+      link: "/affiliate",
     },
   ];
   return (
     <Box className="pt-6 bg-white relative shadow-sm">
       <div className="max-w-screen-2xl mx-auto lg:relative">
         <div className="flex items-center justify-between shadow-sm lg:shadow-none pb-6 px-4">
-          <Link href="/">
-            <Image
-              src="/heipack.png"
-              alt="login-bg"
-              width={300}
-              height={100}
-              className="w-[170px] h-[38px]"
-            />
-          </Link>
+          {router.pathname.includes("/affiliate") ? (
+            <Link href="/">
+              <Image
+                src="/assets/affiliate/gass-logo.png"
+                alt="login-bg"
+                width={300}
+                height={100}
+                className="w-[170px] h-[45px]"
+              />
+            </Link>
+          ) : (
+            <Link href="/">
+              <Image
+                src="/heipack.png"
+                alt="login-bg"
+                width={300}
+                height={100}
+                className="w-[170px] h-[38px]"
+              />
+            </Link>
+          )}
           <div className="hidden lg:flex items-center gap-4 justify-between min-w-[435px]">
             {menus.map((menu, index) => (
               <Link href={menu.link} key={index}>

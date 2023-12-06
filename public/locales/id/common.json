@@ -18,7 +18,8 @@
       "home": "Home",
       "product": "Produk",
       "about_us": "Tentang Kami",
-      "our_contact": "Kontak Kami"
+      "our_contact": "Kontak Kami",
+      "affiliate": "Affiliates"
     },
     "get_in_touch": {
       "header": "Get In Touch"
@@ -37,7 +38,8 @@
       "home": "Home",
       "product": "Produk",
       "about_us": "Tentang Kami",
-      "our_contact": "Kontak Kami"
+      "our_contact": "Kontak Kami",
+      "affiliate": "Affiliates"
     },
     "loginButton": "Masuk"
   },
