@@ -304,9 +304,9 @@ export const getAllProductsBasedOnCategories = (
 export const getSearchProduct = (filter: {
   query: string;
   category: string[];
-  minPrice: number;
-  maxPrice: number;
-  valueRange: number[];
+  minPrice?: number;
+  maxPrice?: number;
+  valueRange?: number[];
 }): AppThunk => {
   return async (dispatch) => {
     try {

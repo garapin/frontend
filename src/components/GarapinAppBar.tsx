@@ -126,13 +126,13 @@ const GarapinAppBar = ({
       <div className="max-w-screen-2xl mx-auto lg:relative">
         <div className="flex items-center justify-between shadow-sm lg:shadow-none pb-6 px-4">
           {router.pathname.includes("/affiliate") ? (
-            <Link href="/">
+            <Link href="/affiliate">
               <Image
                 src="/assets/affiliate/gass-logo.png"
                 alt="login-bg"
                 width={300}
                 height={100}
-                className="w-[170px] h-[45px]"
+                className="w-[170px] h-[55px]"
               />
             </Link>
           ) : (

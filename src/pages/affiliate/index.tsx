@@ -11,6 +11,7 @@ import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import { useRouter } from "next/navigation";
 
 interface IFaqs {
   id: number;
@@ -20,6 +21,7 @@ interface IFaqs {
 
 const Affiliate = () => {
   const [openedFaq, setOpenedFaq] = React.useState<number[]>([]);
+  const router = useRouter();
   const faqs: IFaqs[] = [
     {
       id: 1,
@@ -62,9 +64,10 @@ const Affiliate = () => {
   return (
     <div>
       <section className="relative mb-36">
-        <div className="top-0 left-0 w-full h-full bg-gradient-to-r from-[#642B73] to-[#C6426E] gradient-hero-affiliate">
-          <div className="grid grid-cols-12 gap-4 px-40 py-48">
-            <div className="grid col-span-6 space-y-4 text-white">
+        <div className="top-0 left-0 w-full bg-gradient-to-r from-[#642B73] to-[#C6426E] gradient-hero-affiliate h-[650px]"></div>
+        <div className="grid grid-cols-12 gap-8 items-start absolute top-20 w-full">
+          <div className="grid col-span-6 space-y-4 text-white pt-20 justify-end">
+            <div className="space-y-4">
               <h3>GARAPIN AFFILIATES SELLER SYSTEM</h3>
               <h1>GASS..</h1>
               <p className="max-w-xl leading-6">
@@ -78,20 +81,22 @@ const Affiliate = () => {
               <div>
                 <Button
                   variant="contained"
-                  className="bg-white hover:bg-white/80 text-black capitalize"
+                  className="bg-white hover:bg-white/80 text-black capitalize mt-4"
+                  onClick={() => router.push("/affiliate/home")}
                 >
                   Daftar Affiliates
                 </Button>
               </div>
             </div>
-            <div className="grid col-span-6"></div>
+          </div>
+          <div className="grid col-span-6 justify-end">
+            <img
+              src="/assets/affiliate/hero-illustration.svg"
+              alt="affiliate"
+              className="-mt-10"
+            />
           </div>
         </div>
-        <img
-          src="/assets/affiliate/hero-illustration.svg"
-          alt="affiliate"
-          className="absolute top-10 right-40"
-        />
       </section>
       <section className="mb-36 relative max-w-7xl mx-auto">
         <div className="max-w-7xl mx-auto bg-gradient-to-r from-[#642B73] to-[#C6426E] rounded-lg">
