@@ -21,6 +21,8 @@ import { useRouter } from "next/router";
 import AdminPanelLayout from "@/components/Admin/Layouts/AdminLayout";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const { palette } = createTheme();
 const { augmentColor } = palette;

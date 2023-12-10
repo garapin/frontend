@@ -18,12 +18,15 @@ import {
   Divider,
   Grid,
   IconButton,
+  Popover,
   TextField,
 } from "@mui/material";
 import { i18n } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import React from "react";
 import { useDispatch } from "react-redux";
+import { DateRangePicker } from "react-date-range";
+import { addDays } from "date-fns";
 
 const AffiliateHome = () => {
   const dispatch = useDispatch();
@@ -35,6 +38,14 @@ const AffiliateHome = () => {
     isFetchingNext,
     searchHit,
   } = useAppSelector((state) => state.product);
+  const [showDateRange, setShowDateRange] = React.useState(null);
+  const [dateRange, setDateRange] = React.useState([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 7),
+      key: "selection",
+    },
+  ]);
 
   React.useEffect(() => {
     dispatch(
@@ -67,10 +78,44 @@ const AffiliateHome = () => {
               Rutin pantau performa hasil link kamu.
             </p>
           </div>
-          <div className="flex items-center gap-2 bg-[#713F97] px-4 py-4 rounded-md text-white">
+          <div
+            className="flex items-center gap-2 bg-[#713F97] hover:bg-[#713F97]/90 px-4 py-4 rounded-md text-white cursor-pointer"
+            onClick={(e: any) => setShowDateRange(e.currentTarget)}
+          >
             <CalendarIconSVG />
             <p>Pilih Rentang Tanggal</p>
           </div>
+          <Popover
+            id="range-date-popover"
+            open={Boolean(showDateRange)}
+            anchorEl={showDateRange}
+            onClose={() => setShowDateRange(null)}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <div className="p-4">
+              <DateRangePicker
+                onChange={(item: any) => setDateRange([item.selection])}
+                moveRangeOnFirstSelection={false}
+                months={2}
+                ranges={dateRange}
+                direction="horizontal"
+                className="w-full"
+              />
+              <div className="flex justify-end gap-4">
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    setShowDateRange(null);
+                  }}
+                >
+                  OK
+                </Button>
+              </div>
+            </div>
+          </Popover>
         </div>
 
         <div className="grid grid-cols-12 gap-4">
