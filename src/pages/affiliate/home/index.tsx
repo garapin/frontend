@@ -27,9 +27,12 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { DateRangePicker } from "react-date-range";
 import { addDays } from "date-fns";
+import GASSMobileBottomNav from "@/components/GASSMobileBottomNav";
+import useFirebaseAuth from "@/hooks/useFirebaseAuth";
 
 const AffiliateHome = () => {
   const dispatch = useDispatch();
+  const auth: any = useFirebaseAuth();
   const searchRef = React.useRef<HTMLInputElement>(null);
   const {
     products,
@@ -70,16 +73,25 @@ const AffiliateHome = () => {
   return (
     <div className="bg-slate-50">
       <GASSAppBar />
+      <GASSMobileBottomNav />
       <div className="max-w-screen-2xl mx-auto py-8 space-y-8">
-        <div className="flex items-center gap-4">
-          <div>
+        <div className="lg:flex items-center gap-4 px-6 lg:px-0">
+          <div className="hidden lg:block">
             <h2 className="font-medium text-[32px] mb-2">Performa Affiliate</h2>
             <p className="text-slate-500">
               Rutin pantau performa hasil link kamu.
             </p>
           </div>
+          <div className="mb-6 block lg:hidden">
+            <p className="mb-1 text-slate-600">Halo,</p>
+            {!auth.loading && auth.authUser !== null && (
+              <p className="font-semibold">
+                {auth.authUser.displayName ?? auth.authUser.email}
+              </p>
+            )}
+          </div>
           <div
-            className="flex items-center gap-2 bg-[#713F97] hover:bg-[#713F97]/90 px-4 py-4 rounded-md text-white cursor-pointer"
+            className="flex items-center gap-2 bg-[#713F97] hover:bg-[#713F97]/90 px-4 py-4 rounded-md text-white cursor-pointer w-max"
             onClick={(e: any) => setShowDateRange(e.currentTarget)}
           >
             <CalendarIconSVG />
@@ -118,8 +130,8 @@ const AffiliateHome = () => {
           </Popover>
         </div>
 
-        <div className="grid grid-cols-12 gap-4">
-          <div className="grid col-span-4 bg-white p-4 rounded-md">
+        <div className="grid grid-cols-12 gap-4 px-6 lg:px-0">
+          <div className="grid col-span-12 lg:col-span-4 bg-white p-4 rounded-md">
             <div className="flex items-center gap-2 mb-4">
               <img src="/assets/affiliate/commission.svg" />
               <p className="text-slate-500">Total Komisi</p>
@@ -128,8 +140,8 @@ const AffiliateHome = () => {
               <p className="text-[24px] font-medium">Rp.0</p>
               <p className="text-green-500">Rp.0</p>
             </div>
-            <Divider className="my-4" />
-            <div className="grid grid-cols-12 gap-4">
+            <Divider className="my-4 hidden lg:block" />
+            <div className="grid-cols-12 gap-4 hidden lg:grid">
               <div className="grid col-span-4 space-y-2">
                 <p className="text-slate-500 text-xs">Komisi Kunjungan</p>
                 <p className="text-[14px] font-medium">Rp.0</p>
@@ -147,7 +159,7 @@ const AffiliateHome = () => {
               </div>
             </div>
           </div>
-          <div className="grid col-span-4 bg-white p-4 rounded-md">
+          <div className="grid col-span-6 lg:col-span-4 bg-white p-4 rounded-md">
             <div className="flex items-center gap-2 mb-4">
               <img src="/assets/affiliate/click.svg" />
               <p className="text-slate-500">Total Klik</p>
@@ -156,8 +168,8 @@ const AffiliateHome = () => {
               <p className="text-[24px] font-medium">0</p>
               <p className="text-green-500">0</p>
             </div>
-            <Divider className="my-4" />
-            <div className="grid grid-cols-12 gap-4">
+            <Divider className="my-4 hidden lg:block" />
+            <div className="grid-cols-12 gap-4 hidden lg:grid">
               <div className="grid col-span-3 space-y-2">
                 <p className="text-slate-500 text-xs">Kunjungan Produk</p>
                 <p className="text-[14px] font-medium">0</p>
@@ -180,7 +192,7 @@ const AffiliateHome = () => {
               </div>
             </div>
           </div>
-          <div className="grid col-span-4 bg-white p-4 rounded-md">
+          <div className="grid col-span-6 lg:col-span-4 bg-white p-4 rounded-md">
             <div className="flex items-center gap-2 mb-4">
               <img src="/assets/affiliate/sales-check.svg" />
               <p className="text-slate-500">Total Terjual</p>
@@ -189,8 +201,8 @@ const AffiliateHome = () => {
               <p className="text-[24px] font-medium">0</p>
               <p className="text-green-500">0</p>
             </div>
-            <Divider className="my-4" />
-            <div className="grid grid-cols-12 gap-4">
+            <Divider className="my-4 hidden lg:block" />
+            <div className="grid-cols-12 gap-4 hidden lg:grid">
               <div className="grid col-span-4 space-y-2">
                 <p className="text-slate-500 text-xs">Ready to Buy</p>
                 <p className="text-[14px] font-medium">0</p>
@@ -211,10 +223,10 @@ const AffiliateHome = () => {
         </div>
         <div className="p-4 bg-white rounded-md space-y-4">
           <div className="space-y-2">
-            <h2 className="font-medium text-2xl">
+            <h2 className="font-medium text-lg lg:text-2xl">
               Promosinya gampang, Komisinya dapet
             </h2>
-            <p className="text-slate-500">
+            <p className="text-slate-500 lg:text-base text-sm leading-6">
               Punya produk & packaging favoritmu? Kamu bisa promosikan link-nya
               dengan cara-cara mudah yang bisa dipilih! Cek cara promosikan
             </p>

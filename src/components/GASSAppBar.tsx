@@ -9,7 +9,7 @@ const GASSAppBar = () => {
   const router = useRouter();
   const auth: any = useFirebaseAuth();
   return (
-    <Box className="pt-6 bg-white relative shadow-sm">
+    <Box className="pt-6 bg-white relative shadow-sm hidden md:block">
       <div className="max-w-screen-2xl mx-auto lg:relative">
         <div className="flex items-center justify-between shadow-sm lg:shadow-none pb-6 px-4">
           <div className="flex items-center gap-10">
