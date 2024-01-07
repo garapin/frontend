@@ -1,19 +1,27 @@
 import { OrderRequest } from '@/types/admin';
 import axios from 'axios';
-
-let token: any = null
-
-if (typeof window !== 'undefined') {
-   token = localStorage.getItem('token')
-}
+import { getAuth } from 'firebase/auth';
 
 const host = axios.create({
     baseURL: 'https://asia-southeast2-garapin-f35ef.cloudfunctions.net/',
     headers: {
-        'Authorization': 'Bearer ' + JSON.parse(token),
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
       }
+})
+
+host.interceptors.request.use(async (req) => {
+    const token = await  getAuth().currentUser?.getIdToken()
+
+    if (token) {
+        req.headers.Authorization = `Bearer ${token}`
+    } else {
+        // if on window/browser, redirect to login
+        if (window && window.location.pathname !== '/login') {
+            window.location.href = '/login'
+        }
+    }
+    return req
 })
 
 const api = {
